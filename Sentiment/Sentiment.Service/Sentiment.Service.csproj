@@ -185,12 +185,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sentiment.DataAccess\Sentiment.DataAccess.csproj">
-      <Project>{b12c0538-0676-4bda-a219-16dfd35db3ce}</Project>
-      <Name>Sentiment.DataAccess</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
