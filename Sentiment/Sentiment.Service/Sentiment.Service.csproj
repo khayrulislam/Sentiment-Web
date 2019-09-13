@@ -162,6 +162,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Library\SentiStrength.dll" />
+    <Content Include="Library\Senti_Data\BoosterWordList.txt" />
+    <Content Include="Library\Senti_Data\changes made.txt" />
+    <Content Include="Library\Senti_Data\EmoticonLookupTable.txt" />
+    <Content Include="Library\Senti_Data\EmotionLookupTable.txt" />
+    <Content Include="Library\Senti_Data\EnglishWordList.txt" />
+    <Content Include="Library\Senti_Data\IdiomLookupTable.txt" />
+    <Content Include="Library\Senti_Data\NegatingWordList.txt" />
+    <Content Include="Library\Senti_Data\QuestionWords.txt" />
+    <Content Include="Library\Senti_Data\SlangLookupTable.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
