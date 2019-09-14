@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Sentiment.DataAccess;
+using Sentiment.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,9 +12,10 @@ namespace Sentiment.WebAPI.Controllers
     public class TestController : ApiController
     {
         [HttpGet]
-        public string get()
+        public List<User> get()
         {
-            return "text";
+            var c = new Class1();
+            return c.GetUser();
         }
     }
 }

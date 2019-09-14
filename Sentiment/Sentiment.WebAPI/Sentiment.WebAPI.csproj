@@ -45,6 +45,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -147,10 +153,17 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sentiment.Service\Sentiment.Service.csproj">
-      <Project>{8f10fb35-c228-4173-a669-4aeb0df30340}</Project>
-      <Name>Sentiment.Service</Name>
+    <ProjectReference Include="..\Sentiment.DataAccess\Sentiment.DataAccess.csproj">
+      <Project>{91d56e9d-1eaa-4470-a7bb-0f2e856a77e2}</Project>
+      <Name>Sentiment.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sentiment.Services\Sentiment.Services.csproj">
+      <Project>{a7c63e65-9505-4664-9e19-9afbc424ad86}</Project>
+      <Name>Sentiment.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
