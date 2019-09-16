@@ -56,6 +56,10 @@
     <Compile Include="Migrations\201909141802563_addfirstname.Designer.cs">
       <DependentUpon>201909141802563_addfirstname.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201909161637400_last.cs" />
+    <Compile Include="Migrations\201909161637400_last.Designer.cs">
+      <DependentUpon>201909161637400_last.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
@@ -71,6 +75,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201909141802563_addfirstname.resx">
       <DependentUpon>201909141802563_addfirstname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909161637400_last.resx">
+      <DependentUpon>201909161637400_last.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
