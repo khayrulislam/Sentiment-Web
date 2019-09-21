@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.Services.Interface
 {
-    interface IRepository
+    public interface IRepository : IDisposable
     {
     }
 }

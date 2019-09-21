@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.Services.Interface
 {
-    interface IBranch
+    public interface IBranch: IDisposable
     {
     }
 }
