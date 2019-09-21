@@ -136,7 +136,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Interface\IBranch.cs" />
+    <Compile Include="Interface\ICommit.cs" />
+    <Compile Include="Interface\IContributor.cs" />
+    <Compile Include="Interface\IRepository.cs" />
+    <Compile Include="Interface\IUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
