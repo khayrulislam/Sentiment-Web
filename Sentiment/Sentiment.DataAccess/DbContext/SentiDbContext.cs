@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentiment.DataAccess.DataClass;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -15,5 +16,10 @@ namespace Sentiment.DataAccess
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Repository> Repositories { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<Contributor> Contributors { get; set; }
+        public DbSet<Commit> Commits { get; set; }
+
     }
 }

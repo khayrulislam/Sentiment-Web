@@ -7,13 +7,13 @@ namespace Sentiment.DataAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class last : IMigrationMetadata
+    public sealed partial class addmodel : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(last));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(addmodel));
         
         string IMigrationMetadata.Id
         {
-            get { return "201909161637400_last"; }
+            get { return "201909210520183_addmodel"; }
         }
         
         string IMigrationMetadata.Source
