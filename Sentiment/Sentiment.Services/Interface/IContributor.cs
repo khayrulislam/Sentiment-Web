@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentiment.DataAccess.DataClass;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,8 @@ namespace Sentiment.Services.Interface
 {
     public interface IContributor: IDisposable
     {
+        void StoreContibutor(Contributor contributor);
+        List<Contributor> GetContributors();
+        Contributor GetContributorById();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentiment.DataAccess.DataClass;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace Sentiment.Services.Interface
 {
     public interface ICommit: IDisposable
     {
+        void StoreCommit(Commit commit);
+        List<Commit> GetCommits();
+        Commit GetCommitById();
+
     }
 }
