@@ -1,13 +1,15 @@
 ﻿using Sentiment.DataAccess.DataClass;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess
 {
-    public class User
+    [Table("User")]
+    public class UserData
     {
         public int Id { get; set; }
 
@@ -19,7 +21,7 @@ namespace Sentiment.DataAccess
 
         public string Password { get; set; }
         
-        ICollection<Repository> Repository { get; set; }
+        ICollection<RepositoryData> Repository { get; set; }
 
     }
 }

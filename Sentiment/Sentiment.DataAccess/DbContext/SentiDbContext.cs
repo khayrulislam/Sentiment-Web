@@ -15,11 +15,11 @@ namespace Sentiment.DataAccess
 
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Repository> Repositories { get; set; }
-        public DbSet<Branch> Branches { get; set; }
-        public DbSet<Contributor> Contributors { get; set; }
-        public DbSet<Commit> Commits { get; set; }
+        public DbSet<UserData> Users { get; set; }
+        public DbSet<RepositoryData> Repositories { get; set; }
+        public DbSet<BranchData> Branches { get; set; }
+        public DbSet<ContributorData> Contributors { get; set; }
+        public DbSet<CommitData> Commits { get; set; }
 
     }
 }

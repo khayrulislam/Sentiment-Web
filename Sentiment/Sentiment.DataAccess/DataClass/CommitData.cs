@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.DataClass
 {
-    public class Commit
+    [Table("Commit")]
+    public class CommitData
     {
         public int Id { get; set; }
 
-        public Contributor Commiter { get; set; }
+        public ContributorData Commiter { get; set; }
 
-        public Branch Branch { get; set; }
+        public BranchData Branch { get; set; }
 
         public int PosSentiment { get; set; }
 

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.DataClass
 {
-    public class Repository
+    [Table("Repository")]
+    public class RepositoryData
     {
         public int Id { get; set; }
 
@@ -16,17 +18,17 @@ namespace Sentiment.DataAccess.DataClass
 
         public string Url { get; set; }
 
-        public User User { get; set; }
+        public UserData User { get; set; }
 
         public int UserId { get; set; }
 
-        public ICollection<Branch> Branch { get; set; }
+        public ICollection<BranchData> Branch { get; set; }
 
-        public ICollection<Contributor> Contributor { get; set; }
+        public ICollection<ContributorData> Contributor { get; set; }
 
-        public Repository()
+        public RepositoryData()
         {
-            Contributor = new HashSet<Contributor>();
+            Contributor = new HashSet<ContributorData>();
         }
     }
 }

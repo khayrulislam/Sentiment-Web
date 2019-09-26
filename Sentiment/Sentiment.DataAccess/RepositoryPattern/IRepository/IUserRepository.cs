@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IUserRepository
+    public interface IUserRepository: IRepository<UserData>
     {
+
     }
 }

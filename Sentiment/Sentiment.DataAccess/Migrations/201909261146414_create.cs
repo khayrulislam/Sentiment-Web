@@ -3,12 +3,12 @@ namespace Sentiment.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class addmodel : DbMigration
+    public partial class create : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.Branches",
+                "dbo.Branch",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
@@ -17,11 +17,11 @@ namespace Sentiment.DataAccess.Migrations
                         RepositoryId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Repositories", t => t.RepositoryId, cascadeDelete: true)
+                .ForeignKey("dbo.Repository", t => t.RepositoryId, cascadeDelete: true)
                 .Index(t => t.RepositoryId);
             
             CreateTable(
-                "dbo.Repositories",
+                "dbo.Repository",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
@@ -31,11 +31,11 @@ namespace Sentiment.DataAccess.Migrations
                         UserId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.User", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.Contributors",
+                "dbo.Contributor",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
@@ -45,7 +45,7 @@ namespace Sentiment.DataAccess.Migrations
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.Users",
+                "dbo.User",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
@@ -57,7 +57,7 @@ namespace Sentiment.DataAccess.Migrations
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.Commits",
+                "dbo.Commit",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
@@ -67,46 +67,46 @@ namespace Sentiment.DataAccess.Migrations
                         Commiter_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Branches", t => t.Branch_Id)
-                .ForeignKey("dbo.Contributors", t => t.Commiter_Id)
+                .ForeignKey("dbo.Branch", t => t.Branch_Id)
+                .ForeignKey("dbo.Contributor", t => t.Commiter_Id)
                 .Index(t => t.Branch_Id)
                 .Index(t => t.Commiter_Id);
             
             CreateTable(
-                "dbo.ContributorRepositories",
+                "dbo.ContributorDataRepositoryDatas",
                 c => new
                     {
-                        Contributor_Id = c.Int(nullable: false),
-                        Repository_Id = c.Int(nullable: false),
+                        ContributorData_Id = c.Int(nullable: false),
+                        RepositoryData_Id = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => new { t.Contributor_Id, t.Repository_Id })
-                .ForeignKey("dbo.Contributors", t => t.Contributor_Id, cascadeDelete: true)
-                .ForeignKey("dbo.Repositories", t => t.Repository_Id, cascadeDelete: true)
-                .Index(t => t.Contributor_Id)
-                .Index(t => t.Repository_Id);
+                .PrimaryKey(t => new { t.ContributorData_Id, t.RepositoryData_Id })
+                .ForeignKey("dbo.Contributor", t => t.ContributorData_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Repository", t => t.RepositoryData_Id, cascadeDelete: true)
+                .Index(t => t.ContributorData_Id)
+                .Index(t => t.RepositoryData_Id);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.Commits", "Commiter_Id", "dbo.Contributors");
-            DropForeignKey("dbo.Commits", "Branch_Id", "dbo.Branches");
-            DropForeignKey("dbo.Repositories", "UserId", "dbo.Users");
-            DropForeignKey("dbo.ContributorRepositories", "Repository_Id", "dbo.Repositories");
-            DropForeignKey("dbo.ContributorRepositories", "Contributor_Id", "dbo.Contributors");
-            DropForeignKey("dbo.Branches", "RepositoryId", "dbo.Repositories");
-            DropIndex("dbo.ContributorRepositories", new[] { "Repository_Id" });
-            DropIndex("dbo.ContributorRepositories", new[] { "Contributor_Id" });
-            DropIndex("dbo.Commits", new[] { "Commiter_Id" });
-            DropIndex("dbo.Commits", new[] { "Branch_Id" });
-            DropIndex("dbo.Repositories", new[] { "UserId" });
-            DropIndex("dbo.Branches", new[] { "RepositoryId" });
-            DropTable("dbo.ContributorRepositories");
-            DropTable("dbo.Commits");
-            DropTable("dbo.Users");
-            DropTable("dbo.Contributors");
-            DropTable("dbo.Repositories");
-            DropTable("dbo.Branches");
+            DropForeignKey("dbo.Commit", "Commiter_Id", "dbo.Contributor");
+            DropForeignKey("dbo.Commit", "Branch_Id", "dbo.Branch");
+            DropForeignKey("dbo.Repository", "UserId", "dbo.User");
+            DropForeignKey("dbo.ContributorDataRepositoryDatas", "RepositoryData_Id", "dbo.Repository");
+            DropForeignKey("dbo.ContributorDataRepositoryDatas", "ContributorData_Id", "dbo.Contributor");
+            DropForeignKey("dbo.Branch", "RepositoryId", "dbo.Repository");
+            DropIndex("dbo.ContributorDataRepositoryDatas", new[] { "RepositoryData_Id" });
+            DropIndex("dbo.ContributorDataRepositoryDatas", new[] { "ContributorData_Id" });
+            DropIndex("dbo.Commit", new[] { "Commiter_Id" });
+            DropIndex("dbo.Commit", new[] { "Branch_Id" });
+            DropIndex("dbo.Repository", new[] { "UserId" });
+            DropIndex("dbo.Branch", new[] { "RepositoryId" });
+            DropTable("dbo.ContributorDataRepositoryDatas");
+            DropTable("dbo.Commit");
+            DropTable("dbo.User");
+            DropTable("dbo.Contributor");
+            DropTable("dbo.Repository");
+            DropTable("dbo.Branch");
         }
     }
 }
