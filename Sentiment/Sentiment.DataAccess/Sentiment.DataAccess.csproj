@@ -60,6 +60,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
     <Compile Include="DataClass\User.cs" />
+    <Compile Include="RepositoryPattern\Implement\AllRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\BranchRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\CommitRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\ContributorRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\RepositoryRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\UserRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IBranchRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\ICommitRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IContributorRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IRepositoryRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IUserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
