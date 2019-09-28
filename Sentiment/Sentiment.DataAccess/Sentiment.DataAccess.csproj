@@ -58,6 +58,10 @@
     <Compile Include="Migrations\201909281032595_createdb.Designer.cs">
       <DependentUpon>201909281032595_createdb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201909281346427_map.cs" />
+    <Compile Include="Migrations\201909281346427_map.Designer.cs">
+      <DependentUpon>201909281346427_map.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataClass\UserData.cs" />
@@ -65,12 +69,14 @@
     <Compile Include="RepositoryPattern\Implement\BranchRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\CommitRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\ContributorRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\RepositoryContributorMapRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\RepositoryRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\UnitOfWork.cs" />
     <Compile Include="RepositoryPattern\Implement\UserRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IBranchRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\ICommitRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IContributorRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IRepositoryContributorMapRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IUnitOfWork.cs" />
     <Compile Include="RepositoryPattern\IRepository\IRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IRepositoryRepository.cs" />
@@ -83,6 +89,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201909281032595_createdb.resx">
       <DependentUpon>201909281032595_createdb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909281346427_map.resx">
+      <DependentUpon>201909281346427_map.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

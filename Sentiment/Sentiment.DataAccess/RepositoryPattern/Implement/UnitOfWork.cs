@@ -18,6 +18,8 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         public IRepositoryRepository Repository { get; private set; }
 
         public IUserRepository User { get; private set; }
+        public IRepositoryContributorMapRepository RepositoryContributorMap { get; private set; }
+
 
         private SentiDbContext _dbContext;
 
@@ -29,6 +31,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             Contributor = new ContributorRepository(_dbContext);
             Repository = new RepositoryRepository(_dbContext);
             User = new UserRepository(_dbContext);
+            RepositoryContributorMap = new RepositoryContributorMapRepository(dbContext);
         }
 
         public int Complete()

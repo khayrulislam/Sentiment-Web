@@ -17,6 +17,7 @@ namespace Sentiment.DataAccess
 
         public DbSet<UserData> Users { get; set; }
         public DbSet<RepositoryData> Repositories { get; set; }
+        public DbSet<RepositoryContributorsMap> RepositoryContributorsMap { get; set; }
         public DbSet<BranchData> Branches { get; set; }
         public DbSet<ContributorData> Contributors { get; set; }
         public DbSet<CommitData> Commits { get; set; }

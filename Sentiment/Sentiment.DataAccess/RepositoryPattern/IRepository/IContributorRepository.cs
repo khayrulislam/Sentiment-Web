@@ -10,5 +10,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface IContributorRepository: IRepository<ContributorData>
     {
         //IEnumerable<ContributorData> GetRepositoryContributors(int repoId);
+
+        bool ContributorExist(string contributorName);
+
+        ContributorData GetContributor(string contributorName);
     }
 }

@@ -43,28 +43,41 @@ namespace Sentiment.Services.Service
                 {
                     //repo.Contributors;
 
-                    if (repo.Contributors.Count>0)
+                    /*if (repo.Contributors.Count>0)
                     {
                         contributorList = contributorList.Where(c => repo.Contributors.Any(cc => cc.Name == c.Login)).ToList();
-                    }
+                    }*/
 
                     var contributorDataList = new List<ContributorData>();
 
                     foreach (var contributor in contributorList)
                     {
+                        // check contributor exist
                         var contributorData = new ContributorData()
                         {
                             Name = contributor.Login,
                             Contribution = contributor.Contributions,
-
-                            
                         };
-
-                        contributorDataList.Add(contributorData);
+                        unitOfWork.Contributor.Add(contributorData);
+                        //contributorDataList.Add(contributorData);
                     }
-                    unitOfWork.Contributor.AddRange(contributorDataList);
+                    //unitOfWork.Contributor.AddRange(contributorDataList);
                     unitOfWork.Complete();
 
+
+                    foreach(var contributor in contributorList)
+                    {
+                        //contributorDataList.Add(unitOfWork.Contributor.GetContributor(contributor.Login));
+
+                        RepositoryContributorsMap map = new RepositoryContributorsMap()
+                        {
+                            ContributorId = unitOfWork.Contributor.GetContributor(contributor.Login).Id,
+                            RepositoryId = repo.Id
+                        };
+                        unitOfWork.RepositoryContributorMap.Add(map);
+                        //unitOfWork.RepositoryContributorMap.Add
+                    }
+                    unitOfWork.Complete();
 
 
                 }
