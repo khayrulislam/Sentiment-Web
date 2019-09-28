@@ -29,7 +29,7 @@ namespace Sentiment.Services.Service
             await StoreContributorDataAsync(repo);
 
 
-            
+
 
         }
 
@@ -41,11 +41,11 @@ namespace Sentiment.Services.Service
             {
                 if(repo!= null)
                 {
-                    List<ContributorData> contributors = (List<ContributorData>) repo.Contributors;
+                    //repo.Contributors;
 
-                    if (contributors !=null && contributors.Count > 0)
+                    if (repo.Contributors.Count>0)
                     {
-                        contributorList = contributorList.Where(c => contributors.Any(cc => cc.Name == c.Login)).ToList();
+                        contributorList = contributorList.Where(c => repo.Contributors.Any(cc => cc.Name == c.Login)).ToList();
                     }
 
                     var contributorDataList = new List<ContributorData>();
@@ -55,10 +55,12 @@ namespace Sentiment.Services.Service
                         var contributorData = new ContributorData()
                         {
                             Name = contributor.Login,
-                            Contribution = contributor.Contributions
+                            Contribution = contributor.Contributions,
+                            //Repositories = new List<RepositoryData>() { repo} 
+                            
                         };
 
-                        //contributorDataList.Add(contributorData);
+                        contributorDataList.Add(contributorData);
                     }
                     unitOfWork.Contributor.AddRange(contributorDataList);
                     unitOfWork.Complete();
