@@ -56,7 +56,7 @@ namespace Sentiment.Services.Service
                         {
                             Name = contributor.Login,
                             Contribution = contributor.Contributions,
-                            //Repositories = new List<RepositoryData>() { repo} 
+
                             
                         };
 
@@ -100,8 +100,11 @@ namespace Sentiment.Services.Service
                         branchDataList.Add(branchData);
                     }
 
-                    unitOfWork.Branch.AddRange(branchDataList);
-                    unitOfWork.Complete();
+                    if(branchDataList.Count > 0)
+                    {
+                        unitOfWork.Branch.AddRange(branchDataList);
+                        unitOfWork.Complete();
+                    }
                 }
             }
         }
