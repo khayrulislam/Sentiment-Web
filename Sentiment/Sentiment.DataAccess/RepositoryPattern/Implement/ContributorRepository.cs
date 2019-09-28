@@ -10,9 +10,12 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
     public class ContributorRepository: AllRepository<ContributorData>,IContributorRepository
     {
+        SentiDbContext _dbContext;
         public ContributorRepository(SentiDbContext dbContext):base(dbContext)
         {
-
+            _dbContext = dbContext;
         }
+
+
     }
 }

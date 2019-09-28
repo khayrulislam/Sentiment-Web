@@ -11,6 +11,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();
         void Add(TEntity entity);
+        void AddRange(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
     }
 }

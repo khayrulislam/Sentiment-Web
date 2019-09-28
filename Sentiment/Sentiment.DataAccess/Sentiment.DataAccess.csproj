@@ -51,14 +51,15 @@
     <Compile Include="DataClass\BranchData.cs" />
     <Compile Include="DataClass\CommitData.cs" />
     <Compile Include="DataClass\ContributorData.cs" />
+    <Compile Include="DataClass\RepositoryContributorsMap.cs" />
     <Compile Include="DataClass\RepositoryData.cs" />
-    <Compile Include="Migrations\201909261146414_create.cs" />
-    <Compile Include="Migrations\201909261146414_create.Designer.cs">
-      <DependentUpon>201909261146414_create.cs</DependentUpon>
+    <Compile Include="DbContext\SentiDbContext.cs" />
+    <Compile Include="Migrations\201909281032595_createdb.cs" />
+    <Compile Include="Migrations\201909281032595_createdb.Designer.cs">
+      <DependentUpon>201909281032595_createdb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DbContext\SentiDbContext.cs" />
     <Compile Include="DataClass\UserData.cs" />
     <Compile Include="RepositoryPattern\Implement\AllRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\BranchRepository.cs" />
@@ -80,8 +81,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201909261146414_create.resx">
-      <DependentUpon>201909261146414_create.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201909281032595_createdb.resx">
+      <DependentUpon>201909281032595_createdb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

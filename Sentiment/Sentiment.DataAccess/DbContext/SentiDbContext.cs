@@ -10,7 +10,7 @@ namespace Sentiment.DataAccess
 {
     public class SentiDbContext : DbContext
     {
-        public SentiDbContext(): base("name=SentiDbContext")
+        public SentiDbContext() : base("name=SentiDbContext")
         {
 
         }
@@ -22,4 +22,5 @@ namespace Sentiment.DataAccess
         public DbSet<CommitData> Commits { get; set; }
 
     }
+
 }

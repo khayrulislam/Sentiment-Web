@@ -24,11 +24,8 @@ namespace Sentiment.DataAccess.DataClass
 
         public ICollection<BranchData> Branch { get; set; }
 
-        public ICollection<ContributorData> Contributor { get; set; }
+        
+        public virtual ICollection<ContributorData> Contributors { get; set; }
 
-        public RepositoryData()
-        {
-            Contributor = new HashSet<ContributorData>();
-        }
     }
 }

@@ -21,6 +21,11 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             dbContext.Set<TEntity>().Add(entity);
         }
 
+        public void AddRange(IEnumerable<TEntity> entities)
+        {
+            dbContext.Set<TEntity>().AddRange(entities);
+        }
+
         public TEntity Get(int id)
         {
             return dbContext.Set<TEntity>().Find(id);

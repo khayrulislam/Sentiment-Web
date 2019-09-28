@@ -18,7 +18,7 @@ namespace Sentiment.WebAPI.Controllers
         {
             string repositoryUrl = null;
             // asyn method call
-            await repo.ExecuteRepositoryAnalysisAsync(repositoryUrl);
+            await repo.ExecuteAnalysisAsync(repositoryUrl);
         }
     }
 }

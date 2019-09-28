@@ -16,12 +16,6 @@ namespace Sentiment.DataAccess.DataClass
 
         public int Contribution { get; set; }
 
-        public ICollection<RepositoryData> Repository { get; set; }
-
-        public ContributorData()
-        {
-            Repository = new HashSet<RepositoryData>();
-        }
-
+        public virtual ICollection<RepositoryData> Repositories{ get; set; }
     }
 }

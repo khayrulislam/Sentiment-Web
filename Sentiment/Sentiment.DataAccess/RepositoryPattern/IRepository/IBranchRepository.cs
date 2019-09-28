@@ -9,6 +9,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface IBranchRepository:IRepository<BranchData>
     {
-
+        IEnumerable<BranchData> GetRepositoryBranches(int repoId);
     }
 }

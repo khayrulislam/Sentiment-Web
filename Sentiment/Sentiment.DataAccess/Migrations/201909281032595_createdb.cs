@@ -3,7 +3,7 @@ namespace Sentiment.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class create : DbMigration
+    public partial class createdb : DbMigration
     {
         public override void Up()
         {

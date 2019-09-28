@@ -10,9 +10,20 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
     public class RepositoryRepository: AllRepository<RepositoryData>, IRepositoryRepository
     {
+        SentiDbContext _dbContext;
         public RepositoryRepository(SentiDbContext dbContext): base(dbContext)
         {
+            _dbContext = dbContext;
+        }
 
+        public RepositoryData Get(string repositoryName, string ownerName)
+        {
+            return _dbContext.Repositories.Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).FirstOrDefault();
+        }
+
+        public bool RepositoryExist(string repositoryName, string ownerName)
+        {
+            return _dbContext.Repositories.Any(repo => repo.Name ==repositoryName && repo.OwnerName == ownerName );
         }
     }
 }

@@ -10,9 +10,15 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
     public class BranchRepository: AllRepository<BranchData>,IBranchRepository
     {
+        SentiDbContext _dbContext;
         public BranchRepository(SentiDbContext dbContext):base(dbContext)
         {
+            _dbContext = dbContext;
+        }
 
+        public IEnumerable<BranchData> GetRepositoryBranches(int repoId)
+        {
+            return _dbContext.Branches.Where(b => b.RepositoryId == repoId).ToList();
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface IUserRepository: IRepository<UserData>
     {
-
+        bool UserExist(int userId);
     }
 }
