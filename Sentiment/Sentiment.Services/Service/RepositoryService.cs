@@ -14,9 +14,8 @@ namespace Sentiment.Services.Service
 {
     public class RepositoryService
     {
-        string user = "mockito";
-        string repos = "mockito";
-
+        string user = "khayrulislam";
+        string repos = "Sentiment-Web";
 
         Repository repository;
         GitHubClient gitHubClient;
@@ -112,7 +111,24 @@ namespace Sentiment.Services.Service
                     {
                         // check stored branch list doesn't contain branch
                         // and store that branch in the addBranchs list
-                        if(storedBranches.Any(b=>b.Sha != branch.Commit.Sha))
+                        if(storedBranches.Count > 0)
+                        {
+                            if (storedBranches.Any(b => b.Sha != branch.Commit.Sha))
+                            {
+                                var branchData = new BranchData()
+                                {
+                                    Name = branch.Name,
+                                    RepositoryId = repo.Id,
+                                    Sha = branch.Commit.Sha
+                                };
+                                addBranches.Add(branchData);
+                            }
+                            else if (storedBranches.Any(b => b.Sha == branch.Commit.Sha && b.Name != branch.Name))
+                            {
+                                storedBranches.Where(b => b.Sha == branch.Commit.Sha).First().Name = branch.Commit.Sha;
+                            }
+                        }
+                        else
                         {
                             var branchData = new BranchData()
                             {
@@ -122,10 +138,7 @@ namespace Sentiment.Services.Service
                             };
                             addBranches.Add(branchData);
                         }
-                        else if (storedBranches.Any(b => b.Sha == branch.Commit.Sha && b.Name!= branch.Name))
-                        {
-                            storedBranches.Where(b => b.Sha == branch.Commit.Sha).First().Name = branch.Commit.Sha;
-                        }
+                        
 
                     }
                     unitOfWork.Branch.AddRange(addBranches);
