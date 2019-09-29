@@ -20,9 +20,9 @@ namespace Sentiment.Services.Service
         {
             gitHubClient = GitHubConnection.Instance;
 
-            repository = await gitHubClient.Repository.Get("mockito", "mockito");
+            
 
-            var repo = StoreRepositoryData(1);
+            var repo = await StoreRepositoryDataAsync(1);
 
             await StoreBranchDataAsync(repo);
 
@@ -91,13 +91,15 @@ namespace Sentiment.Services.Service
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
+                // valid repository
                 if (repo != null)
                 {
-                    List<BranchData> branches = (List<BranchData>) unitOfWork.Branch.GetRepositoryBranches(repo.Id);
+                    // get all the branch list stored in the database
+                    var storedBranches = (List<BranchData>) unitOfWork.Branch.GetRepositoryBranches(repo.Id);
 
-                    if(branches.Count > 0)
+                    if(storedBranches.Count > 0)
                     {
-                        branchList = branchList.Where(b => !branches.Any( x => x.Name == b.Name) ).ToList();
+                        branchList = branchList.Where(b => !storedBranches.Any( x => x.Name == b.Name) ).ToList();
                     }
 
                     var branchDataList = new List<BranchData>();
@@ -122,12 +124,16 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private RepositoryData StoreRepositoryData(int userId)
+        private async Task<RepositoryData> StoreRepositoryDataAsync(int userId)
         {
+            repository = await gitHubClient.Repository.Get("mockito", "mockito");
+
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
+                // check user exist for the request
                 if (unitOfWork.User.UserExist(userId))
                 {
+                    // check repository exist for storing repository data
                     if (!unitOfWork.Repository.RepositoryExist(repository.Name, repository.Owner.Login))
                     {
                         var repoData = new RepositoryData()
@@ -140,7 +146,7 @@ namespace Sentiment.Services.Service
                         unitOfWork.Repository.Add(repoData);
                         unitOfWork.Complete();
                     }
-
+                    // return saved repository data based on user input
                     return unitOfWork.Repository.Get(repository.Name, repository.Owner.Login);
                 }
                 return null;
