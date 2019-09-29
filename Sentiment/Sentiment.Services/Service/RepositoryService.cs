@@ -100,19 +100,14 @@ namespace Sentiment.Services.Service
                     // get all the branch list stored in the database
                     var storedBranches = (List<BranchData>) unitOfWork.Branch.GetRepositoryBranches(repo.Id);
 
-                    if(storedBranches.Count > 0)
-                    {
-                        branchList = branchList.Where(b => !storedBranches.Any( x => x.Sha == b.Commit.Sha) ).ToList();
-                    }
-
                     var addBranches = new List<BranchData>();
 
                     foreach(var branch in branchList)
                     {
-                        // check stored branch list doesn't contain branch
-                        // and store that branch in the addBranchs list
+                        // check database contains branch for this repository 
                         if(storedBranches.Count > 0)
                         {
+                            // check branch repository sha and new branch sha doesn't match
                             if (storedBranches.Any(b => b.Sha != branch.Commit.Sha))
                             {
                                 var branchData = new BranchData()
@@ -122,10 +117,6 @@ namespace Sentiment.Services.Service
                                     Sha = branch.Commit.Sha
                                 };
                                 addBranches.Add(branchData);
-                            }
-                            else if (storedBranches.Any(b => b.Sha == branch.Commit.Sha && b.Name != branch.Name))
-                            {
-                                storedBranches.Where(b => b.Sha == branch.Commit.Sha).First().Name = branch.Commit.Sha;
                             }
                         }
                         else
@@ -143,7 +134,6 @@ namespace Sentiment.Services.Service
                     }
                     unitOfWork.Branch.AddRange(addBranches);
                     unitOfWork.Complete();
-                    
                 }
             }
         }
