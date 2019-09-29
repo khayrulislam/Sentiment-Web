@@ -14,6 +14,10 @@ namespace Sentiment.Services.Service
 {
     public class RepositoryService
     {
+        string user = "mockito";
+        string repos = "mockito";
+
+
         Repository repository;
         GitHubClient gitHubClient;
         public async Task ExecuteAnalysisAsync(string repositoryUrl)
@@ -35,7 +39,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreContributorDataAsync(RepositoryData repo)
         {
-            var contributorList = await gitHubClient.Repository.GetAllContributors("mockito", "mockito");
+            var contributorList = await gitHubClient.Repository.GetAllContributors(user, repos);
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -87,7 +91,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreBranchDataAsync(RepositoryData repo)
         {
-            var branchList = await gitHubClient.Repository.Branch.GetAll("mockito", "mockito");
+            var branchList = await gitHubClient.Repository.Branch.GetAll(user, repos);
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -99,34 +103,41 @@ namespace Sentiment.Services.Service
 
                     if(storedBranches.Count > 0)
                     {
-                        branchList = branchList.Where(b => !storedBranches.Any( x => x.Name == b.Name) ).ToList();
+                        branchList = branchList.Where(b => !storedBranches.Any( x => x.Sha == b.Commit.Sha) ).ToList();
                     }
 
-                    var branchDataList = new List<BranchData>();
+                    var addBranches = new List<BranchData>();
 
                     foreach(var branch in branchList)
                     {
-                        var branchData = new BranchData()
+                        // check stored branch list doesn't contain branch
+                        // and store that branch in the addBranchs list
+                        if(storedBranches.Any(b=>b.Sha != branch.Commit.Sha))
                         {
-                            Name = branch.Name,
-                            RepositoryId = repo.Id,
-                            Sha = branch.Commit.Sha
-                        };
-                        branchDataList.Add(branchData);
-                    }
+                            var branchData = new BranchData()
+                            {
+                                Name = branch.Name,
+                                RepositoryId = repo.Id,
+                                Sha = branch.Commit.Sha
+                            };
+                            addBranches.Add(branchData);
+                        }
+                        else if (storedBranches.Any(b => b.Sha == branch.Commit.Sha && b.Name!= branch.Name))
+                        {
+                            storedBranches.Where(b => b.Sha == branch.Commit.Sha).First().Name = branch.Commit.Sha;
+                        }
 
-                    if(branchDataList.Count > 0)
-                    {
-                        unitOfWork.Branch.AddRange(branchDataList);
-                        unitOfWork.Complete();
                     }
+                    unitOfWork.Branch.AddRange(addBranches);
+                    unitOfWork.Complete();
+                    
                 }
             }
         }
 
         private async Task<RepositoryData> StoreRepositoryDataAsync(int userId)
         {
-            repository = await gitHubClient.Repository.Get("mockito", "mockito");
+            repository = await gitHubClient.Repository.Get(user, repos);
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
