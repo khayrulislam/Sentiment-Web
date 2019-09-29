@@ -107,8 +107,9 @@ namespace Sentiment.Services.Service
                         // check database contains branch for this repository 
                         if(storedBranches.Count > 0)
                         {
-                            // check branch repository sha and new branch sha doesn't match
-                            if (storedBranches.Any(b => b.Sha != branch.Commit.Sha))
+                            // check branch repository name and new branch name doesn't match
+                            // store this new branch information
+                            if (storedBranches.Any(b => b.Name != branch.Name))
                             {
                                 var branchData = new BranchData()
                                 {
@@ -117,6 +118,11 @@ namespace Sentiment.Services.Service
                                     Sha = branch.Commit.Sha
                                 };
                                 addBranches.Add(branchData);
+                            }
+                            // stored branch name remain same and change the sha
+                            else if(storedBranches.Any(b => b.Name == branch.Name && b.Sha != branch.Commit.Sha))
+                            {
+                                storedBranches.Where(b => b.Name == branch.Name).First().Sha = branch.Commit.Sha;
                             }
                         }
                         else
