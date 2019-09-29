@@ -109,7 +109,7 @@ namespace Sentiment.Services.Service
                         {
                             // check branch repository name and new branch name doesn't match
                             // store this new branch information
-                            if (storedBranches.Any(b => b.Name != branch.Name))
+                            if (!storedBranches.Exists(b => b.Name == branch.Name))
                             {
                                 var branchData = new BranchData()
                                 {
@@ -120,7 +120,7 @@ namespace Sentiment.Services.Service
                                 addBranches.Add(branchData);
                             }
                             // stored branch name remain same and change the sha
-                            else if(storedBranches.Any(b => b.Name == branch.Name && b.Sha != branch.Commit.Sha))
+                            else if(storedBranches.Exists(b => b.Name == branch.Name && b.Sha!=branch.Commit.Sha))
                             {
                                 storedBranches.Where(b => b.Name == branch.Name).First().Sha = branch.Commit.Sha;
                             }
