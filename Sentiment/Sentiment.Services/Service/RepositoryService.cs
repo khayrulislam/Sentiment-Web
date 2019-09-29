@@ -51,6 +51,8 @@ namespace Sentiment.Services.Service
                         contributorList = contributorList.Where(c => repo.Contributors.Any(cc => cc.Name == c.Login)).ToList();
                     }*/
 
+                    //var storedContributors = ;
+
                     var contributorDataList = new List<ContributorData>();
 
                     foreach (var contributor in contributorList)
@@ -119,7 +121,7 @@ namespace Sentiment.Services.Service
                                 };
                                 addBranches.Add(branchData);
                             }
-                            // stored branch name remain same and change the sha
+                            // branch name remain same and change the sha update branch
                             else if(storedBranches.Exists(b => b.Name == branch.Name && b.Sha!=branch.Commit.Sha))
                             {
                                 storedBranches.Where(b => b.Name == branch.Name).First().Sha = branch.Commit.Sha;
@@ -135,8 +137,6 @@ namespace Sentiment.Services.Service
                             };
                             addBranches.Add(branchData);
                         }
-                        
-
                     }
                     unitOfWork.Branch.AddRange(addBranches);
                     unitOfWork.Complete();

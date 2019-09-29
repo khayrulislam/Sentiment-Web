@@ -21,6 +21,11 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Contributors.Any(c => c.Name == contributorName);
         }
 
+/*        public IEnumerable<ContributorData> GetRepoContributors(int repoId)
+        {
+            //return _dbContext.Contributors.Include("RepositoryContributorsMap").Where(r => r.RepositoryContributorsMap == repoId).ToList();
+        }*/
+
         public ContributorData GetContributor(string contributorName)
         {
             return _dbContext.Contributors.Where(c=> c.Name == contributorName).FirstOrDefault();
