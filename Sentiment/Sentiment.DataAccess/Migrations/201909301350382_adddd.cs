@@ -3,7 +3,7 @@ namespace Sentiment.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class createdb : DbMigration
+    public partial class adddd : DbMigration
     {
         public override void Up()
         {
@@ -33,6 +33,20 @@ namespace Sentiment.DataAccess.Migrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.User", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.RepositoryContributors",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        RepositoryId = c.Int(nullable: false),
+                        ContributorId = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Contributor", t => t.ContributorId, cascadeDelete: true)
+                .ForeignKey("dbo.Repository", t => t.RepositoryId, cascadeDelete: true)
+                .Index(t => t.RepositoryId)
+                .Index(t => t.ContributorId);
             
             CreateTable(
                 "dbo.Contributor",
@@ -72,19 +86,6 @@ namespace Sentiment.DataAccess.Migrations
                 .Index(t => t.Branch_Id)
                 .Index(t => t.Commiter_Id);
             
-            CreateTable(
-                "dbo.ContributorDataRepositoryDatas",
-                c => new
-                    {
-                        ContributorData_Id = c.Int(nullable: false),
-                        RepositoryData_Id = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.ContributorData_Id, t.RepositoryData_Id })
-                .ForeignKey("dbo.Contributor", t => t.ContributorData_Id, cascadeDelete: true)
-                .ForeignKey("dbo.Repository", t => t.RepositoryData_Id, cascadeDelete: true)
-                .Index(t => t.ContributorData_Id)
-                .Index(t => t.RepositoryData_Id);
-            
         }
         
         public override void Down()
@@ -92,19 +93,19 @@ namespace Sentiment.DataAccess.Migrations
             DropForeignKey("dbo.Commit", "Commiter_Id", "dbo.Contributor");
             DropForeignKey("dbo.Commit", "Branch_Id", "dbo.Branch");
             DropForeignKey("dbo.Repository", "UserId", "dbo.User");
-            DropForeignKey("dbo.ContributorDataRepositoryDatas", "RepositoryData_Id", "dbo.Repository");
-            DropForeignKey("dbo.ContributorDataRepositoryDatas", "ContributorData_Id", "dbo.Contributor");
+            DropForeignKey("dbo.RepositoryContributors", "RepositoryId", "dbo.Repository");
+            DropForeignKey("dbo.RepositoryContributors", "ContributorId", "dbo.Contributor");
             DropForeignKey("dbo.Branch", "RepositoryId", "dbo.Repository");
-            DropIndex("dbo.ContributorDataRepositoryDatas", new[] { "RepositoryData_Id" });
-            DropIndex("dbo.ContributorDataRepositoryDatas", new[] { "ContributorData_Id" });
             DropIndex("dbo.Commit", new[] { "Commiter_Id" });
             DropIndex("dbo.Commit", new[] { "Branch_Id" });
+            DropIndex("dbo.RepositoryContributors", new[] { "ContributorId" });
+            DropIndex("dbo.RepositoryContributors", new[] { "RepositoryId" });
             DropIndex("dbo.Repository", new[] { "UserId" });
             DropIndex("dbo.Branch", new[] { "RepositoryId" });
-            DropTable("dbo.ContributorDataRepositoryDatas");
             DropTable("dbo.Commit");
             DropTable("dbo.User");
             DropTable("dbo.Contributor");
+            DropTable("dbo.RepositoryContributors");
             DropTable("dbo.Repository");
             DropTable("dbo.Branch");
         }

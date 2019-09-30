@@ -18,7 +18,18 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public RepositoryData Get(string repositoryName, string ownerName)
         {
-            return _dbContext.Repositories.Include("Contributors").Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).FirstOrDefault();
+            /*var repos = _dbContext.Repositories.Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).
+                FirstOrDefault();*/
+            //repos.RepositoryContributors = _dbContext.RepositoryContributors.Where(rc => rc.RepositoryId == repos.Id)
+            //   .ToList();
+
+
+            var repos = _dbContext.Repositories.Where(rep => rep.Name == repositoryName && rep.OwnerName == ownerName).FirstOrDefault();
+
+            repos.Contributors = _dbContext.Repositories.Where(rep => rep.Name == repositoryName && rep.OwnerName == ownerName)
+                .SelectMany(con => con.RepositoryMap.Select(c => c.ContributorData)).ToList();
+
+            return repos;
         }
 
         public bool RepositoryExist(string repositoryName, string ownerName)

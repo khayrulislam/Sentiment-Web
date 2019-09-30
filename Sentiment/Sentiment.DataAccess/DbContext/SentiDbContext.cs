@@ -20,6 +20,25 @@ namespace Sentiment.DataAccess
         public DbSet<BranchData> Branches { get; set; }
         public DbSet<ContributorData> Contributors { get; set; }
         public DbSet<CommitData> Commits { get; set; }
+        public DbSet<RepositoryContributorMap> RepositoryContributors { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<RepositoryContributorMap>()
+            .HasKey(rcm => rcm.Id)
+            .ToTable("RepositoryContributors");
+
+            modelBuilder.Entity<RepositoryContributorMap>()
+            .HasRequired(rcm => rcm.RepositoryData).WithMany(r => r.RepositoryMap)
+            .HasForeignKey(rcm => rcm.RepositoryId);
+
+            modelBuilder.Entity<RepositoryContributorMap>()
+            .HasRequired(rcm => rcm.ContributorData).WithMany(c => c.ContributorMap)
+            .HasForeignKey(rcm => rcm.ContributorId);
+
+        }
 
     }
 

@@ -51,12 +51,12 @@
     <Compile Include="DataClass\BranchData.cs" />
     <Compile Include="DataClass\CommitData.cs" />
     <Compile Include="DataClass\ContributorData.cs" />
-    <Compile Include="DataClass\RepositoryContributorsMap.cs" />
+    <Compile Include="DataClass\RepositoryContributorMap.cs" />
     <Compile Include="DataClass\RepositoryData.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\201909281032595_createdb.cs" />
-    <Compile Include="Migrations\201909281032595_createdb.Designer.cs">
-      <DependentUpon>201909281032595_createdb.cs</DependentUpon>
+    <Compile Include="Migrations\201909301350382_adddd.cs" />
+    <Compile Include="Migrations\201909301350382_adddd.Designer.cs">
+      <DependentUpon>201909301350382_adddd.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -65,12 +65,14 @@
     <Compile Include="RepositoryPattern\Implement\BranchRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\CommitRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\ContributorRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\RepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\Implement\RepositoryRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\UnitOfWork.cs" />
     <Compile Include="RepositoryPattern\Implement\UserRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IBranchRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\ICommitRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IContributorRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IRepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\IRepository\IUnitOfWork.cs" />
     <Compile Include="RepositoryPattern\IRepository\IRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IRepositoryRepository.cs" />
@@ -81,8 +83,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201909281032595_createdb.resx">
-      <DependentUpon>201909281032595_createdb.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201909301350382_adddd.resx">
+      <DependentUpon>201909301350382_adddd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

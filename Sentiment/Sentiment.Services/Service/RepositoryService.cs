@@ -41,14 +41,15 @@ namespace Sentiment.Services.Service
             {
                 if(repo!= null)
                 {
-                    //repo.Contributors;
+                    var storedContributors = repo.Contributors;
 
-                    if (repo.Contributors.Count>0)
-                    {
-                        contributorList = contributorList.Where(c => repo.Contributors.Any(cc => cc.Name == c.Login)).ToList();
-                    }
+                    contributorList = contributorList.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList();
+                    // check contributor staay in the reop 
+                    // check contributor stored in the table
+
 
                     var contributorDataList = new List<ContributorData>();
+                    var repositoryContributorList = new List<RepositoryContributorMap>();
 
                     foreach (var contributor in contributorList)
                     {
@@ -56,16 +57,24 @@ namespace Sentiment.Services.Service
                         {
                             Name = contributor.Login,
                             Contribution = contributor.Contributions,
-
-                            
                         };
-
+                        //contributorData.ContributorMap = 
+                        var map = new RepositoryContributorMap()
+                        {
+                            ContributorData = contributorData,
+                            RepositoryData = repo
+                        };
+                        //contributorData.Repositories.Add(repo);
+                        repositoryContributorList.Add(map);
                         contributorDataList.Add(contributorData);
                     }
+                    //repo.Contributors = contributorDataList;
+                    //unitOfWork.Complete();
                     unitOfWork.Contributor.AddRange(contributorDataList);
                     unitOfWork.Complete();
 
-
+                    unitOfWork.RepositoryContributor.AddRange(repositoryContributorList);
+                    unitOfWork.Complete();
 
                 }
             }
