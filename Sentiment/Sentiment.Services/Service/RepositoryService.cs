@@ -14,8 +14,8 @@ namespace Sentiment.Services.Service
 {
     public class RepositoryService
     {
-        string user = "khayrulislam";
-        string repos = "Sentiment-Web";
+        string user = "mockito";
+        string repos = "mockito";
 
         Repository repository;
         GitHubClient gitHubClient;
@@ -23,9 +23,10 @@ namespace Sentiment.Services.Service
         {
             gitHubClient = GitHubConnection.Instance;
 
-            
+            repository = await gitHubClient.Repository.Get(user, repos);
 
-            var repo = await StoreRepositoryDataAsync(1);
+
+            var repo =  StoreRepositoryDataAsync(1);
 
             await StoreBranchDataAsync(repo);
 
@@ -38,6 +39,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreContributorDataAsync(RepositoryData repo)
         {
+
             var contributorList = await gitHubClient.Repository.GetAllContributors(user, repos);
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
@@ -144,9 +146,9 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task<RepositoryData> StoreRepositoryDataAsync(int userId)
+        private RepositoryData StoreRepositoryDataAsync(int userId)
         {
-            repository = await gitHubClient.Repository.Get(user, repos);
+            
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {

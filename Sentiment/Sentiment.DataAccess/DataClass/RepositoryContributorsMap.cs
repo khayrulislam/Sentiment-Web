@@ -12,9 +12,9 @@ namespace Sentiment.DataAccess.DataClass
     {
         public int Id { get; set; }
         public int RepositoryId { get; set; }
-        public RepositoryData RepositoryData { get; set; }
+        public virtual RepositoryData RepositoryData { get; set; }
         public int ContributorId { get; set; }
-        public ContributorData ContributorData { get; set; }
+        public virtual ContributorData ContributorData { get; set; }
 
     }
 }
