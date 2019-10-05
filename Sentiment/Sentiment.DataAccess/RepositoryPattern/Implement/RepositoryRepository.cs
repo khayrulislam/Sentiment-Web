@@ -16,7 +16,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
-        public RepositoryData Get(string repositoryName, string ownerName)
+        public RepositoryData GetByName(string repositoryName, string ownerName)
         {
             /*var repos = _dbContext.Repositories.Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).
                 FirstOrDefault();*/

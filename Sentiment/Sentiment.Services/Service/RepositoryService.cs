@@ -14,112 +14,104 @@ namespace Sentiment.Services.Service
 {
     public class RepositoryService
     {
-        Repository repository;
         GitHubClient gitHubClient;
+
+        string repoName = "mockito";
+        string repoOwner = "mockito";
+
         public async Task ExecuteAnalysisAsync(string repositoryUrl)
         {
             gitHubClient = GitHubConnection.Instance;
 
-            repository = await gitHubClient.Repository.Get("mockito", "mockito");
+            var repositoryId = await StoreRepositoryDataAsync(1);
 
-            var repo = StoreRepositoryData(1);
+            await StoreBranchDataAsync(repositoryId);
 
-            await StoreBranchDataAsync(repo);
-
-            await StoreContributorDataAsync(repo);
-
-
-
+            await StoreContributorDataAsync(repositoryId);
 
         }
 
-        private async Task StoreContributorDataAsync(RepositoryData repo)
+        private async Task StoreContributorDataAsync(int repositoryId)
         {
-            var contributorList = await gitHubClient.Repository.GetAllContributors("mockito", "mockito");
+            var allContributors = await gitHubClient.Repository.GetAllContributors(repoName, repoOwner);
+            var contributorList = new List<ContributorData>();
+            var repositoryContributorsList = new List<RepositoryContributorMap>();
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
-                if(repo!= null)
+                if(repositoryId  != 0)
                 {
-                    var storedContributors = repo.Contributors;
+                    var repo = unitOfWork.Repository.Get(repositoryId);
+                    var repositoryData = unitOfWork.Repository.GetByName(repo.Name, repo.OwnerName);
+                    var storedContributors = repositoryData.Contributors;
 
-                    contributorList = contributorList.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList();
-                    // check contributor staay in the reop 
-                    // check contributor stored in the table
+                    allContributors = allContributors.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList();
 
-
-                    var contributorDataList = new List<ContributorData>();
-                    var repositoryContributorList = new List<RepositoryContributorMap>();
-
-                    foreach (var contributor in contributorList)
+                    foreach (var contributor in allContributors)
                     {
                         var contributorData = new ContributorData()
                         {
                             Name = contributor.Login,
                             Contribution = contributor.Contributions,
                         };
-                        //contributorData.ContributorMap = 
-                        var map = new RepositoryContributorMap()
+                        var repositoryContributor = new RepositoryContributorMap()
                         {
                             ContributorData = contributorData,
-                            RepositoryData = repo
+                            RepositoryData = repositoryData
                         };
-                        //contributorData.Repositories.Add(repo);
-                        repositoryContributorList.Add(map);
-                        contributorDataList.Add(contributorData);
+                        repositoryContributorsList.Add(repositoryContributor);
+                        contributorList.Add(contributorData);
                     }
-                    //repo.Contributors = contributorDataList;
-                    //unitOfWork.Complete();
-                    unitOfWork.Contributor.AddRange(contributorDataList);
+                    unitOfWork.Contributor.AddRange(contributorList);
                     unitOfWork.Complete();
-
-                    unitOfWork.RepositoryContributor.AddRange(repositoryContributorList);
+                    unitOfWork.RepositoryContributor.AddRange(repositoryContributorsList);
                     unitOfWork.Complete();
-
                 }
             }
 
         }
 
-        private async Task StoreBranchDataAsync(RepositoryData repo)
+        private async Task StoreBranchDataAsync(int repositoryId)
         {
-            var branchList = await gitHubClient.Repository.Branch.GetAll("mockito", "mockito");
+            var allBranches = await gitHubClient.Repository.Branch.GetAll(repoName, repoOwner);
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
-                if (repo != null)
+                if (repositoryId != 0)
                 {
-                    List<BranchData> branches = (List<BranchData>) unitOfWork.Branch.GetRepositoryBranches(repo.Id);
+                    var storedBranches = (List<BranchData>) unitOfWork.Branch.GetRepositoryBranches(repositoryId);
 
-                    if(branches.Count > 0)
+                    if(storedBranches.Count > 0)
                     {
-                        branchList = branchList.Where(b => !branches.Any( x => x.Name == b.Name) ).ToList();
+                        allBranches = allBranches.Where(b => !storedBranches.Any( x => x.Name == b.Name) ).ToList();
                     }
 
-                    var branchDataList = new List<BranchData>();
+                    var branchList = new List<BranchData>();
 
-                    foreach(var branch in branchList)
+                    foreach(var branch in allBranches)
                     {
                         var branchData = new BranchData()
                         {
                             Name = branch.Name,
-                            RepositoryId = repo.Id,
+                            RepositoryId = repositoryId,
                             Sha = branch.Commit.Sha
                         };
-                        branchDataList.Add(branchData);
+                        branchList.Add(branchData);
                     }
 
-                    if(branchDataList.Count > 0)
+                    if(branchList.Count > 0)
                     {
-                        unitOfWork.Branch.AddRange(branchDataList);
+                        unitOfWork.Branch.AddRange(branchList);
                         unitOfWork.Complete();
                     }
                 }
             }
         }
 
-        private RepositoryData StoreRepositoryData(int userId)
+        private async Task<int> StoreRepositoryDataAsync(int userId)
         {
+            var repository = await gitHubClient.Repository.Get(repoName, repoOwner);
+
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
                 if (unitOfWork.User.UserExist(userId))
@@ -136,11 +128,12 @@ namespace Sentiment.Services.Service
                         unitOfWork.Repository.Add(repoData);
                         unitOfWork.Complete();
                     }
-
-                    return unitOfWork.Repository.Get(repository.Name, repository.Owner.Login);
+                    return unitOfWork.Repository.GetByName(repository.Name, repository.Owner.Login).Id;
                 }
-                return null;
+                return 0;
             }
         }
+
+
     }
 }
