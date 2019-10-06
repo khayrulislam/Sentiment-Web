@@ -12,9 +12,17 @@ namespace Sentiment.DataAccess.DataClass
     {
         public int Id { get; set; }
 
+        public int CommiterId { get; set; }
+
         public ContributorData Commiter { get; set; }
 
+        public int BranchId { get; set; }
+
         public BranchData Branch { get; set; }
+
+        public string Message { get; set; }
+
+        public string Sha { get; set; }
 
         public int PosSentiment { get; set; }
 

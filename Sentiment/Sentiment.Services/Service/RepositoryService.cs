@@ -29,6 +29,24 @@ namespace Sentiment.Services.Service
 
             await StoreContributorDataAsync(repositoryId);
 
+            await StoreCommitDataAsync(repositoryId);
+
+        }
+
+        private async Task StoreCommitDataAsync(int repositoryId)
+        {
+            var option = new ApiOptions();
+            option.PageCount = 1;
+            option.PageSize = 100;
+            option.StartPage = 1;
+
+            var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner,option);
+
+            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            {
+
+            }
+
         }
 
         private async Task StoreContributorDataAsync(int repositoryId)

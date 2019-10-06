@@ -58,6 +58,10 @@
     <Compile Include="Migrations\201910050642295_add.Designer.cs">
       <DependentUpon>201910050642295_add.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201910051256448_commit_column_add.cs" />
+    <Compile Include="Migrations\201910051256448_commit_column_add.Designer.cs">
+      <DependentUpon>201910051256448_commit_column_add.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataClass\UserData.cs" />
@@ -85,6 +89,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201910050642295_add.resx">
       <DependentUpon>201910050642295_add.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910051256448_commit_column_add.resx">
+      <DependentUpon>201910051256448_commit_column_add.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
