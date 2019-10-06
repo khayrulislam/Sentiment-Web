@@ -16,8 +16,8 @@ namespace Sentiment.Services.Service
     {
         GitHubClient gitHubClient;
 
-        string repoName = "mockito";
-        string repoOwner = "mockito";
+        string repoName = "khayrulislam";
+        string repoOwner = "Sentiment-Web";
 
         public async Task ExecuteAnalysisAsync(string repositoryUrl)
         {
@@ -35,17 +35,58 @@ namespace Sentiment.Services.Service
 
         private async Task StoreCommitDataAsync(int repositoryId)
         {
-            var option = new ApiOptions();
-            option.PageCount = 1;
-            option.PageSize = 100;
-            option.StartPage = 1;
+            var option = new ApiOptions()
+            {
+                PageCount = 1,
+                PageSize = 100,
+                StartPage = 1
+            };
+            var count = 1;
 
+
+            var re = new CommitRequest()
+            {
+                Sha = "m2m",
+            };
+            
+            //var com = gitHubClient.Repository.Commit.
+
+
+            //var allCommits = await gitHubClient.
             var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner,option);
 
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+           /* using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
+                while (true)
+                {
+                    option.StartPage = count;
+                    var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner, option);
+                    if (allCommits.Count == 0) break;
+                    else
+                    {
+                        for(int i = 0; i < allCommits.Count; i++)
+                        {
+                            if (!unitOfWork.Commit.Exist(allCommits[i].Sha))
+                            {
+                                var commitList = new List<CommitData>();
+                                for(int j=i; j<allCommits.Count;j++)
+                                {
+                                    //string branchName = allCommits[j].Repository.
 
-            }
+                                    var commitData = new CommitData()
+                                    {
+                                        Sha = allCommits[j].Sha,
+                                        Message = allCommits[j].Commit.Message,
+                                        
+                                    };
+                                }
+                            }
+                        }
+                        
+                    }
+                    count++;
+                }
+            }*/
 
         }
 

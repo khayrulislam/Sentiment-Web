@@ -10,9 +10,15 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
     public class CommitRepository: AllRepository<CommitData>, ICommitRepository
     {
+        SentiDbContext _dbContext;
         public CommitRepository(SentiDbContext dbContext):base(dbContext)
         {
+            _dbContext = dbContext;
+        }
 
+        public bool Exist(string sha)
+        {
+            return _dbContext.Commits.Any(c => c.Sha == sha);
         }
     }
 }

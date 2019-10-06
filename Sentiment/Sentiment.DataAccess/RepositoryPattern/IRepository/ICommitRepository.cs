@@ -9,6 +9,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface ICommitRepository:IRepository<CommitData>
     {
-
+        bool Exist(string sha);
     }
 }
