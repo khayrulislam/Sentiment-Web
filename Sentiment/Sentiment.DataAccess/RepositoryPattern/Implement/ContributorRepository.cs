@@ -16,6 +16,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
-
+        public ContributorData GetByName(string name)
+        {
+            return _dbContext.Contributors.Where(c=>c.Name == name).FirstOrDefault();
+        }
     }
 }

@@ -4,6 +4,7 @@ using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.Implement;
 using Sentiment.DataAccess.RepositoryPattern.IRepository;
 using Sentiment.Services.GitHub;
+using Sentiment.Services.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Sentiment.Services.Service
     public class RepositoryService
     {
         GitHubClient gitHubClient;
+        SentimentCal sentimentCal;
 
         string repoName = "khayrulislam";
         string repoOwner = "Sentiment-Web";
@@ -22,6 +24,7 @@ namespace Sentiment.Services.Service
         public async Task ExecuteAnalysisAsync(string repositoryUrl)
         {
             gitHubClient = GitHubConnection.Instance;
+            sentimentCal = SentimentCal.Instance;
 
             var repositoryId = await StoreRepositoryDataAsync(1);
 
@@ -35,60 +38,67 @@ namespace Sentiment.Services.Service
 
         private async Task StoreCommitDataAsync(int repositoryId)
         {
+            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            {
+                var branchList = unitOfWork.Branch.GetRepositoryBranches(repositoryId);
+
+                foreach (var branch in branchList)
+                {
+                    await StoreBranchCommitAsync(branch);
+                    
+                }
+            }
+        }
+
+        private async Task StoreBranchCommitAsync(BranchData branch)
+        {
+            var count = 0;
             var option = new ApiOptions()
             {
                 PageCount = 1,
-                PageSize = 100,
-                StartPage = 1
+                PageSize = 100
             };
-            var count = 1;
-
-
-            var re = new CommitRequest()
+            var request = new CommitRequest()
             {
-                Sha = "m2m",
+                Sha = branch.Name,
             };
-            
-            //var com = gitHubClient.Repository.Commit.
 
-
-            //var allCommits = await gitHubClient.
-            var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner,option);
-
-           /* using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
                 while (true)
                 {
-                    option.StartPage = count;
-                    var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner, option);
+                    option.StartPage = ++count;
+                    var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner, request, option);
                     if (allCommits.Count == 0) break;
                     else
                     {
-                        for(int i = 0; i < allCommits.Count; i++)
+                        var commitList = new List<CommitData>();
+                        foreach (var commit in allCommits)
                         {
-                            if (!unitOfWork.Commit.Exist(allCommits[i].Sha))
+                            if (!unitOfWork.Commit.Exist(commit.Sha))
                             {
-                                var commitList = new List<CommitData>();
-                                for(int j=i; j<allCommits.Count;j++)
-                                {
-                                    //string branchName = allCommits[j].Repository.
-
-                                    var commitData = new CommitData()
+                                var commiter = unitOfWork.Contributor.GetByName(commit.Committer.Login);
+                                sentimentCal.CalculateSentiment(commit.Commit.Message);
+                                commitList.Add(new CommitData()
                                     {
-                                        Sha = allCommits[j].Sha,
-                                        Message = allCommits[j].Commit.Message,
-                                        
-                                    };
-                                }
+                                        Sha = commit.Sha,
+                                        Message = commit.Commit.Message,
+                                        CommiterId = commiter.Id,
+                                        PosSentiment = sentimentCal.PositoiveSentiScore,
+                                        NegSentiment = sentimentCal.NegativeSentiScore,
+                                        BranchId = branch.Id
+                                    }
+                                );
+                                // commit branch map
                             }
                         }
-                        
+                        unitOfWork.Commit.AddRange(commitList);
+                        unitOfWork.Complete();
                     }
-                    count++;
                 }
-            }*/
-
+            }
         }
+
 
         private async Task StoreContributorDataAsync(int repositoryId)
         {
@@ -101,18 +111,23 @@ namespace Sentiment.Services.Service
                 if(repositoryId  != 0)
                 {
                     var repo = unitOfWork.Repository.Get(repositoryId);
-                    var repositoryData = unitOfWork.Repository.GetByName(repo.Name, repo.OwnerName);
+                    var repositoryData = unitOfWork.Repository.GetByNameAndOwnerName(repo.Name, repo.OwnerName);
                     var storedContributors = repositoryData.Contributors;
 
                     allContributors = allContributors.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList();
 
                     foreach (var contributor in allContributors)
                     {
-                        var contributorData = new ContributorData()
+                        // check contributor exists or not 
+                        var contributorData = unitOfWork.Contributor.GetByName(contributor.Login);
+                        if (contributorData == null)
                         {
-                            Name = contributor.Login,
-                            Contribution = contributor.Contributions,
-                        };
+                            contributorData = new ContributorData()
+                            {
+                                Name = contributor.Login,
+                                Contribution = contributor.Contributions,
+                            };
+                        }
                         var repositoryContributor = new RepositoryContributorMap()
                         {
                             ContributorData = contributorData,
@@ -149,6 +164,7 @@ namespace Sentiment.Services.Service
 
                     foreach(var branch in allBranches)
                     {
+                        // update branch sha not done
                         var branchData = new BranchData()
                         {
                             Name = branch.Name,
@@ -187,7 +203,7 @@ namespace Sentiment.Services.Service
                         unitOfWork.Repository.Add(repoData);
                         unitOfWork.Complete();
                     }
-                    return unitOfWork.Repository.GetByName(repository.Name, repository.Owner.Login).Id;
+                    return unitOfWork.Repository.GetByNameAndOwnerName(repository.Name, repository.Owner.Login).Id;
                 }
                 return 0;
             }

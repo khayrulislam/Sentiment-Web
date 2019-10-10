@@ -10,6 +10,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface IRepositoryRepository:IRepository<RepositoryData>
     {
         bool RepositoryExist(string repositoryName, string ownerName);
-        RepositoryData GetByName(string repositoryName, string ownerName);
+        RepositoryData GetByNameAndOwnerName(string repositoryName, string ownerName);
     }
 }
