@@ -79,13 +79,15 @@ namespace Sentiment.Services.Service
                             {
                                 var commiter = unitOfWork.Contributor.GetByName(commit.Committer.Login);
                                 sentimentCal.CalculateSentiment(commit.Commit.Message);
+                                var pos = sentimentCal.PositoiveSentiScore;
+                                var neg = sentimentCal.NegativeSentiScore;
                                 commitList.Add(new CommitData()
                                     {
                                         Sha = commit.Sha,
                                         Message = commit.Commit.Message,
                                         CommiterId = commiter.Id,
-                                        PosSentiment = sentimentCal.PositoiveSentiScore,
-                                        NegSentiment = sentimentCal.NegativeSentiScore,
+                                        PosSentiment = pos,
+                                        NegSentiment = neg,
                                         BranchId = branch.Id
                                     }
                                 );

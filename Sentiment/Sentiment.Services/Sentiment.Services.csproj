@@ -149,15 +149,31 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Library\Data\BoosterWordList.txt" />
-    <Content Include="Library\Data\changes made.txt" />
-    <Content Include="Library\Data\EmoticonLookupTable.txt" />
-    <Content Include="Library\Data\EmotionLookupTable.txt" />
-    <Content Include="Library\Data\EnglishWordList.txt" />
-    <Content Include="Library\Data\IdiomLookupTable.txt" />
-    <Content Include="Library\Data\NegatingWordList.txt" />
-    <Content Include="Library\Data\QuestionWords.txt" />
-    <Content Include="Library\Data\SlangLookupTable.txt" />
+    <Content Include="Data\BoosterWordList.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\changes made.txt" />
+    <Content Include="Data\EmoticonLookupTable.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\EmotionLookupTable.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\EnglishWordList.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\IdiomLookupTable.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\NegatingWordList.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\QuestionWords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SlangLookupTable.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Library\SentiStrength.dll" />
   </ItemGroup>
   <ItemGroup>
