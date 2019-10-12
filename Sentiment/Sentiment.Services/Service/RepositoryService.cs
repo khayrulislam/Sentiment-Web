@@ -50,7 +50,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task StoreBranchCommitAsync(BranchData branch)
+        private async Task StoreBranchCommitAsync(BranchT branch)
         {
             var count = 0;
             var option = new ApiOptions()
@@ -72,7 +72,8 @@ namespace Sentiment.Services.Service
                     if (allCommits.Count == 0) break;
                     else
                     {
-                        var commitList = new List<CommitData>();
+                        var commitList = new List<CommitT>();
+                        var branchCommitList = new List<BranchCommitT>();
                         foreach (var commit in allCommits)
                         {
                             if (!unitOfWork.Commit.Exist(commit.Sha))
@@ -81,20 +82,28 @@ namespace Sentiment.Services.Service
                                 sentimentCal.CalculateSentiment(commit.Commit.Message);
                                 var pos = sentimentCal.PositoiveSentiScore;
                                 var neg = sentimentCal.NegativeSentiScore;
-                                commitList.Add(new CommitData()
+                                var comm = new CommitT()
                                     {
                                         Sha = commit.Sha,
                                         Message = commit.Commit.Message,
                                         CommiterId = commiter.Id,
                                         PosSentiment = pos,
                                         NegSentiment = neg,
-                                        BranchId = branch.Id
+                                    };
+                                commitList.Add(comm);
+                                // commit branch map
+                                branchCommitList.Add(new BranchCommitT()
+                                    {
+                                        Branch = branch,
+                                        Commit = comm
                                     }
                                 );
-                                // commit branch map
+
                             }
                         }
                         unitOfWork.Commit.AddRange(commitList);
+                        unitOfWork.Complete();
+                        unitOfWork.BranchCommit.AddRange(branchCommitList);
                         unitOfWork.Complete();
                     }
                 }
@@ -105,8 +114,8 @@ namespace Sentiment.Services.Service
         private async Task StoreContributorDataAsync(int repositoryId)
         {
             var allContributors = await gitHubClient.Repository.GetAllContributors(repoName, repoOwner);
-            var contributorList = new List<ContributorData>();
-            var repositoryContributorsList = new List<RepositoryContributorMap>();
+            var contributorList = new List<ContributorT>();
+            var repositoryContributorsList = new List<RepositoryContributorT>();
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -124,16 +133,16 @@ namespace Sentiment.Services.Service
                         var contributorData = unitOfWork.Contributor.GetByName(contributor.Login);
                         if (contributorData == null)
                         {
-                            contributorData = new ContributorData()
+                            contributorData = new ContributorT()
                             {
                                 Name = contributor.Login,
                                 Contribution = contributor.Contributions,
                             };
                         }
-                        var repositoryContributor = new RepositoryContributorMap()
+                        var repositoryContributor = new RepositoryContributorT()
                         {
-                            ContributorData = contributorData,
-                            RepositoryData = repositoryData
+                            Contributor = contributorData,
+                            Repository = repositoryData
                         };
                         repositoryContributorsList.Add(repositoryContributor);
                         contributorList.Add(contributorData);
@@ -155,19 +164,19 @@ namespace Sentiment.Services.Service
             {
                 if (repositoryId != 0)
                 {
-                    var storedBranches = (List<BranchData>) unitOfWork.Branch.GetRepositoryBranches(repositoryId);
+                    var storedBranches = (List<BranchT>) unitOfWork.Branch.GetRepositoryBranches(repositoryId);
 
                     if(storedBranches.Count > 0)
                     {
                         allBranches = allBranches.Where(b => !storedBranches.Any( x => x.Name == b.Name) ).ToList();
                     }
 
-                    var branchList = new List<BranchData>();
+                    var branchList = new List<BranchT>();
 
                     foreach(var branch in allBranches)
                     {
                         // update branch sha not done
-                        var branchData = new BranchData()
+                        var branchData = new BranchT()
                         {
                             Name = branch.Name,
                             RepositoryId = repositoryId,
@@ -195,7 +204,7 @@ namespace Sentiment.Services.Service
                 {
                     if (!unitOfWork.Repository.RepositoryExist(repository.Name, repository.Owner.Login))
                     {
-                        var repoData = new RepositoryData()
+                        var repoData = new RepositoryT()
                         {
                             Name = repository.Name,
                             OwnerName = repository.Owner.Login,

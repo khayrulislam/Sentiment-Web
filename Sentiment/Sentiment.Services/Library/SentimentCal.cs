@@ -19,8 +19,6 @@ namespace Sentiment.Services.Library
         public int PositoiveSentiScore { get; private set; }
         public int NegativeSentiScore { get; private set; }
 
-        
-
         private SentimentCal()
         {
             var buildDir = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
@@ -49,10 +47,7 @@ namespace Sentiment.Services.Library
 
         public void CalculateSentiment(string sentence)
         {
-            this.NegativeSentiScore = 0;
-            this.PositoiveSentiScore = 0;
-            string value = senti.computeSentimentScores(sentence);
-            string[] values = value.Split(' ');
+            string[] values = senti.computeSentimentScores(sentence).Split(' ');
             this.PositoiveSentiScore = Convert.ToInt32(values[0]);
             this.NegativeSentiScore = Convert.ToInt32(values[1]);
         }

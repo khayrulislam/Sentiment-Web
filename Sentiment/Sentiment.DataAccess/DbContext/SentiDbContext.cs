@@ -15,29 +15,42 @@ namespace Sentiment.DataAccess
 
         }
 
-        public DbSet<UserData> Users { get; set; }
-        public DbSet<RepositoryData> Repositories { get; set; }
-        public DbSet<BranchData> Branches { get; set; }
-        public DbSet<ContributorData> Contributors { get; set; }
-        public DbSet<CommitData> Commits { get; set; }
-        public DbSet<RepositoryContributorMap> RepositoryContributors { get; set; }
+        public DbSet<UserT> Users { get; set; }
+        public DbSet<RepositoryT> Repositories { get; set; }
+        public DbSet<BranchT> Branches { get; set; }
+        public DbSet<ContributorT> Contributors { get; set; }
+        public DbSet<CommitT> Commits { get; set; }
+        public DbSet<RepositoryContributorT> RepositoryContributors { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<RepositoryContributorMap>()
+            modelBuilder.Entity<RepositoryContributorT>()
             .HasKey(rcm => rcm.Id)
-            .ToTable("RepositoryContributors");
+            .ToTable("RepositoryContributor");
 
-            modelBuilder.Entity<RepositoryContributorMap>()
-            .HasRequired(rcm => rcm.RepositoryData).WithMany(r => r.RepositoryMap)
+            modelBuilder.Entity<RepositoryContributorT>()
+            .HasRequired(rcm => rcm.Repository).WithMany(r => r.RepositoryContributors)
             .HasForeignKey(rcm => rcm.RepositoryId);
 
-            modelBuilder.Entity<RepositoryContributorMap>()
-            .HasRequired(rcm => rcm.ContributorData).WithMany(c => c.ContributorMap)
+            modelBuilder.Entity<RepositoryContributorT>()
+            .HasRequired(rcm => rcm.Contributor).WithMany(c => c.RepositoryContributors)
             .HasForeignKey(rcm => rcm.ContributorId);
 
+
+
+            modelBuilder.Entity<BranchCommitT>()
+            .HasKey(bc => bc.Id)
+            .ToTable("BranchCommit");
+
+            modelBuilder.Entity<BranchCommitT>()
+            .HasRequired(bc => bc.Branch).WithMany(b => b.BranchCommits)
+            .HasForeignKey(bc => bc.BranchId);
+
+            modelBuilder.Entity<BranchCommitT>()
+            .HasRequired(bc => bc.Commit).WithMany(c => c.BranchCommits)
+            .HasForeignKey(bc => bc.CommitId);
         }
 
     }

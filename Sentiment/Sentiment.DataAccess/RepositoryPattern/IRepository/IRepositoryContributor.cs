@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IRepositoryContributor:IRepository<RepositoryContributorMap>
+    public interface IRepositoryContributor:IRepository<RepositoryContributorT>
     {
 
     }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class RepositoryRepository: AllRepository<RepositoryData>, IRepositoryRepository
+    public class RepositoryRepository: AllRepository<RepositoryT>, IRepositoryRepository
     {
         SentiDbContext _dbContext;
         public RepositoryRepository(SentiDbContext dbContext): base(dbContext)
@@ -16,7 +16,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
-        public RepositoryData GetByNameAndOwnerName(string repositoryName, string ownerName)
+        public RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName)
         {
             /*var repos = _dbContext.Repositories.Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).
                 FirstOrDefault();*/
@@ -27,7 +27,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             var repos = _dbContext.Repositories.Where(rep => rep.Name == repositoryName && rep.OwnerName == ownerName).FirstOrDefault();
 
             repos.Contributors = _dbContext.Repositories.Where(rep => rep.Name == repositoryName && rep.OwnerName == ownerName)
-                .SelectMany(con => con.RepositoryMap.Select(c => c.ContributorData)).ToList();
+                .SelectMany(con => con.RepositoryContributors.Select(c => c.Contributor)).ToList();
 
             return repos;
         }

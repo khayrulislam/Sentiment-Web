@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IBranchRepository:IRepository<BranchT>
+    public interface IBranchCommit: IRepository<BranchCommitT>
     {
-        IEnumerable<BranchT> GetRepositoryBranches(int repoId);
+
     }
 }

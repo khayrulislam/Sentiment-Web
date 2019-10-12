@@ -21,6 +21,8 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public IRepositoryContributor RepositoryContributor { get; private set; }
 
+        public IBranchCommit BranchCommit { get; private set; }
+
         private SentiDbContext _dbContext;
 
         public UnitOfWork(SentiDbContext dbContext)
@@ -32,6 +34,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             Repository = new RepositoryRepository(_dbContext);
             User = new UserRepository(_dbContext);
             RepositoryContributor = new RepositoryContributor(_dbContext);
+            BranchCommit = new BranchCommit(_dbContext);
         }
 
         public int Complete()

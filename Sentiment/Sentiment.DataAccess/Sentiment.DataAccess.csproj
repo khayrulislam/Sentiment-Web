@@ -48,24 +48,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataClass\BranchData.cs" />
-    <Compile Include="DataClass\CommitData.cs" />
-    <Compile Include="DataClass\ContributorData.cs" />
-    <Compile Include="DataClass\RepositoryContributorMap.cs" />
-    <Compile Include="DataClass\RepositoryData.cs" />
+    <Compile Include="DataClass\BranchCommitT.cs" />
+    <Compile Include="DataClass\BranchT.cs" />
+    <Compile Include="DataClass\CommitT.cs" />
+    <Compile Include="DataClass\ContributorT.cs" />
+    <Compile Include="DataClass\RepositoryContributorT.cs" />
+    <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\201910050642295_add.cs" />
-    <Compile Include="Migrations\201910050642295_add.Designer.cs">
-      <DependentUpon>201910050642295_add.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910051256448_commit_column_add.cs" />
-    <Compile Include="Migrations\201910051256448_commit_column_add.Designer.cs">
-      <DependentUpon>201910051256448_commit_column_add.cs</DependentUpon>
+    <Compile Include="Migrations\201910120613027_dbcreate.cs" />
+    <Compile Include="Migrations\201910120613027_dbcreate.Designer.cs">
+      <DependentUpon>201910120613027_dbcreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataClass\UserData.cs" />
+    <Compile Include="DataClass\UserT.cs" />
     <Compile Include="RepositoryPattern\Implement\AllRepository.cs" />
+    <Compile Include="RepositoryPattern\Implement\BranchCommit.cs" />
     <Compile Include="RepositoryPattern\Implement\BranchRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\CommitRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\ContributorRepository.cs" />
@@ -73,6 +71,7 @@
     <Compile Include="RepositoryPattern\Implement\RepositoryRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\UnitOfWork.cs" />
     <Compile Include="RepositoryPattern\Implement\UserRepository.cs" />
+    <Compile Include="RepositoryPattern\IRepository\IBranchCommit.cs" />
     <Compile Include="RepositoryPattern\IRepository\IBranchRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\ICommitRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IContributorRepository.cs" />
@@ -87,11 +86,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910050642295_add.resx">
-      <DependentUpon>201910050642295_add.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910051256448_commit_column_add.resx">
-      <DependentUpon>201910051256448_commit_column_add.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201910120613027_dbcreate.resx">
+      <DependentUpon>201910120613027_dbcreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

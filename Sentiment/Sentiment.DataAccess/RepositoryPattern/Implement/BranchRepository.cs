@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class BranchRepository: AllRepository<BranchData>,IBranchRepository
+    public class BranchRepository: AllRepository<BranchT>,IBranchRepository
     {
         SentiDbContext _dbContext;
         public BranchRepository(SentiDbContext dbContext):base(dbContext)
@@ -16,7 +16,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
-        public IEnumerable<BranchData> GetRepositoryBranches(int repoId)
+        public IEnumerable<BranchT> GetRepositoryBranches(int repoId)
         {
             return _dbContext.Branches.Where(b => b.RepositoryId == repoId).ToList();
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess.DataClass
 {
     [Table("Repository")]
-    public class RepositoryData
+    public class RepositoryT
     {
         public int Id { get; set; }
 
@@ -18,16 +18,16 @@ namespace Sentiment.DataAccess.DataClass
 
         public string Url { get; set; }
 
-        public UserData User { get; set; }
+        public UserT User { get; set; }
 
         public int UserId { get; set; }
 
-        public ICollection<BranchData> Branch { get; set; }
+        public ICollection<BranchT> Branch { get; set; }
 
-        public IList<RepositoryContributorMap> RepositoryMap { get; set; }
+        public IList<RepositoryContributorT> RepositoryContributors { get; set; }
 
         [NotMapped]
-        public ICollection<ContributorData> Contributors { get; set; }
+        public ICollection<ContributorT> Contributors { get; set; }
 
 
     }

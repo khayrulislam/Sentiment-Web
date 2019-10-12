@@ -8,22 +8,12 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess.DataClass
 {
     [Table("Contributor")]
-    public class ContributorData
+    public class ContributorT
     {
         public int Id { get; set; }
-
         public string Name { get; set; }
-
         public int Contribution { get; set; }
-
-        /*        public virtual ICollection<RepositoryData> Repositories{ get; set; }
-
-                public ContributorData()
-                {
-                    this.Repositories = new HashSet<RepositoryData>();
-                }*/
-
-        public IList<RepositoryContributorMap> ContributorMap { get; set; }
+        public IList<RepositoryContributorT> RepositoryContributors { get; set; }
 
     }
 }

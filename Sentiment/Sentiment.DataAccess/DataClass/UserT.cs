@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess
 {
     [Table("User")]
-    public class UserData
+    public class UserT
     {
         public int Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace Sentiment.DataAccess
 
         public string Password { get; set; }
         
-        ICollection<RepositoryData> Repository { get; set; }
+        ICollection<RepositoryT> Repository { get; set; }
 
     }
 }

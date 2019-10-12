@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface ICommitRepository:IRepository<CommitData>
+    public interface ICommitRepository:IRepository<CommitT>
     {
         bool Exist(string sha);
     }

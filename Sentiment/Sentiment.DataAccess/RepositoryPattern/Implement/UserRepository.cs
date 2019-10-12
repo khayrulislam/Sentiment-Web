@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class UserRepository: AllRepository<UserData>, IUserRepository
+    public class UserRepository: AllRepository<UserT>, IUserRepository
     {
         SentiDbContext _dbContext;
         public UserRepository(SentiDbContext dbContext):base(dbContext)

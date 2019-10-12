@@ -8,17 +8,13 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class CommitRepository: AllRepository<CommitT>, ICommitRepository
+    public class BranchCommit : AllRepository<BranchCommitT>, IBranchCommit
     {
         SentiDbContext _dbContext;
-        public CommitRepository(SentiDbContext dbContext):base(dbContext)
+        public BranchCommit(SentiDbContext dbContext) :base( dbContext)
         {
-            _dbContext = dbContext;
+            this._dbContext = dbContext;
         }
 
-        public bool Exist(string sha)
-        {
-            return _dbContext.Commits.Any(c => c.Sha == sha);
-        }
     }
 }
