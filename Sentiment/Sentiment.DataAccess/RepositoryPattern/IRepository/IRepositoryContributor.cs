@@ -9,6 +9,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface IRepositoryContributor:IRepository<RepositoryContributorT>
     {
-
+        List<ContributorT> GetContributorList(int repositoryId);
     }
 }

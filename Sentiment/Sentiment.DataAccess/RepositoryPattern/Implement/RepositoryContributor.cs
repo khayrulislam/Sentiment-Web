@@ -17,6 +17,11 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             this._dbContext = dbContext;
         }
 
-
+        public List<ContributorT> GetContributorList(int repositoryId)
+        {
+            var repoContList = _dbContext.RepositoryContributors.Where(rc => rc.RepositoryId == repositoryId).Select(r=>r.Contributor).ToList();
+            //var list = _dbContext.Contributors.Where(c=>c.Id) 
+            return repoContList;
+        }
     }
 }

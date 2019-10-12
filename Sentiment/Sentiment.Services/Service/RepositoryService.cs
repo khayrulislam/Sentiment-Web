@@ -44,27 +44,28 @@ namespace Sentiment.Services.Service
 
                 foreach (var branch in branchList)
                 {
-                    await StoreBranchCommitAsync(branch);
-                    
+                    await StoreBranchCommitAsync(branch.Id);
                 }
             }
         }
 
-        private async Task StoreBranchCommitAsync(BranchT branch)
+        private async Task StoreBranchCommitAsync(int branchId)
         {
-            var count = 0;
             var option = new ApiOptions()
             {
                 PageCount = 1,
                 PageSize = 100
             };
-            var request = new CommitRequest()
-            {
-                Sha = branch.Name,
-            };
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
+                var branch = unitOfWork.Branch.Get(branchId);
+                var request = new CommitRequest()
+                {
+                    Sha = branch.Name,
+                };
+                var count = 0;
+
                 while (true)
                 {
                     option.StartPage = ++count;
@@ -91,14 +92,11 @@ namespace Sentiment.Services.Service
                                         NegSentiment = neg,
                                     };
                                 commitList.Add(comm);
-                                // commit branch map
                                 branchCommitList.Add(new BranchCommitT()
                                     {
                                         Branch = branch,
                                         Commit = comm
-                                    }
-                                );
-
+                                    } );
                             }
                         }
                         unitOfWork.Commit.AddRange(commitList);
@@ -110,7 +108,6 @@ namespace Sentiment.Services.Service
             }
         }
 
-
         private async Task StoreContributorDataAsync(int repositoryId)
         {
             var allContributors = await gitHubClient.Repository.GetAllContributors(repoName, repoOwner);
@@ -121,10 +118,8 @@ namespace Sentiment.Services.Service
             {
                 if(repositoryId  != 0)
                 {
-                    var repo = unitOfWork.Repository.Get(repositoryId);
-                    var repositoryData = unitOfWork.Repository.GetByNameAndOwnerName(repo.Name, repo.OwnerName);
-                    var storedContributors = repositoryData.Contributors;
-
+                    var storedContributors = unitOfWork.RepositoryContributor.GetContributorList(repositoryId);
+                    var repositoryData = unitOfWork.Repository.Get(repositoryId);
                     allContributors = allContributors.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList();
 
                     foreach (var contributor in allContributors)
@@ -138,6 +133,7 @@ namespace Sentiment.Services.Service
                                 Name = contributor.Login,
                                 Contribution = contributor.Contributions,
                             };
+                            contributorList.Add(contributorData);
                         }
                         var repositoryContributor = new RepositoryContributorT()
                         {
@@ -145,7 +141,6 @@ namespace Sentiment.Services.Service
                             Repository = repositoryData
                         };
                         repositoryContributorsList.Add(repositoryContributor);
-                        contributorList.Add(contributorData);
                     }
                     unitOfWork.Contributor.AddRange(contributorList);
                     unitOfWork.Complete();
