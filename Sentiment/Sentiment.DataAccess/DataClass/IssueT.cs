@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.DataClass
 {
-    [Table("Commit")]
-    public class CommitT:Sentiment
+    [Table("Issue")]
+
+    public class IssueT:Sentiment
     {
         public int Id { get; set; }
-        public string Message { get; set; }
-        public string Sha { get; set; }
-        public IList<BranchCommitT> BranchCommits { get; set; }
+
     }
 }

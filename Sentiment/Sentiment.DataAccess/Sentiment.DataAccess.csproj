@@ -50,10 +50,14 @@
   <ItemGroup>
     <Compile Include="DataClass\BranchCommitT.cs" />
     <Compile Include="DataClass\BranchT.cs" />
+    <Compile Include="DataClass\CommentT.cs" />
     <Compile Include="DataClass\CommitT.cs" />
     <Compile Include="DataClass\ContributorT.cs" />
+    <Compile Include="DataClass\IssueT.cs" />
+    <Compile Include="DataClass\PullRequestT.cs" />
     <Compile Include="DataClass\RepositoryContributorT.cs" />
     <Compile Include="DataClass\RepositoryT.cs" />
+    <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
     <Compile Include="Migrations\201910120613027_dbcreate.cs" />
     <Compile Include="Migrations\201910120613027_dbcreate.Designer.cs">
@@ -80,6 +84,7 @@
     <Compile Include="RepositoryPattern\IRepository\IRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IRepositoryRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\IUserRepository.cs" />
+    <Compile Include="Shared\Constant.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

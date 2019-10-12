@@ -34,6 +34,15 @@ namespace Sentiment.Services.Service
 
             await StoreCommitDataAsync(repositoryId);
 
+            var comment = await gitHubClient.Repository.Comment.GetAllForRepository(repoOwner,repoName);
+
+
+            var pull = gitHubClient.PullRequest.GetAllForRepository(repoOwner,repoName);
+            var issue = gitHubClient.Issue.GetAllForRepository(repoOwner,repoName);
+
+            var pullcom = gitHubClient.PullRequest.
+            //var pull= gitHubClient.PullRequest.ReviewComment.
+
         }
 
         private async Task StoreCommitDataAsync(int repositoryId)

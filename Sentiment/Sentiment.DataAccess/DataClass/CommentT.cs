@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentiment.DataAccess.Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.DataClass
 {
-    [Table("Commit")]
-    public class CommitT:Sentiment
+    [Table("Comment")]
+    public class CommentT:Sentiment
     {
         public int Id { get; set; }
-        public string Message { get; set; }
-        public string Sha { get; set; }
-        public IList<BranchCommitT> BranchCommits { get; set; }
+        public CommentType Type { get; set; }
+        public int TypeId { get; set; }
+
     }
 }
