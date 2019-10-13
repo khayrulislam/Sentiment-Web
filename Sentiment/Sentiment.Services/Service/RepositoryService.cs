@@ -34,30 +34,18 @@ namespace Sentiment.Services.Service
 
             await StoreContributorDataAsync(repositoryId);
 
-            await StoreCommitAsync(repositoryId);
+            //await StoreCommitAsync(repositoryId);
+            
+            
             /*
                         await StorePullRequestAsync(repositoryId);
 
                         await StorePullRequestCommentAsync(repositoryId);
             */
+
             await StoreIssueAsync(repositoryId);
 
 
-            //var comment = await gitHubClient.Repository.Comment.GetAllForRepository(repoOwner,repoName);
-
-
-            var pull = await gitHubClient.PullRequest.GetAllForRepository(10);
-            var issue = await gitHubClient.Issue.GetAllForRepository(repoOwner,repoName);
-
-           // gitHubClient.PullRequest.ReviewComment
-
-            foreach (var p in pull)
-            {
-                var com = p.Comments;
-                
-            }
-            //var pullcom = gitHubClient.PullRequest.
-            //var pull= gitHubClient.PullRequest.ReviewComment.
 
         }
 
