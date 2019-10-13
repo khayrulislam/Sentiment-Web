@@ -34,93 +34,16 @@ namespace Sentiment.Services.Service
 
             await StoreContributorDataAsync(repositoryId);
 
-            //await StoreCommitAsync(repositoryId);
+            CommitService commitService = new CommitService();
+            await commitService.StoreAllCommitsAsync(repoId, repositoryId);
 
-            IssueService issueService = new IssueService();
-            await issueService.StoreAllIssuesAsync(repoId,repositoryId).ConfigureAwait(false);
-         
-
-            //await StoreIssueAsync(repositoryId);
+/*            IssueService issueService = new IssueService();
+            await issueService.StoreAllIssuesAsync(repoId,repositoryId).ConfigureAwait(false); // store issue and pull request
+         */
 
 
 
         }
-
-        private async Task StoreIssueAsync(int repositoryId)
-        {
-            var request = new RepositoryIssueRequest()
-            {
-                State = ItemStateFilter.All
-            };
-            var allIssues = await gitHubClient.Issue.GetAllForRepository(repoId, request);
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                if (repositoryId != 0)
-                {
-/*                    var storedIssue = (List<IssueT>) unitOfWork.Issue.GetList(repositoryId);
-                    if(storedIssue.Count > 0)
-                    {
-                        allIssues = allIssues.Where(i => !storedIssue.Any(si => si.IssueNumber == i.Number)).ToList();
-                    }*/
-                    var issueList = new List<IssueT>();
-                    var pullRequestList = new List<PullRequestT>();
-
-                    foreach(var issue in allIssues)
-                    {
-                        var issuer = unitOfWork.Contributor.GetByName(issue.User.Login);
-                        if(issuer == null)
-                        {
-                            issuer = new ContributorT()
-                            {
-                                Name = issue.User.Login
-                            };
-                            unitOfWork.Contributor.Add(issuer);
-                            unitOfWork.Complete();
-                        }
-                        sentimentCal.CalculateSentiment(issue.Body);
-                        if (issue.PullRequest == null)
-                        {
-                            if (!unitOfWork.Issue.Exist(issue.Id))
-                            {
-                                issueList.Add(new IssueT()
-                                {
-                                    RepositoryId = repositoryId,
-                                    IssueNumber = issue.Number,
-                                    Title = issue.Title,
-                                    PosSentiment = sentimentCal.PositoiveSentiScore,
-                                    NegSentiment = sentimentCal.NegativeSentiScore,
-                                    WriterId = issuer.Id,
-                                    State = issue.State.StringValue,
-                                    IssueId = issue.Id
-                                });
-                            }
-                        }
-                        else
-                        {
-                            if (!unitOfWork.PullRequest.Exist(issue.Id))
-                            {
-                                pullRequestList.Add(new PullRequestT()
-                                {
-                                    RepositoryId = repositoryId,
-                                    RequestNumber = issue.Number,
-                                    Title = issue.Title,
-                                    PosSentiment = sentimentCal.PositoiveSentiScore,
-                                    NegSentiment = sentimentCal.NegativeSentiScore,
-                                    WriterId = issuer.Id,
-                                    State = issue.State.StringValue,
-                                    PullRequestId = issue.Id
-                                });
-                            }
-                        }
-                    }
-                    unitOfWork.Issue.AddRange(issueList);
-                    unitOfWork.PullRequest.AddRange(pullRequestList);
-                    unitOfWork.Complete();
-                }
-            }
-        }
-
-
 
         //////////////////////////
         private async Task StorePullRequestCommentAsync(int repositoryId)
@@ -201,77 +124,6 @@ namespace Sentiment.Services.Service
             }
         }
         ////////////////////////////////
-        private async Task StoreCommitAsync(int repositoryId)
-        {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                var branchList = unitOfWork.Branch.GetList(repositoryId);
-
-                foreach (var branch in branchList)
-                {
-                    await StoreBranchCommitAsync(branch.Id);
-                }
-            }
-        }
-
-        private async Task StoreBranchCommitAsync(int branchId)
-        {
-            var option = new ApiOptions()
-            {
-                PageCount = 1,
-                PageSize = 100
-            };
-
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                var branch = unitOfWork.Branch.Get(branchId);
-                var request = new CommitRequest()
-                {
-                    Sha = branch.Name,
-                };
-                var count = 0;
-
-                while (true)
-                {
-                    option.StartPage = ++count;
-                    var allCommits = await gitHubClient.Repository.Commit.GetAll(repoId, request, option);
-                    if (allCommits.Count == 0) break;
-                    else
-                    {
-                        var commitList = new List<CommitT>();
-                        var branchCommitList = new List<BranchCommitT>();
-                        foreach (var commit in allCommits)
-                        {
-                            if (!unitOfWork.Commit.Exist(commit.Sha))
-                            {
-                                var commiter = unitOfWork.Contributor.GetByName(commit.Committer.Login);
-                                sentimentCal.CalculateSentiment(commit.Commit.Message);
-                                var pos = sentimentCal.PositoiveSentiScore;
-                                var neg = sentimentCal.NegativeSentiScore;
-                                var comm = new CommitT()
-                                    {
-                                        Sha = commit.Sha,
-                                        Message = commit.Commit.Message,
-                                        WriterId = commiter.Id,
-                                        PosSentiment = pos,
-                                        NegSentiment = neg,
-                                    };
-                                commitList.Add(comm);
-                                branchCommitList.Add(new BranchCommitT()
-                                    {
-                                        Branch = branch,
-                                        Commit = comm
-                                    } );
-                            }
-                        }
-                        unitOfWork.Commit.AddRange(commitList);
-                        unitOfWork.Complete();
-                        unitOfWork.BranchCommit.AddRange(branchCommitList);
-                        unitOfWork.Complete();
-                    }
-                }
-            }
-        }
 
         private async Task StoreContributorDataAsync(int repositoryId)
         {

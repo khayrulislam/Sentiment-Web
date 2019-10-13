@@ -46,7 +46,7 @@ namespace Sentiment.Services.Service
             while (true)
             {
                 option.StartPage = ++sPage;
-                var issueBlock = await gitHubClient.Issue.GetAllForRepository(repoId, request, option);
+                var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
                 if (issueBlock.Count == 0) break;
                 else StoreIssueBlock(repositoryId, issueBlock);
             }
