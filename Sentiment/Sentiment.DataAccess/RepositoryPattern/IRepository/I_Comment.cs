@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface I_PullRequest:I_AllRepository<PullRequestT>
+    public interface I_Comment:I_AllRepository<CommentT>
     {
-
     }
 }

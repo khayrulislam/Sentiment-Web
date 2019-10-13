@@ -10,18 +10,15 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
     public class UnitOfWork : I_UnitOfWork
     {
         public I_Branch Branch { get; private set; }
-
         public I_Commit Commit { get; private set; }
-
         public I_ContributorRepository Contributor { get; private set; }
-
         public I_Repository Repository { get; private set; }
-
         public I_User User { get; private set; }
-
         public I_RepositoryContributor RepositoryContributor { get; private set; }
-
         public I_BranchCommit BranchCommit { get; private set; }
+        public I_PullRequest PullRequest{ get; private set; }
+        public I_Comment Comment{ get; private set; }
+        public I_Issue Issue{ get; private set; }
 
         private SentiDbContext _dbContext;
 
@@ -35,6 +32,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             User = new UserRepository(_dbContext);
             RepositoryContributor = new RepositoryContributor(_dbContext);
             BranchCommit = new BranchCommit(_dbContext);
+            PullRequest = new PullRequest_(_dbContext);
+            Comment = new Comment_(_dbContext);
+            Issue = new Issue_(dbContext);
         }
 
         public int Complete()

@@ -1,4 +1,5 @@
-﻿using Sentiment.DataAccess.DataClass;
+﻿
+using Sentiment.DataAccess.DataClass;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface I_PullRequest:I_AllRepository<PullRequestT>
+    public interface I_Issue:I_AllRepository<IssueT>
     {
-
     }
 }
