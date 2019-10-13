@@ -10,5 +10,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface I_Issue:I_AllRepository<IssueT>
     {
+        IEnumerable<IssueT> GetList(int repositoryId);
     }
 }

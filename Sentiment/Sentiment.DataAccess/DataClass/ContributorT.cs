@@ -12,7 +12,6 @@ namespace Sentiment.DataAccess.DataClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Contribution { get; set; }
         public IList<RepositoryContributorT> RepositoryContributors { get; set; }
 
     }

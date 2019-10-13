@@ -16,7 +16,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
-        public IEnumerable<BranchT> GetRepositoryBranches(int repoId)
+        public IEnumerable<BranchT> GetList(int repoId)
         {
             return _dbContext.Branches.Where(b => b.RepositoryId == repoId).ToList();
         }
