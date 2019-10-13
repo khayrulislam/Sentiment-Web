@@ -21,6 +21,8 @@ namespace Sentiment.Services.Service
         string repoName = "khayrulislam";
         string repoOwner = "Sentiment-Web";
 
+        long repoId;
+
         public async Task ExecuteAnalysisAsync(string repositoryUrl)
         {
             gitHubClient = GitHubConnection.Instance;
@@ -34,15 +36,34 @@ namespace Sentiment.Services.Service
 
             await StoreCommitDataAsync(repositoryId);
 
-            var comment = await gitHubClient.Repository.Comment.GetAllForRepository(repoOwner,repoName);
+            await StorePullRequestAsync(repositoryId);
+
+            //var comment = await gitHubClient.Repository.Comment.GetAllForRepository(repoOwner,repoName);
 
 
-            var pull = gitHubClient.PullRequest.GetAllForRepository(repoOwner,repoName);
-            var issue = gitHubClient.Issue.GetAllForRepository(repoOwner,repoName);
+            var pull = await gitHubClient.PullRequest.GetAllForRepository(10);
+            var issue = await gitHubClient.Issue.GetAllForRepository(repoOwner,repoName);
 
-            var pullcom = gitHubClient.PullRequest.
+           // gitHubClient.PullRequest.ReviewComment
+
+            foreach (var p in pull)
+            {
+                var com = p.Comments;
+                
+            }
+            //var pullcom = gitHubClient.PullRequest.
             //var pull= gitHubClient.PullRequest.ReviewComment.
 
+        }
+
+        private async Task StorePullRequestAsync(int repositoryId)
+        {
+            var allPullRequest = await gitHubClient.PullRequest.GetAllForRepository(repoId);
+
+            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            {
+
+            }
         }
 
         private async Task StoreCommitDataAsync(int repositoryId)
@@ -78,7 +99,7 @@ namespace Sentiment.Services.Service
                 while (true)
                 {
                     option.StartPage = ++count;
-                    var allCommits = await gitHubClient.Repository.Commit.GetAll(repoName, repoOwner, request, option);
+                    var allCommits = await gitHubClient.Repository.Commit.GetAll(repoId, request, option);
                     if (allCommits.Count == 0) break;
                     else
                     {
@@ -96,7 +117,7 @@ namespace Sentiment.Services.Service
                                     {
                                         Sha = commit.Sha,
                                         Message = commit.Commit.Message,
-                                        CommiterId = commiter.Id,
+                                        WriterId = commiter.Id,
                                         PosSentiment = pos,
                                         NegSentiment = neg,
                                     };
@@ -119,7 +140,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreContributorDataAsync(int repositoryId)
         {
-            var allContributors = await gitHubClient.Repository.GetAllContributors(repoName, repoOwner);
+            var allContributors = await gitHubClient.Repository.GetAllContributors(repoId);
             var contributorList = new List<ContributorT>();
             var repositoryContributorsList = new List<RepositoryContributorT>();
 
@@ -162,7 +183,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreBranchDataAsync(int repositoryId)
         {
-            var allBranches = await gitHubClient.Repository.Branch.GetAll(repoName, repoOwner);
+            var allBranches = await gitHubClient.Repository.Branch.GetAll(repoId);
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -213,12 +234,15 @@ namespace Sentiment.Services.Service
                             Name = repository.Name,
                             OwnerName = repository.Owner.Login,
                             UserId = userId,
-                            Url = repository.Url
+                            Url = repository.Url,
+                            RepoId = repository.Id
                         };
                         unitOfWork.Repository.Add(repoData);
                         unitOfWork.Complete();
                     }
-                    return unitOfWork.Repository.GetByNameAndOwnerName(repository.Name, repository.Owner.Login).Id;
+                    var repo = unitOfWork.Repository.GetByNameAndOwnerName(repository.Name, repository.Owner.Login);
+                    repoId = repo.RepoId;
+                    return repo.Id;
                 }
                 return 0;
             }

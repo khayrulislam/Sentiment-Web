@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class AllRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class AllRepository<TEntity> : I_AllRepository<TEntity> where TEntity : class
     {
         protected readonly SentiDbContext dbContext;
 

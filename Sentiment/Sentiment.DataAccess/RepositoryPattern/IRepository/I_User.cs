@@ -1,5 +1,4 @@
-﻿using Sentiment.DataAccess.DataClass;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface ICommitRepository:IRepository<CommitT>
+    public interface I_User: I_AllRepository<UserT>
     {
-        bool Exist(string sha);
+        bool UserExist(int userId);
     }
 }

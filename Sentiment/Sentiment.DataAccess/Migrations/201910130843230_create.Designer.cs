@@ -7,13 +7,13 @@ namespace Sentiment.DataAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class dbcreate : IMigrationMetadata
+    public sealed partial class create : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(dbcreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(create));
         
         string IMigrationMetadata.Id
         {
-            get { return "201910120613027_dbcreate"; }
+            get { return "201910130843230_create"; }
         }
         
         string IMigrationMetadata.Source

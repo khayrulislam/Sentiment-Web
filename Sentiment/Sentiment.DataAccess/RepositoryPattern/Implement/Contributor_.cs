@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class CommitRepository: AllRepository<CommitT>, ICommitRepository
+    public class Contributor_: AllRepository<ContributorT>,I_ContributorRepository
     {
         SentiDbContext _dbContext;
-        public CommitRepository(SentiDbContext dbContext):base(dbContext)
+        public Contributor_(SentiDbContext dbContext):base(dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public bool Exist(string sha)
+        public ContributorT GetByName(string name)
         {
-            return _dbContext.Commits.Any(c => c.Sha == sha);
+            return _dbContext.Contributors.Where(c=>c.Name == name).FirstOrDefault();
         }
     }
 }

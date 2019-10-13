@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IRepository<TEntity> where TEntity: class
+    public interface I_AllRepository<TEntity> where TEntity: class
     {
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();

@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IContributorRepository: IRepository<ContributorT>
+    public interface I_RepositoryContributor:I_AllRepository<RepositoryContributorT>
     {
-        //IEnumerable<ContributorData> GetRepositoryContributors(int repoId);
-
-        ContributorT GetByName(string name);
+        List<ContributorT> GetContributorList(int repositoryId);
     }
 }

@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class ContributorRepository: AllRepository<ContributorT>,IContributorRepository
+    public class Branch_: AllRepository<BranchT>,I_Branch
     {
         SentiDbContext _dbContext;
-        public ContributorRepository(SentiDbContext dbContext):base(dbContext)
+        public Branch_(SentiDbContext dbContext):base(dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public ContributorT GetByName(string name)
+        public IEnumerable<BranchT> GetRepositoryBranches(int repoId)
         {
-            return _dbContext.Contributors.Where(c=>c.Name == name).FirstOrDefault();
+            return _dbContext.Branches.Where(b => b.RepositoryId == repoId).ToList();
         }
     }
 }

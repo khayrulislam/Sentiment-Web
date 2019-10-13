@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class BranchCommit : AllRepository<BranchCommitT>, IBranchCommit
+    public class BranchCommit : AllRepository<BranchCommitT>, I_BranchCommit
     {
         SentiDbContext _dbContext;
         public BranchCommit(SentiDbContext dbContext) :base( dbContext)

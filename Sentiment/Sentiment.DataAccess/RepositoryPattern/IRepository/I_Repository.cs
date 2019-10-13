@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IRepositoryRepository:IRepository<RepositoryT>
+    public interface I_Repository:I_AllRepository<RepositoryT>
     {
         bool RepositoryExist(string repositoryName, string ownerName);
         RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName);

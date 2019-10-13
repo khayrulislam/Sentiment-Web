@@ -7,31 +7,31 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : I_UnitOfWork
     {
-        public IBranchRepository Branch { get; private set; }
+        public I_Branch Branch { get; private set; }
 
-        public ICommitRepository Commit { get; private set; }
+        public I_Commit Commit { get; private set; }
 
-        public IContributorRepository Contributor { get; private set; }
+        public I_ContributorRepository Contributor { get; private set; }
 
-        public IRepositoryRepository Repository { get; private set; }
+        public I_Repository Repository { get; private set; }
 
-        public IUserRepository User { get; private set; }
+        public I_User User { get; private set; }
 
-        public IRepositoryContributor RepositoryContributor { get; private set; }
+        public I_RepositoryContributor RepositoryContributor { get; private set; }
 
-        public IBranchCommit BranchCommit { get; private set; }
+        public I_BranchCommit BranchCommit { get; private set; }
 
         private SentiDbContext _dbContext;
 
         public UnitOfWork(SentiDbContext dbContext)
         {
             this._dbContext = dbContext;
-            Branch = new BranchRepository(_dbContext);
-            Commit = new CommitRepository(_dbContext);
-            Contributor = new ContributorRepository(_dbContext);
-            Repository = new RepositoryRepository(_dbContext);
+            Branch = new Branch_(_dbContext);
+            Commit = new Commit_(_dbContext);
+            Contributor = new Contributor_(_dbContext);
+            Repository = new Repository_(_dbContext);
             User = new UserRepository(_dbContext);
             RepositoryContributor = new RepositoryContributor(_dbContext);
             BranchCommit = new BranchCommit(_dbContext);

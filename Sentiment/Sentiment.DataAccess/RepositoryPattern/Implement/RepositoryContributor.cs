@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class RepositoryContributor: AllRepository<RepositoryContributorT>, IRepositoryContributor
+    public class RepositoryContributor: AllRepository<RepositoryContributorT>, I_RepositoryContributor
     {
         SentiDbContext _dbContext;
         public RepositoryContributor(SentiDbContext dbContext):base(dbContext)

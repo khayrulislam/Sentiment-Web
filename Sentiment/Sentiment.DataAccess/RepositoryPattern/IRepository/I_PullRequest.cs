@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface IUserRepository: IRepository<UserT>
+    public interface I_PullRequest
     {
-        bool UserExist(int userId);
     }
 }
