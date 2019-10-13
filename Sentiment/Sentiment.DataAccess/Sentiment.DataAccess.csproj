@@ -67,6 +67,10 @@
     <Compile Include="Migrations\201910130858348_pullmap.Designer.cs">
       <DependentUpon>201910130858348_pullmap.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201910131200524_removecontribution.cs" />
+    <Compile Include="Migrations\201910131200524_removecontribution.Designer.cs">
+      <DependentUpon>201910131200524_removecontribution.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataClass\UserT.cs" />
@@ -106,6 +110,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201910130858348_pullmap.resx">
       <DependentUpon>201910130858348_pullmap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910131200524_removecontribution.resx">
+      <DependentUpon>201910131200524_removecontribution.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

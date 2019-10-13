@@ -279,7 +279,6 @@ namespace Sentiment.Services.Service
                             contributorData = new ContributorT()
                             {
                                 Name = contributor.Login,
-                                Contribution = contributor.Contributions,
                             };
                             contributorList.Add(contributorData);
                         }
