@@ -18,7 +18,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public IEnumerable<IssueT> GetList(int repositoryId)
         {
-            return _dbContext.Issues.Where(i => i.RepostoryId == repositoryId).ToList();
+            return _dbContext.Issues.Where(i => i.RepositoryId == repositoryId).ToList();
         }
     }
 }

@@ -18,8 +18,8 @@ namespace Sentiment.Services.Service
         GitHubClient gitHubClient;
         SentimentCal sentimentCal;
 
-        string repoName = "khayrulislam";
-        string repoOwner = "Sentiment-Web";
+        string repoName = "mockito";
+        string repoOwner = "mockito";
 
         long repoId;
 
@@ -36,12 +36,7 @@ namespace Sentiment.Services.Service
 
             //await StoreCommitAsync(repositoryId);
             
-            
-            /*
-                        await StorePullRequestAsync(repositoryId);
-
-                        await StorePullRequestCommentAsync(repositoryId);
-            */
+         
 
             await StoreIssueAsync(repositoryId);
 
@@ -51,6 +46,11 @@ namespace Sentiment.Services.Service
 
         private async Task StoreIssueAsync(int repositoryId)
         {
+            var x = new RepositoryIssueRequest()
+            {
+                State = ItemStateFilter.Closed,
+                
+            };
             var allIssues = await gitHubClient.Issue.GetAllForRepository(repoId);
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -62,6 +62,8 @@ namespace Sentiment.Services.Service
                         allIssues = allIssues.Where(i => !storedIssue.Any(si => si.IssueNumber == i.Number)).ToList();
                     }
                     var issueList = new List<IssueT>();
+                    var pullRequestList = new List<PullRequestT>();
+
                     foreach(var issue in allIssues)
                     {
                         var issuer = unitOfWork.Contributor.GetByName(issue.User.Login);
@@ -75,18 +77,38 @@ namespace Sentiment.Services.Service
                             unitOfWork.Complete();
                         }
                         sentimentCal.CalculateSentiment(issue.Body);
-                        issueList.Add(new IssueT()
+                        if (issue.PullRequest == null)
                         {
-                            RepostoryId = repositoryId,
-                            IssueNumber = issue.Number,
-                            Title = issue.Title,
-                            PosSentiment = sentimentCal.PositoiveSentiScore,
-                            NegSentiment = sentimentCal.NegativeSentiScore,
-                            WriterId = issuer.Id
-                        });
+                            issueList.Add(new IssueT()
+                            {
+                                RepositoryId = repositoryId,
+                                IssueNumber = issue.Number,
+                                Title = issue.Title,
+                                PosSentiment = sentimentCal.PositoiveSentiScore,
+                                NegSentiment = sentimentCal.NegativeSentiScore,
+                                WriterId = issuer.Id,
+                                State = issue.State.StringValue
+                            });
+                        }
+                        else
+                        {
+                            pullRequestList.Add(new PullRequestT()
+                            {
+                                RepositoryId = repositoryId,
+                                RequestNumber = issue.Number,
+                                Title = issue.Title,
+                                PosSentiment = sentimentCal.PositoiveSentiScore,
+                                NegSentiment = sentimentCal.NegativeSentiScore,
+                                WriterId = issuer.Id,
+                                State = issue.State.StringValue
+                            });
+                        }
+                        
                     }
                     unitOfWork.Issue.AddRange(issueList);
+                    unitOfWork.PullRequest.AddRange(pullRequestList);
                     unitOfWork.Complete();
+
                 }
             }
         }

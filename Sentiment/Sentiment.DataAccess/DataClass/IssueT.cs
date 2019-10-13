@@ -11,9 +11,11 @@ namespace Sentiment.DataAccess.DataClass
     public class IssueT:Sentiment
     {
         public int Id { get; set; }
-        public int RepostoryId { get; set; }
+        public int RepositoryId { get; set; }
         public RepositoryT Repository { get; set; }
         public int IssueNumber { get; set; }
         public string Title { get; set; }
+        public string State { get; set; }
+
     }
 }

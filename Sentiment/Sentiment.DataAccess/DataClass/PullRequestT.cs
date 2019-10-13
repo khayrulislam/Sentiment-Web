@@ -15,5 +15,6 @@ namespace Sentiment.DataAccess.DataClass
         public string Title { get; set; }
         public int RepositoryId { get; set; }
         public RepositoryT Repository{ get; set; }
+        public string State { get; set; }
     }
 }
