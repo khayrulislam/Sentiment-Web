@@ -46,12 +46,12 @@ namespace Sentiment.Services.Service
 
         private async Task StoreIssueAsync(int repositoryId)
         {
-            var x = new RepositoryIssueRequest()
+            var request = new RepositoryIssueRequest()
             {
-                State = ItemStateFilter.Closed,
+                State = ItemStateFilter.All,
                 
             };
-            var allIssues = await gitHubClient.Issue.GetAllForRepository(repoId);
+            var allIssues = await gitHubClient.Issue.GetAllForRepository(repoId, request);
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
                 if (repositoryId != 0)
