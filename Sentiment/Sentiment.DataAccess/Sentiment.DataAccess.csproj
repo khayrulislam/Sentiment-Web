@@ -59,21 +59,9 @@
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\201910130843230_create.cs" />
-    <Compile Include="Migrations\201910130843230_create.Designer.cs">
-      <DependentUpon>201910130843230_create.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910130858348_pullmap.cs" />
-    <Compile Include="Migrations\201910130858348_pullmap.Designer.cs">
-      <DependentUpon>201910130858348_pullmap.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910131200524_removecontribution.cs" />
-    <Compile Include="Migrations\201910131200524_removecontribution.Designer.cs">
-      <DependentUpon>201910131200524_removecontribution.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910131300082_addstate.cs" />
-    <Compile Include="Migrations\201910131300082_addstate.Designer.cs">
-      <DependentUpon>201910131300082_addstate.cs</DependentUpon>
+    <Compile Include="Migrations\201910131758052_add.cs" />
+    <Compile Include="Migrations\201910131758052_add.Designer.cs">
+      <DependentUpon>201910131758052_add.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,17 +97,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910130843230_create.resx">
-      <DependentUpon>201910130843230_create.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910130858348_pullmap.resx">
-      <DependentUpon>201910130858348_pullmap.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910131200524_removecontribution.resx">
-      <DependentUpon>201910131200524_removecontribution.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910131300082_addstate.resx">
-      <DependentUpon>201910131300082_addstate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201910131758052_add.resx">
+      <DependentUpon>201910131758052_add.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

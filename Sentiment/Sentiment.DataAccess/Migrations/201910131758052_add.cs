@@ -3,7 +3,7 @@ namespace Sentiment.DataAccess.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class create : DbMigration
+    public partial class add : DbMigration
     {
         public override void Up()
         {
@@ -39,7 +39,7 @@ namespace Sentiment.DataAccess.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        RepoId = c.Int(nullable: false),
+                        RepoId = c.Long(nullable: false),
                         Name = c.String(),
                         OwnerName = c.String(),
                         Url = c.String(),
@@ -69,7 +69,6 @@ namespace Sentiment.DataAccess.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
-                        Contribution = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -120,14 +119,19 @@ namespace Sentiment.DataAccess.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        IssueId = c.Int(nullable: false),
+                        RepositoryId = c.Int(nullable: false),
+                        IssueNumber = c.Int(nullable: false),
                         Title = c.String(),
+                        State = c.String(),
+                        IssueId = c.Long(nullable: false),
                         PosSentiment = c.Int(nullable: false),
                         NegSentiment = c.Int(nullable: false),
                         WriterId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Repository", t => t.RepositoryId, cascadeDelete: true)
                 .ForeignKey("dbo.Contributor", t => t.WriterId, cascadeDelete: true)
+                .Index(t => t.RepositoryId)
                 .Index(t => t.WriterId);
             
             CreateTable(
@@ -137,12 +141,17 @@ namespace Sentiment.DataAccess.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         RequestNumber = c.Int(nullable: false),
                         Title = c.String(),
+                        RepositoryId = c.Int(nullable: false),
+                        State = c.String(),
+                        PullRequestId = c.Long(nullable: false),
                         PosSentiment = c.Int(nullable: false),
                         NegSentiment = c.Int(nullable: false),
                         WriterId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Repository", t => t.RepositoryId, cascadeDelete: true)
                 .ForeignKey("dbo.Contributor", t => t.WriterId, cascadeDelete: true)
+                .Index(t => t.RepositoryId)
                 .Index(t => t.WriterId);
             
         }
@@ -150,7 +159,9 @@ namespace Sentiment.DataAccess.Migrations
         public override void Down()
         {
             DropForeignKey("dbo.PullRequest", "WriterId", "dbo.Contributor");
+            DropForeignKey("dbo.PullRequest", "RepositoryId", "dbo.Repository");
             DropForeignKey("dbo.Issue", "WriterId", "dbo.Contributor");
+            DropForeignKey("dbo.Issue", "RepositoryId", "dbo.Repository");
             DropForeignKey("dbo.Comment", "WriterId", "dbo.Contributor");
             DropForeignKey("dbo.BranchCommit", "CommitId", "dbo.Commit");
             DropForeignKey("dbo.Commit", "WriterId", "dbo.Contributor");
@@ -160,7 +171,9 @@ namespace Sentiment.DataAccess.Migrations
             DropForeignKey("dbo.RepositoryContributor", "ContributorId", "dbo.Contributor");
             DropForeignKey("dbo.Branch", "RepositoryId", "dbo.Repository");
             DropIndex("dbo.PullRequest", new[] { "WriterId" });
+            DropIndex("dbo.PullRequest", new[] { "RepositoryId" });
             DropIndex("dbo.Issue", new[] { "WriterId" });
+            DropIndex("dbo.Issue", new[] { "RepositoryId" });
             DropIndex("dbo.Comment", new[] { "WriterId" });
             DropIndex("dbo.Commit", new[] { "WriterId" });
             DropIndex("dbo.RepositoryContributor", new[] { "ContributorId" });

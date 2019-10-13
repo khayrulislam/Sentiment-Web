@@ -10,5 +10,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface I_PullRequest:I_AllRepository<PullRequestT>
     {
         IEnumerable<PullRequestT> GetList(int repositoryId);
+        bool Exist(int pullRequestId);
     }
 }

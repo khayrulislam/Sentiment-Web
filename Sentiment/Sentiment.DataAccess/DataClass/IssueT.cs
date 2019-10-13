@@ -16,6 +16,7 @@ namespace Sentiment.DataAccess.DataClass
         public int IssueNumber { get; set; }
         public string Title { get; set; }
         public string State { get; set; }
+        public long IssueId { get; set; }
 
     }
 }

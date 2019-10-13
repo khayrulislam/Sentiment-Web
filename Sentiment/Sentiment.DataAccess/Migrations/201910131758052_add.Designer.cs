@@ -7,13 +7,13 @@ namespace Sentiment.DataAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class removecontribution : IMigrationMetadata
+    public sealed partial class add : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(removecontribution));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(add));
         
         string IMigrationMetadata.Id
         {
-            get { return "201910131200524_removecontribution"; }
+            get { return "201910131758052_add"; }
         }
         
         string IMigrationMetadata.Source
