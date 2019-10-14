@@ -57,6 +57,7 @@
     <Compile Include="DataClass\BranchCommitT.cs" />
     <Compile Include="DataClass\BranchT.cs" />
     <Compile Include="DataClass\CommentT.cs" />
+    <Compile Include="DataClass\CommitCommentT.cs" />
     <Compile Include="DataClass\CommitT.cs" />
     <Compile Include="DataClass\ContributorT.cs" />
     <Compile Include="DataClass\IssueT.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="RepositoryPattern\Implement\BranchCommit.cs" />
     <Compile Include="RepositoryPattern\Implement\Branch_.cs" />
     <Compile Include="RepositoryPattern\Implement\Comment_.cs" />
+    <Compile Include="RepositoryPattern\Implement\CommitComment_.cs" />
     <Compile Include="RepositoryPattern\Implement\Commit_.cs" />
     <Compile Include="RepositoryPattern\Implement\Contributor_.cs" />
     <Compile Include="RepositoryPattern\Implement\Issue_.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="RepositoryPattern\IRepository\I_Branch.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Comment.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Commit.cs" />
+    <Compile Include="RepositoryPattern\IRepository\I_CommitComment.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_ContributorRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Issue.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_RepositoryContributor.cs" />

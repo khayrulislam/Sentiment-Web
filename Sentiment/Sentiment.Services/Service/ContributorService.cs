@@ -45,6 +45,7 @@ namespace Sentiment.Services.Service
                     var repository = unitOfWork.Repository.Get(repositoryId);
                     foreach (var contributor in allContributors)
                     {
+                        // problem in cotributor storing missing some case
                         // check contributor exists or not 
                         var contributorData = unitOfWork.Contributor.GetByName(contributor.Login);
                         if (contributorData == null)
@@ -76,6 +77,24 @@ namespace Sentiment.Services.Service
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
                 return (List<ContributorT>) unitOfWork.Contributor.GetList(repositoryId);
+            }
+        }
+
+        public ContributorT GetContributor(string name)
+        {
+            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            {
+                var contributor = unitOfWork.Contributor.GetByName(name);
+                if (contributor == null)
+                {
+                    contributor = new ContributorT()
+                    {
+                        Name = name
+                    };
+                    unitOfWork.Contributor.Add(contributor);
+                    unitOfWork.Complete();
+                }
+                return contributor;
             }
         }
 

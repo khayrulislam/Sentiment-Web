@@ -19,6 +19,8 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         CommitRequest request;
         ApiOptions option;
+        ContributorService contributorService;
+        CommentService commentService;
         public CommitService()
         {
             Initialize();
@@ -29,6 +31,9 @@ namespace Sentiment.Services.Service
             this.commitClient = gitHubClient.Repository.Commit;
             this.sentimentCal = SentimentCal.Instance;
             this.request = new CommitRequest();
+            this.contributorService = new ContributorService();
+            this.commentService = new CommentService();
+
             this.option = new ApiOptions()
             {
                 PageCount = 1,
@@ -48,7 +53,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task StoreBranchCommitAsync(long repoId, int id,int repositoryId)
+        private async Task StoreBranchCommitAsync(long repoId, int id, int repositoryId)
         {
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -65,27 +70,19 @@ namespace Sentiment.Services.Service
                     {
                         var commitList = new List<CommitT>();
                         var branchCommitList = new List<BranchCommitT>();
+                        var commentedShaList = new List<string>();
                         foreach (var commit in allCommits)
                         {
+                            if (commit.Commit.CommentCount > 0) commentedShaList.Add(commit.Sha);
                             if (!unitOfWork.Commit.Exist(commit.Sha))
                             {
                                 if (commit.Committer != null)
                                 {
-                                    var commiter = unitOfWork.Contributor.GetByName(commit.Committer.Login);
-                                    if(commiter == null)
-                                    {
-                                        commiter = new ContributorT()
-                                        {
-                                            Name = commit.Committer.Login
-                                        };
-                                        unitOfWork.Contributor.Add(commiter);
-                                        unitOfWork.Complete();
-                                    }
+                                    var commiter = contributorService.GetContributor(commit.Committer.Login);
                                     sentimentCal.CalculateSentiment(commit.Commit.Message);
                                     var comm = new CommitT()
                                     {
                                         Sha = commit.Sha,
-                                        Message = commit.Commit.Message,
                                         WriterId = commiter.Id,
                                         PosSentiment = sentimentCal.PositoiveSentiScore,
                                         NegSentiment = sentimentCal.NegativeSentiScore,
@@ -104,6 +101,8 @@ namespace Sentiment.Services.Service
                         unitOfWork.Complete();
                         unitOfWork.BranchCommit.AddRange(branchCommitList);
                         unitOfWork.Complete();
+
+
                     }
                 }
             }
