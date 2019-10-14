@@ -20,5 +20,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             return _dbContext.Contributors.Where(c=>c.Name == name).FirstOrDefault();
         }
+
+        public IEnumerable<ContributorT> GetList(int repoId)
+        {
+            return _dbContext.RepositoryContributors.Where(rc => rc.RepositoryId == repoId).Select(s => s.Contributor).ToList();
+        }
     }
 }

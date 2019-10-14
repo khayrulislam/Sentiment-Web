@@ -17,31 +17,38 @@ namespace Sentiment.Services.Service
     {
         GitHubClient gitHubClient;
         SentimentCal sentimentCal;
-
-        string repoName = "mockito";
-        string repoOwner = "mockito";
-
         long repoId;
 
-        public async Task ExecuteAnalysisAsync(string repositoryUrl)
+        public RepositoryService()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
         {
             gitHubClient = GitHubConnection.Instance;
             sentimentCal = SentimentCal.Instance;
+        }
 
-            var repositoryId = await StoreRepositoryDataAsync(1);
+        public async Task ExecuteAnalysisAsync(int userId, string repoName, string repoOwnerName)
+        {
+            var repositoryId = await StoreRepositoryAsync(userId, repoName, repoOwnerName);
 
-            await StoreBranchDataAsync(repositoryId);
-
-            await StoreContributorDataAsync(repositoryId);
-
+            BranchService branchService = new BranchService();
+            ContributorService contributorService = new ContributorService();
             CommitService commitService = new CommitService();
-            await commitService.StoreAllCommitsAsync(repoId, repositoryId);
+            IssueService issueService = new IssueService();
 
-/*            IssueService issueService = new IssueService();
-            await issueService.StoreAllIssuesAsync(repoId,repositoryId).ConfigureAwait(false); // store issue and pull request
-         */
+            await branchService.StoreAllBranchesAsync(repoId, repositoryId);
 
-
+            var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
+            var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
+            var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
+            await Task.WhenAll(t2, t3, t4);
+            // store some information for execution complete
+            //await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
+            //await commitService.StoreAllCommitsAsync(repoId, repositoryId);
+            //await issueService.StoreAllIssuesAsync(repoId, repositoryId); // store issue and pull request
 
         }
 
@@ -125,87 +132,7 @@ namespace Sentiment.Services.Service
         }
         ////////////////////////////////
 
-        private async Task StoreContributorDataAsync(int repositoryId)
-        {
-            var allContributors = await gitHubClient.Repository.GetAllContributors(repoId);
-            var contributorList = new List<ContributorT>();
-            var repositoryContributorsList = new List<RepositoryContributorT>();
-
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                if(repositoryId  != 0)
-                {
-                    var storedContributors = unitOfWork.RepositoryContributor.GetContributorList(repositoryId);
-                    var repositoryData = unitOfWork.Repository.Get(repositoryId);
-                    allContributors = allContributors.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList();
-
-                    foreach (var contributor in allContributors)
-                    {
-                        // check contributor exists or not 
-                        var contributorData = unitOfWork.Contributor.GetByName(contributor.Login);
-                        if (contributorData == null)
-                        {
-                            contributorData = new ContributorT()
-                            {
-                                Name = contributor.Login,
-                            };
-                            contributorList.Add(contributorData);
-                        }
-                        var repositoryContributor = new RepositoryContributorT()
-                        {
-                            Contributor = contributorData,
-                            Repository = repositoryData
-                        };
-                        repositoryContributorsList.Add(repositoryContributor);
-                    }
-                    unitOfWork.Contributor.AddRange(contributorList);
-                    unitOfWork.Complete();
-                    unitOfWork.RepositoryContributor.AddRange(repositoryContributorsList);
-                    unitOfWork.Complete();
-                }
-            }
-
-        }
-
-        private async Task StoreBranchDataAsync(int repositoryId)
-        {
-            var allBranches = await gitHubClient.Repository.Branch.GetAll(repoId);
-
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                if (repositoryId != 0)
-                {
-                    var storedBranches = (List<BranchT>) unitOfWork.Branch.GetList(repositoryId);
-
-                    if(storedBranches.Count > 0)
-                    {
-                        allBranches = allBranches.Where(b => !storedBranches.Any( x => x.Name == b.Name) ).ToList();
-                    }
-
-                    var branchList = new List<BranchT>();
-
-                    foreach(var branch in allBranches)
-                    {
-                        // update branch sha not done
-                        var branchData = new BranchT()
-                        {
-                            Name = branch.Name,
-                            RepositoryId = repositoryId,
-                            Sha = branch.Commit.Sha
-                        };
-                        branchList.Add(branchData);
-                    }
-
-                    if(branchList.Count > 0)
-                    {
-                        unitOfWork.Branch.AddRange(branchList);
-                        unitOfWork.Complete();
-                    }
-                }
-            }
-        }
-
-        private async Task<int> StoreRepositoryDataAsync(int userId)
+        private async Task<int> StoreRepositoryAsync(int userId, string repoName, string repoOwner)
         {
             var repository = await gitHubClient.Repository.Get(repoName, repoOwner);
 

@@ -11,15 +11,18 @@ namespace Sentiment.WebAPI.Controllers
 {
     public class RepositoryController : ApiController
     {
-        private RepositoryService repo = new RepositoryService();
+        private RepositoryService repositoryService = new RepositoryService();
         
         [HttpGet]
-        public async Task CalculateRepositorySentiment()
+        public  string ExecuteRepositoryAnalysis(int userId, string repoName, string repoOwnerName)
         {
-            string repositoryUrl = null;
-            // asyn method call
-            await repo.ExecuteAnalysisAsync(repositoryUrl).ConfigureAwait(false);
-            
+            Task.Run(() =>
+            {
+                repositoryService.ExecuteAnalysisAsync(userId, repoName, repoOwnerName);
+            });
+
+            //await repositoryService.ExecuteAnalysisAsync(userId,repoName,repoOwnerName).ConfigureAwait(false);
+            return "yuyuyuy";
         }
     }
 }

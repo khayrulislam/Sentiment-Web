@@ -9,8 +9,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface I_ContributorRepository: I_AllRepository<ContributorT>
     {
-        //IEnumerable<ContributorData> GetRepositoryContributors(int repoId);
-
+        IEnumerable<ContributorT> GetList(int repoId);
         ContributorT GetByName(string name);
     }
 }

@@ -33,7 +33,7 @@ namespace Sentiment.Services.Service
             this.option = new ApiOptions()
             {
                 PageCount = 1,
-                PageSize = 300
+                PageSize = 100
             };
         }
 
@@ -45,12 +45,12 @@ namespace Sentiment.Services.Service
 
                 foreach (var branch in branchList)
                 {
-                    await StoreBranchCommitAsync(repoId, branch.Id);
+                    await StoreBranchCommitAsync(repoId, branch.Id, repositoryId);
                 }
             }
         }
 
-        private async Task StoreBranchCommitAsync(long repoId, int id)
+        private async Task StoreBranchCommitAsync(long repoId, int id,int repositoryId)
         {
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
@@ -71,22 +71,35 @@ namespace Sentiment.Services.Service
                         {
                             if (!unitOfWork.Commit.Exist(commit.Sha))
                             {
-                                var commiter = unitOfWork.Contributor.GetByName(commit.Committer.Login);
-                                sentimentCal.CalculateSentiment(commit.Commit.Message);
-                                var comm = new CommitT()
+                                if (commit.Committer != null)
                                 {
-                                    Sha = commit.Sha,
-                                    Message = commit.Commit.Message,
-                                    WriterId = commiter.Id,
-                                    PosSentiment = sentimentCal.PositoiveSentiScore,
-                                    NegSentiment = sentimentCal.NegativeSentiScore,
-                                };
-                                commitList.Add(comm);
-                                branchCommitList.Add(new BranchCommitT()
-                                {
-                                    Branch = branch,
-                                    Commit = comm
-                                });
+                                    var commiter = unitOfWork.Contributor.GetByName(commit.Committer.Login);
+                                    if(commiter == null)
+                                    {
+                                        commiter = new ContributorT()
+                                        {
+                                            Name = commit.Committer.Login
+                                        };
+                                        unitOfWork.Contributor.Add(commiter);
+                                        unitOfWork.Complete();
+                                    }
+                                    sentimentCal.CalculateSentiment(commit.Commit.Message);
+                                    var comm = new CommitT()
+                                    {
+                                        Sha = commit.Sha,
+                                        Message = commit.Commit.Message,
+                                        WriterId = commiter.Id,
+                                        PosSentiment = sentimentCal.PositoiveSentiScore,
+                                        NegSentiment = sentimentCal.NegativeSentiScore,
+                                        RepositoryId = repositoryId
+                                    };
+                                    commitList.Add(comm);
+                                    branchCommitList.Add(new BranchCommitT()
+                                    {
+                                        Branch = branch,
+                                        Commit = comm
+                                    });
+                                }
                             }
                         }
                         unitOfWork.Commit.AddRange(commitList);
