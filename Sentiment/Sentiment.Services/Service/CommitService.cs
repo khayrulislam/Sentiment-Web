@@ -22,7 +22,6 @@ namespace Sentiment.Services.Service
         public CommitService()
         {
             Initialize();
-            
         }
         private void Initialize()
         {
@@ -42,7 +41,6 @@ namespace Sentiment.Services.Service
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
                 var branchList = unitOfWork.Branch.GetList(repositoryId);
-
                 foreach (var branch in branchList)
                 {
                     await StoreBranchCommitAsync(repoId, branch.Id, repositoryId);
