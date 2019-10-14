@@ -16,4 +16,9 @@ namespace Sentiment.DataAccess.Shared
         PullRequest,
         Review
     }
+
+    public class ExtensionData
+    {
+        public string Message { get; set; }
+    }
 }
