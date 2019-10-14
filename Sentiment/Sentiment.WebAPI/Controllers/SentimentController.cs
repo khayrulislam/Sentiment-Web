@@ -14,7 +14,8 @@ namespace Sentiment.WebAPI.Controllers
     public class SentimentController : ApiController
     {
         SentimentCal sentimentCal = SentimentCal.Instance;
-        [AllowAnonymous]
+
+
         [HttpPost]
         public ExtensionOutputData CalculateSentiment(ExtensionInputData data)
         {
