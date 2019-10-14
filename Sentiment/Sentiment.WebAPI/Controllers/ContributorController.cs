@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace Sentiment.WebAPI.Controllers
 {
@@ -13,10 +14,11 @@ namespace Sentiment.WebAPI.Controllers
     {
         private ContributorService contributorService = new ContributorService();
 
+        [ResponseType(typeof(List<ContributorT>))]
         [HttpGet]
-        public List<ContributorT> GetContributorList(int repoId)
+        public HttpResponseMessage GetContributorList(int repoId)
         {
-            return contributorService.GetContributorList(repoId);
+            return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetContributorList(repoId));
         }
     }
 }

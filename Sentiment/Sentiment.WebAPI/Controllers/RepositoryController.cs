@@ -14,15 +14,14 @@ namespace Sentiment.WebAPI.Controllers
         private RepositoryService repositoryService = new RepositoryService();
         
         [HttpGet]
-        public  string ExecuteRepositoryAnalysis(int userId, string repoName, string repoOwnerName)
+        public HttpResponseMessage ExecuteRepositoryAnalysis( string repoName, string repoOwnerName)
         {
             Task.Run(() =>
             {
-                repositoryService.ExecuteAnalysisAsync(userId, repoName, repoOwnerName);
+                repositoryService.ExecuteAnalysisAsync(repoName, repoOwnerName);
             });
-
             //await repositoryService.ExecuteAnalysisAsync(userId,repoName,repoOwnerName).ConfigureAwait(false);
-            return "yuyuyuy";
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

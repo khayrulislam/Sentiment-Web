@@ -30,9 +30,9 @@ namespace Sentiment.Services.Service
             sentimentCal = SentimentCal.Instance;
         }
 
-        public async Task ExecuteAnalysisAsync(int userId, string repoName, string repoOwnerName)
+        public async Task ExecuteAnalysisAsync(string repoName, string repoOwnerName)
         {
-            var repositoryId = await StoreRepositoryAsync(userId, repoName, repoOwnerName);
+            var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
 
             BranchService branchService = new BranchService();
             ContributorService contributorService = new ContributorService();
@@ -52,87 +52,7 @@ namespace Sentiment.Services.Service
 
         }
 
-        //////////////////////////
-        private async Task StorePullRequestCommentAsync(int repositoryId)
-        {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                var pullRequestList = unitOfWork.PullRequest.GetList(repositoryId);
-
-                foreach (var pullRequest in pullRequestList)
-                {
-                    await StoreCommentAsync(pullRequest.Id);
-                }
-            }
-        }
-
-        private async Task StoreCommentAsync(int pullRequestId)
-        {
-            var count = 0;
-            var option = new ApiOptions()
-            {
-                PageCount = 1,
-                PageSize = 100
-            };
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                var pullrequest = unitOfWork.PullRequest.Get(pullRequestId);
-
-                while (true)
-                {
-                    option.StartPage = ++count;
-                    var allComments = await gitHubClient.PullRequest.ReviewComment.GetAll(repoId,pullrequest.RequestNumber,option);
-                    if (allComments.Count == 0) break;
-                    else
-                    {
-                        foreach (var comment in allComments)
-                        {
-
-                        }
-                    }
-                    
-                }
-            }
-        }
-
-        private async Task StorePullRequestAsync(int repositoryId)
-        {
-            var allPullRequest = await gitHubClient.PullRequest.GetAllForRepository(repoId);
-            //var allIssues = await gitHubClient.Issue.GetAllForRepository(repoId);
-
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
-            {
-                if(repositoryId != 0)
-                {
-                    var storedPullRequests = (List<PullRequestT>)unitOfWork.PullRequest.GetList(repositoryId);
-                    if(storedPullRequests.Count > 0)
-                    {
-                        allPullRequest = allPullRequest.Where(pr => !storedPullRequests.Any(r => r.RequestNumber == pr.Number)).ToList();
-                    }
-                    var pullRequestList = new List<PullRequestT>();
-
-                    foreach (var pullRequest in allPullRequest)
-                    {
-                        var requester = unitOfWork.Contributor.GetByName(pullRequest.User.Login);
-                        sentimentCal.CalculateSentiment(pullRequest.Body);
-                        pullRequestList.Add( new PullRequestT()
-                        {
-                            RepositoryId = repositoryId,
-                            RequestNumber = pullRequest.Number,
-                            Title = pullRequest.Title,
-                            PosSentiment = sentimentCal.PositoiveSentiScore,
-                            NegSentiment = sentimentCal.NegativeSentiScore,
-                            WriterId = requester.Id
-                        });
-                    }
-                    unitOfWork.PullRequest.AddRange(pullRequestList);
-                    unitOfWork.Complete();
-                }
-            }
-        }
-        ////////////////////////////////
-
-        private async Task<int> StoreRepositoryAsync(int userId, string repoName, string repoOwner)
+        private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
         {
             var repository = await gitHubClient.Repository.Get(repoName, repoOwner);
 
