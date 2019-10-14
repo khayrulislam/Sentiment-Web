@@ -6,18 +6,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Sentiment.WebAPI.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class SentimentController : ApiController
     {
         SentimentCal sentimentCal = SentimentCal.Instance;
-
+        [AllowAnonymous]
         [HttpPost]
-        public List<int> CalculateSentiment(ExtensionData data)
+        public ExtensionOutputData CalculateSentiment(ExtensionInputData data)
         {
             sentimentCal.CalculateSentiment(data.Message);
-            return new List<int>() { sentimentCal.PositoiveSentiScore,sentimentCal.NegativeSentiScore};
+            //Response.AppendHeader("Access-Control-Allow-Origin", "*");
+            ExtensionOutputData od = new ExtensionOutputData()
+            {
+                NegSentiment = sentimentCal.NegativeSentiScore,
+                PosSentiment = sentimentCal.PositoiveSentiScore,
+                Type =data.Type
+            };
+            return od;
         }
     }
 }

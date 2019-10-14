@@ -17,8 +17,16 @@ namespace Sentiment.DataAccess.Shared
         Review
     }
 
-    public class ExtensionData
+    public class ExtensionInputData
     {
         public string Message { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class ExtensionOutputData
+    {
+        public int PosSentiment { get; set; }
+        public int NegSentiment { get; set; }
+        public string Type { get; set; }
     }
 }
