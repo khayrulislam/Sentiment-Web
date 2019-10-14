@@ -15,8 +15,6 @@ namespace Sentiment.DataAccess.DataClass
         public string Name { get; set; }
         public string OwnerName { get; set; }
         public string Url { get; set; }
-        public UserT User { get; set; }
-        public int UserId { get; set; }
         public ICollection<BranchT> Branch { get; set; }
         public IList<RepositoryContributorT> RepositoryContributors { get; set; }
 

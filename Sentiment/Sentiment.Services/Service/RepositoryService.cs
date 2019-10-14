@@ -138,26 +138,21 @@ namespace Sentiment.Services.Service
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
-                if (unitOfWork.User.UserExist(userId))
+                if (!unitOfWork.Repository.RepositoryExist(repository.Name, repository.Owner.Login))
                 {
-                    if (!unitOfWork.Repository.RepositoryExist(repository.Name, repository.Owner.Login))
+                    var repoData = new RepositoryT()
                     {
-                        var repoData = new RepositoryT()
-                        {
-                            Name = repository.Name,
-                            OwnerName = repository.Owner.Login,
-                            UserId = userId,
-                            Url = repository.Url,
-                            RepoId = repository.Id
-                        };
-                        unitOfWork.Repository.Add(repoData);
-                        unitOfWork.Complete();
-                    }
-                    var repo = unitOfWork.Repository.GetByNameAndOwnerName(repository.Name, repository.Owner.Login);
-                    repoId = repo.RepoId;
-                    return repo.Id;
+                        Name = repository.Name,
+                        OwnerName = repository.Owner.Login,
+                        Url = repository.Url,
+                        RepoId = repository.Id
+                    };
+                    unitOfWork.Repository.Add(repoData);
+                    unitOfWork.Complete();
                 }
-                return 0;
+                var repo = unitOfWork.Repository.GetByNameAndOwnerName(repository.Name, repository.Owner.Login);
+                repoId = repo.RepoId;
+                return repo.Id;
             }
         }
 
