@@ -65,13 +65,9 @@
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\201910131758052_add.cs" />
-    <Compile Include="Migrations\201910131758052_add.Designer.cs">
-      <DependentUpon>201910131758052_add.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910140341264_repoi.cs" />
-    <Compile Include="Migrations\201910140341264_repoi.Designer.cs">
-      <DependentUpon>201910140341264_repoi.cs</DependentUpon>
+    <Compile Include="Migrations\201910140858412_add.cs" />
+    <Compile Include="Migrations\201910140858412_add.Designer.cs">
+      <DependentUpon>201910140858412_add.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,11 +103,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910131758052_add.resx">
-      <DependentUpon>201910131758052_add.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910140341264_repoi.resx">
-      <DependentUpon>201910140341264_repoi.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201910140858412_add.resx">
+      <DependentUpon>201910140858412_add.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
