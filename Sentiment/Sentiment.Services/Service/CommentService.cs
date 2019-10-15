@@ -48,7 +48,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreCommitCommentAsync(long repoId, string sha)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 var commit = unitOfWork.Commit.GetBySha(sha);
                 var count = 0;

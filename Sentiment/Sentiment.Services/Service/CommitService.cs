@@ -43,7 +43,7 @@ namespace Sentiment.Services.Service
 
         public async Task StoreAllCommitsAsync(long repoId, int repositoryId)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 var branchList = unitOfWork.Branch.GetList(repositoryId);
                 foreach (var branch in branchList)
@@ -55,7 +55,7 @@ namespace Sentiment.Services.Service
 
         private async Task StoreBranchCommitAsync(long repoId, int id, int repositoryId)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 var branch = unitOfWork.Branch.Get(id);
                 request.Sha = branch.Name;

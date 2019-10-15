@@ -55,7 +55,7 @@ namespace Sentiment.Services.Service
         {
             var repository = await gitHubClient.Repository.Get(repoName, repoOwner);
 
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 if (!unitOfWork.Repository.RepositoryExist(repository.Name, repository.Owner.Login))
                 {
@@ -69,12 +69,28 @@ namespace Sentiment.Services.Service
                     unitOfWork.Repository.Add(repoData);
                     unitOfWork.Complete();
                 }
-                var repo = unitOfWork.Repository.GetByNameAndOwnerName(repository.Name, repository.Owner.Login);
+                var repo = GetRepositoryByNameOwnerName(repository.Name, repository.Owner.Login);
                 repoId = repo.RepoId;
                 return repo.Id;
             }
         }
 
+
+        public RepositoryT GetRepositoryById(long repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Repository.GetById(repoId);
+            }
+        }
+
+        public RepositoryT GetRepositoryByNameOwnerName(string name, string ownerName)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Repository.GetByNameAndOwnerName(name, ownerName);
+            }
+        }
 
     }
 }

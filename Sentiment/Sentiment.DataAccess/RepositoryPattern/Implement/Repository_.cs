@@ -16,6 +16,11 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
+        public RepositoryT GetById(long repoId)
+        {
+            return _dbContext.Repositories.Where(rep=>rep.RepoId == repoId).FirstOrDefault();
+        }
+
         public RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName)
         {
             /*var repos = _dbContext.Repositories.Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).

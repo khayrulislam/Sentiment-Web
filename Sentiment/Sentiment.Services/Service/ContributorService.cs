@@ -37,7 +37,7 @@ namespace Sentiment.Services.Service
             var allContributors = await repositoryClient.GetAllContributors(repoId);
             var repositoryContributorsList = new List<RepositoryContributorT>();
 
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 var repository = unitOfWork.Repository.Get(repositoryId);
                 if (repository != null)
@@ -64,7 +64,7 @@ namespace Sentiment.Services.Service
 
         public List<ContributorT> GetContributorList(int repositoryId)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 return (List<ContributorT>) unitOfWork.Contributor.GetList(repositoryId);
             }
@@ -72,7 +72,7 @@ namespace Sentiment.Services.Service
 
         public ContributorT GetContributor(string name)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 var contributor = unitOfWork.Contributor.GetByName(name);
                 if (contributor == null)

@@ -36,7 +36,7 @@ namespace Sentiment.Services.Service
         public async Task StoreAllBranchesAsync(long repoId, int repositoryId)
         {
             var allBranches = await gitHubClient.Repository.Branch.GetAll(repoId);
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 if (repositoryId != 0)
                 {
@@ -65,7 +65,7 @@ namespace Sentiment.Services.Service
 
         public List<BranchT> GetBranchList(int repositoryId)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 return (List<BranchT>) unitOfWork.Branch.GetList(repositoryId);
             }

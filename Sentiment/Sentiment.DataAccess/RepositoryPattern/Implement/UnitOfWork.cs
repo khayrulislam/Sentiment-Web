@@ -21,9 +21,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         private SentiDbContext _dbContext;
 
-        public UnitOfWork(SentiDbContext dbContext)
+        public UnitOfWork()
         {
-            this._dbContext = dbContext;
+            this._dbContext = new SentiDbContext();
             Branch = new Branch_(_dbContext);
             Commit = new Commit_(_dbContext);
             Contributor = new Contributor_(_dbContext);
@@ -32,7 +32,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             BranchCommit = new BranchCommit(_dbContext);
             PullRequest = new PullRequest_(_dbContext);
             Comment = new Comment_(_dbContext);
-            Issue = new Issue_(dbContext);
+            Issue = new Issue_(_dbContext);
         }
 
         public int Complete()

@@ -57,7 +57,7 @@ namespace Sentiment.Services.Service
 
         private void StoreIssueBlock(int repositoryId, IReadOnlyList<Issue> issueBlock)
         {
-            using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
+            using (var unitOfWork = new UnitOfWork())
             {
                 if (repositoryId != 0)
                 {

@@ -11,5 +11,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     {
         bool RepositoryExist(string repositoryName, string ownerName);
         RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName);
+        RepositoryT GetById(long repoId);
+        
     }
 }
