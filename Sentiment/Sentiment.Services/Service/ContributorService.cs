@@ -35,37 +35,27 @@ namespace Sentiment.Services.Service
         public async Task StoreAllContributorsAsync(long repoId,int repositoryId)
         {
             var allContributors = await repositoryClient.GetAllContributors(repoId);
-            var contributorList = new List<ContributorT>();
             var repositoryContributorsList = new List<RepositoryContributorT>();
 
             using (var unitOfWork = new UnitOfWork(new SentiDbContext()))
             {
-                if (repositoryId != 0)
+                var repository = unitOfWork.Repository.Get(repositoryId);
+                if (repository != null)
                 {
-                    var repository = unitOfWork.Repository.Get(repositoryId);
+                    var storedContributors = GetContributorList(repositoryId);
+                    allContributors = allContributors.Where(c => !storedContributors.Any(sc => sc.Name == c.Login)).ToList(); // get only not stored contibutors
+
                     foreach (var contributor in allContributors)
                     {
-                        // problem in cotributor storing missing some case
-                        // check contributor exists or not 
-                        var contributorData = unitOfWork.Contributor.GetByName(contributor.Login);
-                        if (contributorData == null)
+                        // get contributor form db or create a new one
+                        var contributorData = GetContributor(contributor.Login);
+                        var repositoryContributor = new RepositoryContributorT()
                         {
-                            contributorData = new ContributorT()
-                            {
-                                Name = contributor.Login,
-                            };
-                            contributorList.Add(contributorData);
-                            var repositoryContributor = new RepositoryContributorT()
-                            {
-                                Contributor = contributorData,
-                                Repository = repository
-                            };
-                            repositoryContributorsList.Add(repositoryContributor);
-                        }
-
+                            Contributor = contributorData,
+                            Repository = repository
+                        };
+                        repositoryContributorsList.Add(repositoryContributor);
                     }
-                    unitOfWork.Contributor.AddRange(contributorList);
-                    unitOfWork.Complete();
                     unitOfWork.RepositoryContributor.AddRange(repositoryContributorsList);
                     unitOfWork.Complete();
                 }

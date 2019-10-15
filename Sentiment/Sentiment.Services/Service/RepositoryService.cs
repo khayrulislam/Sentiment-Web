@@ -19,6 +19,11 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         long repoId;
 
+        BranchService branchService;
+        ContributorService contributorService;
+        CommitService commitService;
+        IssueService issueService;
+
         public RepositoryService()
         {
             Initialize();
@@ -28,28 +33,22 @@ namespace Sentiment.Services.Service
         {
             gitHubClient = GitHubConnection.Instance;
             sentimentCal = SentimentCal.Instance;
+            this.branchService = new BranchService();
+            this.contributorService = new ContributorService();
+            this.commitService = new CommitService();
+            this.issueService = new IssueService();
         }
 
         public async Task ExecuteAnalysisAsync(string repoName, string repoOwnerName)
         {
             var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
-
-            BranchService branchService = new BranchService();
-            ContributorService contributorService = new ContributorService();
-            CommitService commitService = new CommitService();
-            IssueService issueService = new IssueService();
-
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
 
             var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
-            var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
-            var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
-            await Task.WhenAll(t2, t3, t4);
-            // store some information for execution complete
-            //await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
-            //await commitService.StoreAllCommitsAsync(repoId, repositoryId);
-            //await issueService.StoreAllIssuesAsync(repoId, repositoryId); // store issue and pull request
-
+            //var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
+            //var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
+            //await Task.WhenAll(t2, t3, t4);
+            
         }
 
         private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
