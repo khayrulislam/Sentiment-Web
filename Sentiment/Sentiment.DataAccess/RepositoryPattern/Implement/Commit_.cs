@@ -20,5 +20,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             return _dbContext.Commits.Any(c => c.Sha == sha);
         }
+
+        public CommitT GetBySha(string sha)
+        {
+            return _dbContext.Commits.Where(c=>c.Sha == sha).FirstOrDefault();
+        }
     }
 }

@@ -57,6 +57,7 @@
     <Compile Include="DataClass\BranchCommitT.cs" />
     <Compile Include="DataClass\BranchT.cs" />
     <Compile Include="DataClass\CommentT.cs" />
+    <Compile Include="DataClass\CommitCommentT.cs" />
     <Compile Include="DataClass\CommitT.cs" />
     <Compile Include="DataClass\ContributorT.cs" />
     <Compile Include="DataClass\IssueT.cs" />
@@ -73,13 +74,17 @@
     <Compile Include="Migrations\201910140341264_repoi.Designer.cs">
       <DependentUpon>201910140341264_repoi.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201910141137052_removeuser.cs" />
+    <Compile Include="Migrations\201910141137052_removeuser.Designer.cs">
+      <DependentUpon>201910141137052_removeuser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataClass\UserT.cs" />
     <Compile Include="RepositoryPattern\Implement\AllRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\BranchCommit.cs" />
     <Compile Include="RepositoryPattern\Implement\Branch_.cs" />
     <Compile Include="RepositoryPattern\Implement\Comment_.cs" />
+    <Compile Include="RepositoryPattern\Implement\CommitComment_.cs" />
     <Compile Include="RepositoryPattern\Implement\Commit_.cs" />
     <Compile Include="RepositoryPattern\Implement\Contributor_.cs" />
     <Compile Include="RepositoryPattern\Implement\Issue_.cs" />
@@ -87,18 +92,17 @@
     <Compile Include="RepositoryPattern\Implement\RepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\Implement\Repository_.cs" />
     <Compile Include="RepositoryPattern\Implement\UnitOfWork.cs" />
-    <Compile Include="RepositoryPattern\Implement\UserRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_BranchCommit.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Branch.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Comment.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Commit.cs" />
+    <Compile Include="RepositoryPattern\IRepository\I_CommitComment.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_ContributorRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Issue.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_RepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_UnitOfWork.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_AllRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Repository.cs" />
-    <Compile Include="RepositoryPattern\IRepository\I_User.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_PullRequest.cs" />
     <Compile Include="Shared\Constant.cs" />
   </ItemGroup>
@@ -112,6 +116,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201910140341264_repoi.resx">
       <DependentUpon>201910140341264_repoi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910141137052_removeuser.resx">
+      <DependentUpon>201910141137052_removeuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

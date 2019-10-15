@@ -19,6 +19,7 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         RepositoryIssueRequest request;
         ApiOptions option;
+        ContributorService contributorService;
         public IssueService()
         {
             Initialize();
@@ -29,6 +30,8 @@ namespace Sentiment.Services.Service
             this.gitHubClient = GitHubConnection.Instance;
             this.issueClient = gitHubClient.Issue;
             this.sentimentCal = SentimentCal.Instance;
+            this.contributorService = new ContributorService();
+
             this.request = new RepositoryIssueRequest()
             {
                 State = ItemStateFilter.All
@@ -69,16 +72,7 @@ namespace Sentiment.Services.Service
                     foreach (var issue in issueBlock)
                     {
                         sentimentCal.CalculateSentiment(issue.Body);
-                        var issuer = unitOfWork.Contributor.GetByName(issue.User.Login);
-                        if (issuer == null)
-                        {
-                            issuer = new ContributorT()
-                            {
-                                Name = issue.User.Login
-                            };
-                            unitOfWork.Contributor.Add(issuer);
-                            unitOfWork.Complete();
-                        }
+                        var issuer = contributorService.GetContributor(issue.User.Login);
                         if (issue.PullRequest == null)
                         {
                             if (!unitOfWork.Issue.Exist(issue.Id))

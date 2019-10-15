@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace Sentiment.WebAPI.Controllers
 {
@@ -13,10 +14,11 @@ namespace Sentiment.WebAPI.Controllers
     {
         private BranchService branchService = new BranchService();
 
+        [ResponseType(typeof(List<BranchT>))]
         [HttpGet]
-        public List<BranchT> GetBranchList(int repoId)
+        public HttpResponseMessage GetBranchList(int repoId)
         {
-            return branchService.GetBranchList(repoId);
+            return  Request.CreateResponse(HttpStatusCode.OK, branchService.GetBranchList(repoId));
         }
 
     }
