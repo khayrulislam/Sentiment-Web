@@ -91,7 +91,6 @@ namespace Sentiment.DataAccess.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Message = c.String(),
                         Sha = c.String(),
-                        RepositoryId = c.Int(nullable: false),
                         PosSentiment = c.Int(nullable: false),
                         NegSentiment = c.Int(nullable: false),
                         WriterId = c.Int(nullable: false),

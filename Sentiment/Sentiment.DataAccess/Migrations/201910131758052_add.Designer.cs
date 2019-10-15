@@ -13,7 +13,7 @@ namespace Sentiment.DataAccess.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201910140858412_add"; }
+            get { return "201910131758052_add"; }
         }
         
         string IMigrationMetadata.Source
