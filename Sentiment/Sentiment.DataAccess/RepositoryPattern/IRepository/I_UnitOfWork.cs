@@ -14,7 +14,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         I_Repository Repository { get; }
         I_RepositoryContributor RepositoryContributor { get; }
         I_BranchCommit BranchCommit { get; }
-        I_PullRequest PullRequest { get; }
         I_IssueComment Comment { get; }
         I_Issue Issue { get; }
 

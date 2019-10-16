@@ -67,7 +67,6 @@ namespace Sentiment.Services.Service
                         allIssues = allIssues.Where(i => !storedIssue.Any(si => si.IssueNumber == i.Number)).ToList();
                     }*/
                     var issueList = new List<IssueT>();
-                    var pullRequestList = new List<PullRequestT>();
 
                     foreach (var issue in issueBlock)
                     {
@@ -90,7 +89,7 @@ namespace Sentiment.Services.Service
                         }
                         else
                         {
-                            if (!unitOfWork.PullRequest.Exist(issue.Id))
+                            /*if (!unitOfWork.PullRequest.Exist(issue.Id))
                             {
                                 pullRequestList.Add(new PullRequestT()
                                 {
@@ -103,11 +102,10 @@ namespace Sentiment.Services.Service
                                     State = issue.State.StringValue,
                                     PullRequestId = issue.Id
                                 });
-                            }
+                            }*/
                         }
                     }
                     unitOfWork.Issue.AddRange(issueList);
-                    unitOfWork.PullRequest.AddRange(pullRequestList);
                     unitOfWork.Complete();
                 }
             }

@@ -61,11 +61,14 @@
     <Compile Include="DataClass\CommitT.cs" />
     <Compile Include="DataClass\ContributorT.cs" />
     <Compile Include="DataClass\IssueT.cs" />
-    <Compile Include="DataClass\PullRequestT.cs" />
     <Compile Include="DataClass\RepositoryContributorT.cs" />
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
+    <Compile Include="Migrations\201910160719589_dbcreate.cs" />
+    <Compile Include="Migrations\201910160719589_dbcreate.Designer.cs">
+      <DependentUpon>201910160719589_dbcreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryPattern\Implement\AllRepository.cs" />
@@ -76,7 +79,6 @@
     <Compile Include="RepositoryPattern\Implement\Commit_.cs" />
     <Compile Include="RepositoryPattern\Implement\Contributor_.cs" />
     <Compile Include="RepositoryPattern\Implement\Issue_.cs" />
-    <Compile Include="RepositoryPattern\Implement\PullRequest_.cs" />
     <Compile Include="RepositoryPattern\Implement\RepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\Implement\Repository_.cs" />
     <Compile Include="RepositoryPattern\Implement\UnitOfWork.cs" />
@@ -91,12 +93,16 @@
     <Compile Include="RepositoryPattern\IRepository\I_UnitOfWork.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_AllRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Repository.cs" />
-    <Compile Include="RepositoryPattern\IRepository\I_PullRequest.cs" />
     <Compile Include="Shared\Constant.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201910160719589_dbcreate.resx">
+      <DependentUpon>201910160719589_dbcreate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

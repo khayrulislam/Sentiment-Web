@@ -15,7 +15,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         public I_Repository Repository { get; private set; }
         public I_RepositoryContributor RepositoryContributor { get; private set; }
         public I_BranchCommit BranchCommit { get; private set; }
-        public I_PullRequest PullRequest{ get; private set; }
         public I_IssueComment Comment{ get; private set; }
         public I_Issue Issue{ get; private set; }
 
@@ -30,7 +29,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             Repository = new Repository_(_dbContext);
             RepositoryContributor = new RepositoryContributor(_dbContext);
             BranchCommit = new BranchCommit(_dbContext);
-            PullRequest = new PullRequest_(_dbContext);
             Comment = new IssueComment_(_dbContext);
             Issue = new Issue_(_dbContext);
         }
