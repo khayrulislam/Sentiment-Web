@@ -48,11 +48,11 @@ namespace Sentiment.Services.Service
                     foreach (var contributor in allContributors)
                     {
                         // get contributor form db or create a new one
-                        var contributorData = GetContributor(contributor.Login);
+                        var contributorData = GetContributor(contributor.Id, contributor.Login);
                         var repositoryContributor = new RepositoryContributorT()
                         {
-                            Contributor = contributorData,
-                            Repository = repository
+                            ContributorId = contributorData.Id,
+                            RepositoryId = repository.Id
                         };
                         repositoryContributorsList.Add(repositoryContributor);
                     }
@@ -70,16 +70,17 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public ContributorT GetContributor(string name)
+        public ContributorT GetContributor(long id, string name)
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                var contributor = unitOfWork.Contributor.GetByName(name);
+                var contributor = unitOfWork.Contributor.GetByIdName(id,name);
                 if (contributor == null)
                 {
                     contributor = new ContributorT()
                     {
-                        Name = name
+                        Name = name,
+                        ContributorId = id
                     };
                     unitOfWork.Contributor.Add(contributor);
                     unitOfWork.Complete();

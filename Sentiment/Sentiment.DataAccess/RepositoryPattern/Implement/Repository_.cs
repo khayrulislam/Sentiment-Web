@@ -37,9 +37,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return repos;
         }
 
-        public bool RepositoryExist(string repositoryName, string ownerName)
+        public bool Exist(string repositoryName, string ownerName)
         {
-            return _dbContext.Repositories.Any(repo => repo.Name ==repositoryName && repo.OwnerName == ownerName );
+            return _dbContext.Repositories.Any(repo => repo.Name == repositoryName && repo.OwnerName == ownerName );
         }
     }
 }

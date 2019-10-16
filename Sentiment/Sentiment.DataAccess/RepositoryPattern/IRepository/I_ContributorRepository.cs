@@ -11,5 +11,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     {
         IEnumerable<ContributorT> GetList(int repoId);
         ContributorT GetByName(string name);
+        ContributorT GetById(long contributorId);
+        ContributorT GetByIdName(long contributorId, string Name);
     }
 }

@@ -19,7 +19,7 @@ namespace Sentiment.DataAccess.DataClass
         public int NegSentimentTitle { get; set; }
         public string State { get; set; }
         public IssueType IssueType { get; set; }
-        public DateTimeOffset DateTime { get; set; }
+        public DateTimeOffset? DateTime { get; set; }
         public ICollection<IssueCommentT> Comments { get; set; }
 
     }

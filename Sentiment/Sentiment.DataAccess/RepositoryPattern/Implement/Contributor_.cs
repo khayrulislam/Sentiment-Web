@@ -16,6 +16,16 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             _dbContext = dbContext;
         }
 
+        public ContributorT GetById(long contributorId)
+        {
+            return _dbContext.Contributors.Where(c=>c.ContributorId == contributorId).FirstOrDefault();
+        }
+
+        public ContributorT GetByIdName(long contributorId, string Name)
+        {
+            return _dbContext.Contributors.Where(c=>c.ContributorId == contributorId && c.Name == Name).FirstOrDefault();
+        }
+
         public ContributorT GetByName(string name)
         {
             return _dbContext.Contributors.Where(c=>c.Name == name).FirstOrDefault();

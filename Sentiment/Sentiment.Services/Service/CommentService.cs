@@ -60,7 +60,7 @@ namespace Sentiment.Services.Service
                     {
                         // check comment exist
                         //var
-                        var commenter = contributorService.GetContributor(comment.User.Login);
+                        var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
                         sentimentCal.CalculateSentiment(comment.Body);
                         commentList.Add( new CommitCommentT() {
                             CommitId = commit.Id,

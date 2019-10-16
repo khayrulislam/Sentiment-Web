@@ -66,14 +66,10 @@ namespace Sentiment.Services.Service
 
                     foreach (var issue in issueBlock)
                     {
-                        sentimentCal.CalculateSentiment(issue.Title);
-                        var titlePos = sentimentCal.PositoiveSentiScore;
-                        var titleNeg = sentimentCal.NegativeSentiScore;
-                        sentimentCal.CalculateSentiment(issue.Body);
-                        var bodyPos = sentimentCal.PositoiveSentiScore;
-                        var bodyNeg = sentimentCal.NegativeSentiScore;
+                        sentimentCal.CalculateSentiment(issue.Title); var titlePos = sentimentCal.PositoiveSentiScore; var titleNeg = sentimentCal.NegativeSentiScore;
+                        sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
 
-                        var issuer = contributorService.GetContributor(issue.User.Login);
+                        var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
                         var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
 
                         if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
@@ -88,7 +84,8 @@ namespace Sentiment.Services.Service
                                 State = issue.State.StringValue,
                                 IssueType = issueType,
                                 NegSentimentTitle = titleNeg,
-                                PosSentimentTitle = titlePos
+                                PosSentimentTitle = titlePos,
+                                DateTime = issue.UpdatedAt
                             });
                         }
                     }

@@ -78,7 +78,7 @@ namespace Sentiment.Services.Service
                             {
                                 if (commit.Committer != null)
                                 {
-                                    var commiter = contributorService.GetContributor(commit.Committer.Login);
+                                    var commiter = contributorService.GetContributor(commit.Committer.Id,commit.Committer.Login);
                                     sentimentCal.CalculateSentiment(commit.Commit.Message);
                                     var comm = new CommitT()
                                     {
