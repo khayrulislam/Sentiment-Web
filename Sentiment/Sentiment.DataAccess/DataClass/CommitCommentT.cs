@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess.DataClass
 {
     [Table("CommitComment")]
-    public class CommitCommentT:Sentiment
+    public class CommitCommentT:SentimentComment
     {
         public int Id { get; set; }
         public int CommitId { get; set; }

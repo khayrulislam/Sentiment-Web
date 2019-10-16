@@ -6,11 +6,20 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.DataClass
 {
-    public class Sentiment
+    public class SentimentComment
     {
+        public int PosSentiment { get; set; }
+        public int NegSentiment { get; set; }
+        public int? WriterId { get; set; }
+        public ContributorT Writer { get; set; }
+    }
+
+    public class Sentiment
+    { 
         public int PosSentiment { get; set; }
         public int NegSentiment { get; set; }
         public int WriterId { get; set; }
         public ContributorT Writer { get; set; }
     }
+
 }

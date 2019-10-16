@@ -17,6 +17,8 @@ namespace Sentiment.DataAccess.DataClass
         public string Url { get; set; }
         public ICollection<BranchT> Branch { get; set; }
         public IList<RepositoryContributorT> RepositoryContributors { get; set; }
+        public ICollection<CommitT> Commits{ get; set; }
+        public ICollection<IssueT> Issues { get; set; }
 
         [NotMapped]
         public ICollection<ContributorT> Contributors { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess.DataClass
 {
     [Table("IssueComment")]
-    public class IssueCommentT:Sentiment
+    public class IssueCommentT:SentimentComment
     {
         public int Id { get; set; }
         public long CommentNumber { get; set; }
