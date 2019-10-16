@@ -13,10 +13,13 @@ namespace Sentiment.DataAccess.DataClass
         public int Id { get; set; }
         public int RepositoryId { get; set; }
         public RepositoryT Repository { get; set; }
-        public int IssueNumber { get; set; }
-        public string Title { get; set; }
+        public long IssueNumber { get; set; }
+        public int PosSentimentTitle { get; set; }
+        public int NegSentimentTitle { get; set; }
         public string State { get; set; }
-        public long IssueId { get; set; }
+        public IssueT IssueType { get; set; }
+        public DateTimeOffset DateTime { get; set; }
+        public ICollection<IssueCommentT> Comments { get; set; }
 
     }
 }

@@ -13,6 +13,7 @@ namespace Sentiment.DataAccess.DataClass
         public int Id { get; set; }
         public string Sha { get; set; }
         public int RepositoryId { get; set; }
+        public DateTimeOffset DateTime { get; set; }
         public IList<BranchCommitT> BranchCommits { get; set; }
         public ICollection<CommitCommentT> Comments { get; set; }
     }

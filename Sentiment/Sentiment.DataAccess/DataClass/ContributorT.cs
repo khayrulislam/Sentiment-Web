@@ -12,8 +12,11 @@ namespace Sentiment.DataAccess.DataClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public long ContributorId { get; set; }
         public IList<RepositoryContributorT> RepositoryContributors { get; set; }
         public ICollection<CommitT> Commits { get; set; }
         public ICollection<CommitCommentT> CommitComments { get; set; }
+        public ICollection<IssueCommentT> IssueComments { get; set; }
+        public ICollection<IssueT> Issues { get; set; }
     }
 }

@@ -75,18 +75,16 @@ namespace Sentiment.Services.Service
                         var issuer = contributorService.GetContributor(issue.User.Login);
                         if (issue.PullRequest == null)
                         {
-                            if (!unitOfWork.Issue.Exist(issue.Id))
+                            if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
                             {
                                 issueList.Add(new IssueT()
                                 {
                                     RepositoryId = repositoryId,
                                     IssueNumber = issue.Number,
-                                    Title = issue.Title,
                                     PosSentiment = sentimentCal.PositoiveSentiScore,
                                     NegSentiment = sentimentCal.NegativeSentiScore,
                                     WriterId = issuer.Id,
                                     State = issue.State.StringValue,
-                                    IssueId = issue.Id
                                 });
                             }
                         }

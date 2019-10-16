@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.DataClass
 {
-    [Table("Comment")]
-    public class CommentT:Sentiment
+    [Table("IssueComment")]
+    public class IssueCommentT:Sentiment
     {
         public int Id { get; set; }
-        public CommentType Type { get; set; }
-        public int TypeId { get; set; }
+        public long CommentNumber { get; set; }
+        public int IssueId { get; set; }
+        public IssueT Issue { get; set; }
+        public DateTimeOffset DateTime { get; set; }
 
     }
 }

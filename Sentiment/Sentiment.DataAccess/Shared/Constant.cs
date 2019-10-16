@@ -17,6 +17,12 @@ namespace Sentiment.DataAccess.Shared
         Review
     }
 
+    public enum IssueType
+    {
+        Issue=1,
+        PullRequest
+    }
+
     public class ExtensionInputData
     {
         public string Message { get; set; }

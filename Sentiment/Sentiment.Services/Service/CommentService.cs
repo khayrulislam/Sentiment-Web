@@ -67,7 +67,7 @@ namespace Sentiment.Services.Service
                             PosSentiment = sentimentCal.PositoiveSentiScore,
                             NegSentiment = sentimentCal.NegativeSentiScore,
                             WriterId = commenter.Id,
-                            CommentId = comment.Id,
+                            CommentNumber = comment.Id,
                             DateTime = comment.UpdatedAt
                         });
                     }
