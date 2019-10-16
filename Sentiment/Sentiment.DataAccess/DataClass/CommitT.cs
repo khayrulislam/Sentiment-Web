@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess.DataClass
 {
     [Table("Commit")]
-    public class CommitT:Sentiment
+    public class CommitT:SentimentComment
     {
         public int Id { get; set; }
         public string Sha { get; set; }
-        public int RepositoryId { get; set; }
+        public int? RepositoryId { get; set; }
         public RepositoryT Repository { get; set; }
         public DateTimeOffset DateTime { get; set; }
         public IList<BranchCommitT> BranchCommits { get; set; }

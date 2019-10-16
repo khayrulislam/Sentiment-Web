@@ -2,6 +2,7 @@
 using Sentiment.DataAccess;
 using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.Implement;
+using Sentiment.DataAccess.Shared;
 using Sentiment.Services.GitHub;
 using Sentiment.Services.Library;
 using System;
@@ -39,7 +40,7 @@ namespace Sentiment.Services.Service
             this.option = new ApiOptions()
             {
                 PageCount = 1,
-                PageSize = 300
+                PageSize = 100
             };
         }
 
@@ -61,48 +62,34 @@ namespace Sentiment.Services.Service
             {
                 if (repositoryId != 0)
                 {
-/*                    var storedIssue = (List<IssueT>) unitOfWork.Issue.GetList(repositoryId);
-                    if(storedIssue.Count > 0)
-                    {
-                        allIssues = allIssues.Where(i => !storedIssue.Any(si => si.IssueNumber == i.Number)).ToList();
-                    }*/
                     var issueList = new List<IssueT>();
 
                     foreach (var issue in issueBlock)
                     {
+                        sentimentCal.CalculateSentiment(issue.Title);
+                        var titlePos = sentimentCal.PositoiveSentiScore;
+                        var titleNeg = sentimentCal.NegativeSentiScore;
                         sentimentCal.CalculateSentiment(issue.Body);
+                        var bodyPos = sentimentCal.PositoiveSentiScore;
+                        var bodyNeg = sentimentCal.NegativeSentiScore;
+
                         var issuer = contributorService.GetContributor(issue.User.Login);
-                        if (issue.PullRequest == null)
+                        var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
+
+                        if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
                         {
-                            if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
+                            issueList.Add(new IssueT()
                             {
-                                issueList.Add(new IssueT()
-                                {
-                                    RepositoryId = repositoryId,
-                                    IssueNumber = issue.Number,
-                                    PosSentiment = sentimentCal.PositoiveSentiScore,
-                                    NegSentiment = sentimentCal.NegativeSentiScore,
-                                    WriterId = issuer.Id,
-                                    State = issue.State.StringValue,
-                                });
-                            }
-                        }
-                        else
-                        {
-                            /*if (!unitOfWork.PullRequest.Exist(issue.Id))
-                            {
-                                pullRequestList.Add(new PullRequestT()
-                                {
-                                    RepositoryId = repositoryId,
-                                    RequestNumber = issue.Number,
-                                    Title = issue.Title,
-                                    PosSentiment = sentimentCal.PositoiveSentiScore,
-                                    NegSentiment = sentimentCal.NegativeSentiScore,
-                                    WriterId = issuer.Id,
-                                    State = issue.State.StringValue,
-                                    PullRequestId = issue.Id
-                                });
-                            }*/
+                                RepositoryId = repositoryId,
+                                IssueNumber = issue.Number,
+                                PosSentiment = bodyPos,
+                                NegSentiment = bodyNeg,
+                                WriterId = issuer.Id,
+                                State = issue.State.StringValue,
+                                IssueType = issueType,
+                                NegSentimentTitle = titleNeg,
+                                PosSentimentTitle = titlePos
+                            });
                         }
                     }
                     unitOfWork.Issue.AddRange(issueList);
