@@ -44,10 +44,10 @@ namespace Sentiment.Services.Service
             var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
 
-            //var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
-            //var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
-            //var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
-            //await Task.WhenAll(t2, t3, t4);
+            var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
+            var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
+            var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
+            await Task.WhenAll(t2, t3, t4);
             
         }
 
