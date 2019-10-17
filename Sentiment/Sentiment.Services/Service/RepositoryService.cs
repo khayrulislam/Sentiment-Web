@@ -41,14 +41,24 @@ namespace Sentiment.Services.Service
 
         public async Task ExecuteAnalysisAsync(string repoName, string repoOwnerName)
         {
+            DateTime start = DateTime.Now;
             var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
+            /*
+                        var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
+                        var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
+                        var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
+                        await Task.WhenAll(t2, t3, t4);*/
 
-            var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
-            var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
-            var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
-            await Task.WhenAll(t2, t3, t4);
-            
+            await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
+            await issueService.StoreAllIssuesAsync(repoId, repositoryId);
+            await commitService.StoreAllCommitsAsync(repoId, repositoryId);
+            /*            var t2 = Task.Run(() => { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
+                        var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
+                        var t3 = Task.Run(() => { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
+                        await Task.WhenAll(t2, t3, t4);*/
+            DateTime end = DateTime.Now;
+            var dif = end - start;
         }
 
         private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
