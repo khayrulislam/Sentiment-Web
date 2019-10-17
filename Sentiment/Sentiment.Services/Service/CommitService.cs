@@ -101,10 +101,18 @@ namespace Sentiment.Services.Service
                         unitOfWork.Complete();
                         unitOfWork.BranchCommit.AddRange(branchCommitList);
                         unitOfWork.Complete();
-
+                        await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
 
                     }
                 }
+            }
+        }
+
+        public CommitT GetBySha(string sha)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Commit.GetBySha(sha);
             }
         }
     }

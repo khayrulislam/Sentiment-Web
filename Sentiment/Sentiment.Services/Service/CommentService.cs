@@ -19,6 +19,7 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         ApiOptions option;
         ContributorService contributorService;
+        CommitService commitService;
         public CommentService()
         {
             Initialize();
@@ -30,6 +31,7 @@ namespace Sentiment.Services.Service
             this.commitCommentClient = gitHubClient.Repository.Comment;
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
+            this.commitService = new CommitService();
 
             this.option = new ApiOptions()
             {
@@ -50,19 +52,17 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                var commit = unitOfWork.Commit.GetBySha(sha);
-                var count = 0;
-                while (true) {
-                    option.StartPage = ++count;
-                    var comments = await commitCommentClient.GetAllForCommit(repoId,sha);
-                    var commentList = new List<CommitCommentT>();
-                    foreach (var comment in comments)
+                var commit = commitService.GetBySha(sha);
+                var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
+                var commentList = new List<CommitCommentT>();
+                foreach (var comment in comments)
+                {
+                    if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
                     {
-                        // check comment exist
-                        //var
                         var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
                         sentimentCal.CalculateSentiment(comment.Body);
-                        commentList.Add( new CommitCommentT() {
+                        commentList.Add(new CommitCommentT()
+                        {
                             CommitId = commit.Id,
                             PosSentiment = sentimentCal.PositoiveSentiScore,
                             NegSentiment = sentimentCal.NegativeSentiScore,
@@ -71,6 +71,8 @@ namespace Sentiment.Services.Service
                             DateTime = comment.UpdatedAt
                         });
                     }
+                    unitOfWork.CommitComment.AddRange(commentList);
+                    unitOfWork.Complete();
                 }
             }
         }
