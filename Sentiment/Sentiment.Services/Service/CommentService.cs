@@ -19,7 +19,6 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         ApiOptions option;
         ContributorService contributorService;
-        CommitService commitService;
         public CommentService()
         {
             Initialize();
@@ -31,7 +30,6 @@ namespace Sentiment.Services.Service
             this.commitCommentClient = gitHubClient.Repository.Comment;
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
-            this.commitService = new CommitService();
 
             this.option = new ApiOptions()
             {
@@ -52,7 +50,7 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                var commit = commitService.GetBySha(sha);
+                var commit = unitOfWork.Commit.GetBySha(sha);
                 var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
                 var commentList = new List<CommitCommentT>();
                 foreach (var comment in comments)
