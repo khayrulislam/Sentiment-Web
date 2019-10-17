@@ -11,6 +11,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface I_Issue:I_AllRepository<IssueT>
     {
         IEnumerable<IssueT> GetList(int repositoryId);
-        bool Exist(int repositoryId,long issueId);
+        bool Exist(int repositoryId,int issueNumber);
+        IssueT GetByNumber(int issueNumber);
     }
 }

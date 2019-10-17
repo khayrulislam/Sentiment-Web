@@ -21,6 +21,7 @@ namespace Sentiment.Services.Service
         RepositoryIssueRequest request;
         ApiOptions option;
         ContributorService contributorService;
+        CommentService commentService;
         public IssueService()
         {
             Initialize();
@@ -32,6 +33,7 @@ namespace Sentiment.Services.Service
             this.issueClient = gitHubClient.Issue;
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
+            this.commentService = new CommentService();
 
             this.request = new RepositoryIssueRequest()
             {
@@ -52,28 +54,29 @@ namespace Sentiment.Services.Service
                 option.StartPage = ++sPage;
                 var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
                 if (issueBlock.Count == 0) break;
-                else StoreIssueBlock(repositoryId, issueBlock);
+                else await StoreIssueBlockAsync(repoId, repositoryId, issueBlock);
             }
         }
 
-        private void StoreIssueBlock(int repositoryId, IReadOnlyList<Issue> issueBlock)
+        private async Task StoreIssueBlockAsync(long repoId, int repositoryId, IReadOnlyList<Issue> issueBlock)
         {
             using (var unitOfWork = new UnitOfWork())
             {
                 if (repositoryId != 0)
                 {
                     var issueList = new List<IssueT>();
-
+                    var commentedIssueList = new List<int>();
                     foreach (var issue in issueBlock)
                     {
-                        sentimentCal.CalculateSentiment(issue.Title); var titlePos = sentimentCal.PositoiveSentiScore; var titleNeg = sentimentCal.NegativeSentiScore;
-                        sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
-
-                        var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
-                        var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
-
+                        if (issue.Comments > 0) commentedIssueList.Add(issue.Number);
                         if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
                         {
+                            sentimentCal.CalculateSentiment(issue.Title); var titlePos = sentimentCal.PositoiveSentiScore; var titleNeg = sentimentCal.NegativeSentiScore;
+                            sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
+
+                            var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
+                            var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
+
                             issueList.Add(new IssueT()
                             {
                                 RepositoryId = repositoryId,
@@ -91,6 +94,8 @@ namespace Sentiment.Services.Service
                     }
                     unitOfWork.Issue.AddRange(issueList);
                     unitOfWork.Complete();
+
+                    await commentService.StoreAllIssueCommentsAsync(repoId, commentedIssueList);
                 }
             }
         }

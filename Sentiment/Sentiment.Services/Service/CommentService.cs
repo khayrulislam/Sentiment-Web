@@ -16,6 +16,7 @@ namespace Sentiment.Services.Service
     {
         GitHubClient gitHubClient;
         IRepositoryCommentsClient commitCommentClient;
+        IIssueCommentsClient issueCommentClient;
         SentimentCal sentimentCal;
         ApiOptions option;
         ContributorService contributorService;
@@ -30,6 +31,7 @@ namespace Sentiment.Services.Service
             this.commitCommentClient = gitHubClient.Repository.Comment;
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
+            this.issueCommentClient = gitHubClient.Issue.Comment;
 
             this.option = new ApiOptions()
             {
@@ -72,6 +74,44 @@ namespace Sentiment.Services.Service
                     unitOfWork.CommitComment.AddRange(commentList);
                     unitOfWork.Complete();
                 }
+            }
+        }
+
+
+        public async Task StoreAllIssueCommentsAsync(long repoId, List<int> issueNumberList)
+        {
+            foreach (var issueNumber in issueNumberList)
+            {
+                await StoreIssueCommentAsync(repoId, issueNumber);
+            }
+        }
+
+        private async Task StoreIssueCommentAsync(long repoId, int issueNumber)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var issue = unitOfWork.Issue.GetByNumber(issueNumber);
+                var comments = await issueCommentClient.GetAllForIssue(repoId,issueNumber);
+                var commentList = new List<IssueCommentT>();
+
+                foreach(var comment in comments)
+                {
+                    if (!unitOfWork.IssueComment.Exist(issue.Id, comment.Id))
+                    {
+                        var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+                        sentimentCal.CalculateSentiment(comment.Body);
+                        commentList.Add(new IssueCommentT()
+                        {
+                            IssueId = issue.Id,
+                            CommentNumber = comment.Id,
+                            PosSentiment = sentimentCal.PositoiveSentiScore,
+                            NegSentiment = sentimentCal.NegativeSentiScore,
+                            WriterId = issuer.Id
+                        });
+                    }
+                }
+                unitOfWork.IssueComment.AddRange(commentList);
+                unitOfWork.Complete();
             }
         }
     }

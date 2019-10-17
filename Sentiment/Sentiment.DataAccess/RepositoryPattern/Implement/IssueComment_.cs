@@ -15,5 +15,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             this._dbContext = dbContext;
         }
+
+        public bool Exist(int issueId, int commentNumber)
+        {
+            return _dbContext.IssueComments.Any(ic=>ic.IssueId == issueId && ic.CommentNumber == commentNumber);
+        }
     }
 }
