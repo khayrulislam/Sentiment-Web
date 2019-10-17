@@ -50,8 +50,8 @@ namespace Sentiment.Services.Service
                         var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
                         await Task.WhenAll(t2, t3, t4);*/
 
-            await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
-            await issueService.StoreAllIssuesAsync(repoId, repositoryId);
+            //await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
+            //await issueService.StoreAllIssuesAsync(repoId, repositoryId);
             await commitService.StoreAllCommitsAsync(repoId, repositoryId);
             /*            var t2 = Task.Run(() => { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
                         var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });

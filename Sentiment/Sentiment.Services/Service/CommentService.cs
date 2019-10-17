@@ -44,7 +44,31 @@ namespace Sentiment.Services.Service
         {
             foreach(string sha in shaList)
             {
-                await StoreCommitCommentAsync(repoId, sha);
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var commit = unitOfWork.Commit.GetBySha(sha);
+                    var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
+                    var commentList = new List<CommitCommentT>();
+                    foreach (var comment in comments)
+                    {
+                        if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
+                        {
+                            var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+                            sentimentCal.CalculateSentiment(comment.Body);
+                            commentList.Add(new CommitCommentT()
+                            {
+                                CommitId = commit.Id,
+                                PosSentiment = sentimentCal.PositoiveSentiScore,
+                                NegSentiment = sentimentCal.NegativeSentiScore,
+                                WriterId = commenter.Id,
+                                CommentNumber = comment.Id,
+                                DateTime = comment.UpdatedAt
+                            });
+                        }
+                    }
+                    unitOfWork.CommitComment.AddRange(commentList);
+                    unitOfWork.Complete();
+                }
             }
         }
 

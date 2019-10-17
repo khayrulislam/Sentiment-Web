@@ -95,13 +95,31 @@ namespace Sentiment.Services.Service
                                         Commit = comm
                                     });
                                 }
+                                else
+                                {
+                                    sentimentCal.CalculateSentiment(commit.Commit.Message);
+                                    var comm = new CommitT()
+                                    {
+                                        Sha = commit.Sha,
+                                        PosSentiment = sentimentCal.PositoiveSentiScore,
+                                        NegSentiment = sentimentCal.NegativeSentiScore,
+                                        RepositoryId = repositoryId
+                                    };
+                                    commitList.Add(comm);
+                                    branchCommitList.Add(new BranchCommitT()
+                                    {
+                                        Branch = branch,
+                                        Commit = comm
+                                    });
+                                }
                             }
                         }
                         unitOfWork.Commit.AddRange(commitList);
                         unitOfWork.Complete();
                         unitOfWork.BranchCommit.AddRange(branchCommitList);
                         unitOfWork.Complete();
-                        await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
+                        if(commentedShaList.Count > 0)
+                            await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
 
                     }
                 }
