@@ -119,7 +119,11 @@ namespace Sentiment.Services.Service
                         unitOfWork.BranchCommit.AddRange(branchCommitList);
                         unitOfWork.Complete();
                         if(commentedShaList.Count > 0)
-                            await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
+                        {
+                            var xx = Task.Factory.StartNew(() => commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList));
+
+                        }
+                        //await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
 
                     }
                 }

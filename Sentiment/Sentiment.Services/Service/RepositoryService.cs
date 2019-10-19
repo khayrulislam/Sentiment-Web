@@ -44,6 +44,17 @@ namespace Sentiment.Services.Service
             DateTime start = DateTime.Now;
             var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
+            await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
+            await issueService.StoreAllIssuesAsync(repoId, repositoryId);
+
+            var tt = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
+
+            if (tt.IsCompleted)
+            {
+                DateTime end = DateTime.Now;
+                var dif = end - start;
+            }
+
             /*
                         var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
                         var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
@@ -52,13 +63,37 @@ namespace Sentiment.Services.Service
 
             //await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
             //await issueService.StoreAllIssuesAsync(repoId, repositoryId);
-            await commitService.StoreAllCommitsAsync(repoId, repositoryId);
-            /*            var t2 = Task.Run(() => { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
+            //await commitService.StoreAllCommitsAsync(repoId, repositoryId);
+
+            /*            var x = Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId));
+                        var y = Task.Factory.StartNew(() => issueService.StoreAllIssuesAsync(repoId, repositoryId));
+                        var z = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
+
+
+                        x.Wait();
+                        y.Wait();
+                        z.Wait();
+            */
+
+
+            /*            var tasks = new[]
+                        {
+                            Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId)),
+                            Task.Factory.StartNew(() => issueService.StoreAllIssuesAsync(repoId, repositoryId)),
+                            Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId))
+                        };
+                        Task.WaitAll(tasks);*/
+
+            //if(tasks.All().IsCompleted)
+
+            /*
+
+                        var t2 = Task.Run(() => { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
                         var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
                         var t3 = Task.Run(() => { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
                         await Task.WhenAll(t2, t3, t4);*/
-            DateTime end = DateTime.Now;
-            var dif = end - start;
+
+
         }
 
         private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)

@@ -54,11 +54,11 @@ namespace Sentiment.Services.Service
                 option.StartPage = ++sPage;
                 var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
                 if (issueBlock.Count == 0) break;
-                else await StoreIssueBlockAsync(repoId, repositoryId, issueBlock);
+                else  StoreIssueBlock(repoId, repositoryId, issueBlock);
             }
         }
 
-        private async Task StoreIssueBlockAsync(long repoId, int repositoryId, IReadOnlyList<Issue> issueBlock)
+        private void StoreIssueBlock(long repoId, int repositoryId, IReadOnlyList<Issue> issueBlock)
         {
             using (var unitOfWork = new UnitOfWork())
             {
@@ -94,8 +94,12 @@ namespace Sentiment.Services.Service
                     }
                     unitOfWork.Issue.AddRange(issueList);
                     unitOfWork.Complete();
+                    if (commentedIssueList.Count > 0)
+                    {
+                        var xx = Task.Factory.StartNew(() => commentService.StoreAllIssueCommentsAsync(repoId, commentedIssueList));
+                    }
 
-                    await commentService.StoreAllIssueCommentsAsync(repoId, commentedIssueList);
+                    //await commentService.StoreAllIssueCommentsAsync(repoId, commentedIssueList);
                 }
             }
         }
