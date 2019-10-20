@@ -42,6 +42,8 @@ namespace Sentiment.Services.Service
 
         public async Task StoreAllCommitCommentsAsync(long repoId, List<string> shaList)
         {
+            var list = new List<Task>();
+
             foreach(string sha in shaList)
             {
                 using (var unitOfWork = new UnitOfWork())
@@ -49,27 +51,36 @@ namespace Sentiment.Services.Service
                     var commit = unitOfWork.Commit.GetBySha(sha);
                     var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
                     var commentList = new List<CommitCommentT>();
-                    foreach (var comment in comments)
-                    {
-                        if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
+                    // problem in exist
+                    list.Add(Task.Run(()=> {
+                        foreach (var comment in comments)
                         {
-                            var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
-                            sentimentCal.CalculateSentiment(comment.Body);
-                            commentList.Add(new CommitCommentT()
+                            if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
                             {
-                                CommitId = commit.Id,
-                                PosSentiment = sentimentCal.PositoiveSentiScore,
-                                NegSentiment = sentimentCal.NegativeSentiScore,
-                                WriterId = commenter.Id,
-                                CommentNumber = comment.Id,
-                                DateTime = comment.UpdatedAt
-                            });
+                                var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+                                sentimentCal.CalculateSentiment(comment.Body);
+                                commentList.Add(new CommitCommentT()
+                                {
+                                    CommitId = commit.Id,
+                                    PosSentiment = sentimentCal.PositoiveSentiScore,
+                                    NegSentiment = sentimentCal.NegativeSentiScore,
+                                    WriterId = commenter.Id,
+                                    CommentNumber = comment.Id,
+                                    DateTime = comment.UpdatedAt
+                                });
+                            }
                         }
-                    }
-                    unitOfWork.CommitComment.AddRange(commentList);
-                    unitOfWork.Complete();
+                        unitOfWork.CommitComment.AddRange(commentList);
+                        unitOfWork.Complete();
+
+                        return 1;
+                    }));
+
                 }
             }
+
+            await Task.WhenAll(list.ToArray());
+
         }
 
         private async Task StoreCommitCommentAsync(long repoId, string sha)
@@ -112,30 +123,37 @@ namespace Sentiment.Services.Service
 
         public async Task StoreIssueCommentAsync(long repoId, int issueNumber)
         {
+            var list = new List<Task>();
             using (var unitOfWork = new UnitOfWork())
             {
                 var issue = unitOfWork.Issue.GetByNumber(issueNumber);
                 var comments = await issueCommentClient.GetAllForIssue(repoId,issueNumber);
                 var commentList = new List<IssueCommentT>();
 
-                foreach(var comment in comments)
-                {
-                    if (!unitOfWork.IssueComment.Exist(issue.Id, comment.Id))
+                list.Add( Task.Run(()=> {
+
+                    foreach (var comment in comments)
                     {
-                        var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
-                        sentimentCal.CalculateSentiment(comment.Body);
-                        commentList.Add(new IssueCommentT()
+                        if (!unitOfWork.IssueComment.Exist(issue.Id, comment.Id))
                         {
-                            IssueId = issue.Id,
-                            CommentNumber = comment.Id,
-                            PosSentiment = sentimentCal.PositoiveSentiScore,
-                            NegSentiment = sentimentCal.NegativeSentiScore,
-                            WriterId = issuer.Id
-                        });
+                            var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+                            sentimentCal.CalculateSentiment(comment.Body);
+                            commentList.Add(new IssueCommentT()
+                            {
+                                IssueId = issue.Id,
+                                CommentNumber = comment.Id,
+                                PosSentiment = sentimentCal.PositoiveSentiScore,
+                                NegSentiment = sentimentCal.NegativeSentiScore,
+                                WriterId = issuer.Id
+                            });
+                        }
                     }
-                }
-                unitOfWork.IssueComment.AddRange(commentList);
-                unitOfWork.Complete();
+                    unitOfWork.IssueComment.AddRange(commentList);
+                    unitOfWork.Complete();
+                    return 1;
+                }));
+
+                await Task.WhenAll(list.ToArray());
             }
         }
     }

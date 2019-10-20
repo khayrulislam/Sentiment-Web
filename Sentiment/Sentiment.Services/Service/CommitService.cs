@@ -21,6 +21,8 @@ namespace Sentiment.Services.Service
         ApiOptions option;
         ContributorService contributorService;
         CommentService commentService;
+        List<string> shaList = new List<string>();
+
         public CommitService()
         {
             Initialize();
@@ -50,11 +52,8 @@ namespace Sentiment.Services.Service
                 {
                     await ExecuteBranchAsync(branch, repoId, repositoryId);
                 }
-/*
-                unitOfWork.Branch.GetList(repositoryId).ToList().ForEach( (branch) => {
-                     
-                });*/
             }
+            await commentService.StoreAllCommitCommentsAsync(repoId, shaList);
         }
 
         private async Task ExecuteBranchAsync(BranchT branch, long repoId, int repositoryId)
@@ -82,10 +81,9 @@ namespace Sentiment.Services.Service
                 var branch = unitOfWork.Branch.Get(branchId);
                 var commitList = new List<CommitT>();
                 var branchCommitList = new List<BranchCommitT>();
-                var commentedShaList = new List<string>();
 
                 allCommits.ToList().ForEach((commit)=> {
-                    if (commit.Commit.CommentCount > 0) commentedShaList.Add(commit.Sha);
+                    if (commit.Commit.CommentCount > 0) shaList.Add(commit.Sha);
                     if (!unitOfWork.Commit.Exist(commit.Sha))
                     {
                         CommitT comm = GetACommit(commit, repositoryId);
@@ -98,7 +96,6 @@ namespace Sentiment.Services.Service
                     }
                 });
                 unitOfWork.Commit.AddRange(commitList);
-                //unitOfWork.Complete();
                 unitOfWork.BranchCommit.AddRange(branchCommitList);
                 unitOfWork.Complete();
             }

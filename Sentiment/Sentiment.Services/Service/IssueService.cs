@@ -61,6 +61,7 @@ namespace Sentiment.Services.Service
                 } 
             }
             Task.WaitAll(list.ToArray());
+            await commentService.StoreAllIssueCommentsAsync(repoId, commentList);
         }
 
         private void StoreIssueBlockAsync(int repositoryId, IReadOnlyList<Issue> issueBlock)
