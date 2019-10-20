@@ -45,15 +45,26 @@ namespace Sentiment.Services.Service
             var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
             await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
-            await issueService.StoreAllIssuesAsync(repoId, repositoryId);
 
-            var tt = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
+            
+            //var contriTask =  Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId));
+            var issueTask = Task.Factory.StartNew(() => issueService.StoreAllIssuesAsync(repoId, repositoryId));
+            var commitTask = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
+            
+             
+            //Task.WaitAll(tasklist.ToArray());
 
-            if (tt.IsCompleted)
-            {
-                DateTime end = DateTime.Now;
-                var dif = end - start;
-            }
+
+
+            /*            await issueService.StoreAllIssuesAsync(repoId, repositoryId);
+
+                        var tt = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
+
+                        if (tt.IsCompleted)
+                        {
+                            DateTime end = DateTime.Now;
+                            var dif = end - start;
+                        }*/
 
             /*
                         var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
@@ -76,13 +87,10 @@ namespace Sentiment.Services.Service
             */
 
 
-            /*            var tasks = new[]
-                        {
-                            Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId)),
-                            Task.Factory.StartNew(() => issueService.StoreAllIssuesAsync(repoId, repositoryId)),
-                            Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId))
-                        };
-                        Task.WaitAll(tasks);*/
+
+
+
+
 
             //if(tasks.All().IsCompleted)
 

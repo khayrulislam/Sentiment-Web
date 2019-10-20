@@ -45,11 +45,62 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                var branchList = unitOfWork.Branch.GetList(repositoryId);
-                foreach (var branch in branchList)
+                var list = unitOfWork.Branch.GetList(repositoryId);
+                foreach(var branch in list)
                 {
-                    await StoreBranchCommitAsync(repoId, branch.Id, repositoryId);
+                    await ExecuteBranchAsync(branch, repoId, repositoryId);
                 }
+/*
+                unitOfWork.Branch.GetList(repositoryId).ToList().ForEach( (branch) => {
+                     
+                });*/
+            }
+        }
+
+        private async Task ExecuteBranchAsync(BranchT branch, long repoId, int repositoryId)
+        {
+            var list = new List<Task>();
+            request.Sha = branch.Name;
+            var page = 0;
+            while (true)
+            {
+                option.StartPage = ++page;
+                var allCommits = await commitClient.GetAll(repoId, request, option);
+                if (allCommits.Count == 0) break;
+                else
+                {
+                    list.Add(Task.Run(() => { StoreBranchCommit(branch.Id, repositoryId, allCommits); return 1; }));
+                }
+            }
+            await Task.WhenAll(list.ToArray());
+        }
+
+        private void StoreBranchCommit(int branchId, int repositoryId, IReadOnlyList<GitHubCommit> allCommits)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var branch = unitOfWork.Branch.Get(branchId);
+                var commitList = new List<CommitT>();
+                var branchCommitList = new List<BranchCommitT>();
+                var commentedShaList = new List<string>();
+
+                allCommits.ToList().ForEach((commit)=> {
+                    if (commit.Commit.CommentCount > 0) commentedShaList.Add(commit.Sha);
+                    if (!unitOfWork.Commit.Exist(commit.Sha))
+                    {
+                        CommitT comm = GetACommit(commit, repositoryId);
+                        commitList.Add(comm);
+                        branchCommitList.Add(new BranchCommitT()
+                        {
+                            Branch = branch,
+                            Commit = comm
+                        });
+                    }
+                });
+                unitOfWork.Commit.AddRange(commitList);
+                //unitOfWork.Complete();
+                unitOfWork.BranchCommit.AddRange(branchCommitList);
+                unitOfWork.Complete();
             }
         }
 
@@ -76,58 +127,44 @@ namespace Sentiment.Services.Service
                             if (commit.Commit.CommentCount > 0) commentedShaList.Add(commit.Sha);
                             if (!unitOfWork.Commit.Exist(commit.Sha))
                             {
-                                if (commit.Committer != null)
+                                CommitT comm = GetACommit(commit, repositoryId);
+                                commitList.Add(comm);
+                                branchCommitList.Add(new BranchCommitT()
                                 {
-                                    var commiter = contributorService.GetContributor(commit.Committer.Id,commit.Committer.Login);
-                                    sentimentCal.CalculateSentiment(commit.Commit.Message);
-                                    var comm = new CommitT()
-                                    {
-                                        Sha = commit.Sha,
-                                        WriterId = commiter.Id,
-                                        PosSentiment = sentimentCal.PositoiveSentiScore,
-                                        NegSentiment = sentimentCal.NegativeSentiScore,
-                                        RepositoryId = repositoryId
-                                    };
-                                    commitList.Add(comm);
-                                    branchCommitList.Add(new BranchCommitT()
-                                    {
-                                        Branch = branch,
-                                        Commit = comm
-                                    });
-                                }
-                                else
-                                {
-                                    sentimentCal.CalculateSentiment(commit.Commit.Message);
-                                    var comm = new CommitT()
-                                    {
-                                        Sha = commit.Sha,
-                                        PosSentiment = sentimentCal.PositoiveSentiScore,
-                                        NegSentiment = sentimentCal.NegativeSentiScore,
-                                        RepositoryId = repositoryId
-                                    };
-                                    commitList.Add(comm);
-                                    branchCommitList.Add(new BranchCommitT()
-                                    {
-                                        Branch = branch,
-                                        Commit = comm
-                                    });
-                                }
+                                    Branch = branch,
+                                    Commit = comm
+                                });
                             }
                         }
                         unitOfWork.Commit.AddRange(commitList);
                         unitOfWork.Complete();
                         unitOfWork.BranchCommit.AddRange(branchCommitList);
                         unitOfWork.Complete();
-                        if(commentedShaList.Count > 0)
+                        /*if(commentedShaList.Count > 0)
                         {
                             var xx = Task.Factory.StartNew(() => commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList));
 
-                        }
+                        }*/
                         //await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
 
                     }
                 }
             }
+        }
+
+        private CommitT GetACommit(GitHubCommit commit, int repositoryId)
+        {
+            ContributorT commiter = null;
+            if (commit.Committer != null) commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
+            sentimentCal.CalculateSentiment(commit.Commit.Message);
+            return new CommitT()
+            {
+                Sha = commit.Sha,
+                Writer = commiter,
+                PosSentiment = sentimentCal.PositoiveSentiScore,
+                NegSentiment = sentimentCal.NegativeSentiScore,
+                RepositoryId = repositoryId
+            };
         }
 
         public CommitT GetBySha(string sha)

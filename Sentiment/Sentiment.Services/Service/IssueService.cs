@@ -22,6 +22,7 @@ namespace Sentiment.Services.Service
         ApiOptions option;
         ContributorService contributorService;
         CommentService commentService;
+        List<int> commentList = new List<int>();
         public IssueService()
         {
             Initialize();
@@ -49,59 +50,57 @@ namespace Sentiment.Services.Service
         public async Task StoreAllIssuesAsync(long repoId, int repositoryId)
         {
             int sPage = 0;
+            var list = new List<Task>();
             while (true)
             {
                 option.StartPage = ++sPage;
                 var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
                 if (issueBlock.Count == 0) break;
-                else  StoreIssueBlock(repoId, repositoryId, issueBlock);
+                else {
+                    list.Add(Task.Run( () => { StoreIssueBlockAsync(repositoryId, issueBlock); return 1; }));
+                } 
             }
+            Task.WaitAll(list.ToArray());
         }
 
-        private void StoreIssueBlock(long repoId, int repositoryId, IReadOnlyList<Issue> issueBlock)
+        private void StoreIssueBlockAsync(int repositoryId, IReadOnlyList<Issue> issueBlock)
         {
             using (var unitOfWork = new UnitOfWork())
             {
                 if (repositoryId != 0)
                 {
                     var issueList = new List<IssueT>();
-                    var commentedIssueList = new List<int>();
+                    var taskList = new List<Task>();
                     foreach (var issue in issueBlock)
                     {
-                        if (issue.Comments > 0) commentedIssueList.Add(issue.Number);
-                        if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
-                        {
-                            sentimentCal.CalculateSentiment(issue.Title); var titlePos = sentimentCal.PositoiveSentiScore; var titleNeg = sentimentCal.NegativeSentiScore;
-                            sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
-
-                            var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
-                            var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
-
-                            issueList.Add(new IssueT()
-                            {
-                                RepositoryId = repositoryId,
-                                IssueNumber = issue.Number,
-                                PosSentiment = bodyPos,
-                                NegSentiment = bodyNeg,
-                                WriterId = issuer.Id,
-                                State = issue.State.StringValue,
-                                IssueType = issueType,
-                                NegSentimentTitle = titleNeg,
-                                PosSentimentTitle = titlePos,
-                                DateTime = issue.UpdatedAt
-                            });
-                        }
+                        if (issue.Comments > 0) commentList.Add(issue.Number);
+                        if (!unitOfWork.Issue.Exist(repositoryId, issue.Number)) issueList.Add(GetAIssue(issue, repositoryId));
                     }
                     unitOfWork.Issue.AddRange(issueList);
                     unitOfWork.Complete();
-                    if (commentedIssueList.Count > 0)
-                    {
-                        var xx = Task.Factory.StartNew(() => commentService.StoreAllIssueCommentsAsync(repoId, commentedIssueList));
-                    }
-
-                    //await commentService.StoreAllIssueCommentsAsync(repoId, commentedIssueList);
                 }
             }
+        }
+
+        private IssueT GetAIssue(Issue issue, int repositoryId)
+        {
+            sentimentCal.CalculateSentiment(issue.Title); var titlePos = sentimentCal.PositoiveSentiScore; var titleNeg = sentimentCal.NegativeSentiScore;
+            sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
+            var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
+            var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
+            return new IssueT()
+            {
+                RepositoryId = repositoryId,
+                IssueNumber = issue.Number,
+                PosSentiment = bodyPos,
+                NegSentiment = bodyNeg,
+                WriterId = issuer.Id,
+                State = issue.State.StringValue,
+                IssueType = issueType,
+                NegSentimentTitle = titleNeg,
+                PosSentimentTitle = titlePos,
+                DateTime = issue.UpdatedAt
+            };
         }
     }
 }

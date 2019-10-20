@@ -110,7 +110,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task StoreIssueCommentAsync(long repoId, int issueNumber)
+        public async Task StoreIssueCommentAsync(long repoId, int issueNumber)
         {
             using (var unitOfWork = new UnitOfWork())
             {
