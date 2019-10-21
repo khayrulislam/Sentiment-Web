@@ -54,7 +54,7 @@ namespace Sentiment.Services.Service
             var list = new List<Task>();
 
             list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
-            //list.Add(Task.Run(async () => { await commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; }));
+            list.Add(Task.Run(async () => { await commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; }));
              
             await Task.WhenAll(list.ToArray());
 

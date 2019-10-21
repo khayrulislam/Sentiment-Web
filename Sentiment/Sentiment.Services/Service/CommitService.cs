@@ -53,7 +53,7 @@ namespace Sentiment.Services.Service
                     await ExecuteBranchAsync(branch, repoId, repositoryId);
                 }
             }
-            await commentService.StoreAllCommitCommentsAsync(repoId, shaList.ToList());
+            //await commentService.StoreAllCommitCommentsAsync(repoId, shaList.ToList());
         }
 
         private async Task ExecuteBranchAsync(BranchT branch, long repoId, int repositoryId)
@@ -62,7 +62,7 @@ namespace Sentiment.Services.Service
             request.Sha = branch.Name;
             var page = 0;
             var allCommits = await commitClient.GetAll(repoId, request);
-            StoreBranchCommit(branch.Id, repositoryId, allCommits);
+            StoreBranchCommit(branch.Id, repoId, repositoryId, allCommits);
 
 
 
@@ -81,7 +81,7 @@ namespace Sentiment.Services.Service
             await Task.WhenAll(list.ToArray());*/
         }
 
-        private void StoreBranchCommit(int branchId, int repositoryId, IReadOnlyList<GitHubCommit> allCommits)
+        private void StoreBranchCommit(int branchId,long repoId, int repositoryId, IReadOnlyList<GitHubCommit> allCommits)
         {
             using (var unitOfWork = new UnitOfWork())
             {
@@ -89,18 +89,20 @@ namespace Sentiment.Services.Service
                 var commitList = new List<CommitT>();
                 var branchCommitList = new List<BranchCommitT>();
 
-                allCommits.ToList().ForEach((commit)=> {
-                    if (commit.Commit.CommentCount > 0) shaList.Add(commit.Sha);
-                    if (!unitOfWork.Commit.Exist(commit.Sha))
-                    {
-                        CommitT comm = GetACommit(commit, repositoryId);
-                        commitList.Add(comm);
-                        branchCommitList.Add(new BranchCommitT()
-                        {
-                            Branch = branch,
-                            Commit = comm
-                        });
+                allCommits.ToList().ForEach(async (commit)=> {
+                    CommitT comm;
+                    comm = unitOfWork.Commit.GetBySha(commit.Sha);
+                    if (comm == null) {
+                        comm = GetACommit(commit, repositoryId);
+                        unitOfWork.Commit.Add(comm);
+                        unitOfWork.Complete();
                     }
+                    if (commit.Commit.CommentCount > 0) await commentService.StoreCommitCommentAsync(repoId,commit.Sha);
+                    branchCommitList.Add(new BranchCommitT()
+                    {
+                        Branch = branch,
+                        Commit = comm
+                    });
                 });
                 unitOfWork.Commit.AddRange(commitList);
                 unitOfWork.BranchCommit.AddRange(branchCommitList);

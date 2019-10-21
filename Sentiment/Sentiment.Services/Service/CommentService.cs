@@ -78,7 +78,7 @@ namespace Sentiment.Services.Service
             await Task.WhenAll(list.ToArray());
         }
 
-        private async Task StoreCommitCommentAsync(long repoId, string sha)
+        public async Task StoreCommitCommentAsync(long repoId, string sha)
         {
             using (var unitOfWork = new UnitOfWork())
             {
