@@ -46,14 +46,20 @@ namespace Sentiment.Services.Service
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
             await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
 
-            
-            //var contriTask =  Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId));
-            var issueTask = Task.Factory.StartNew(() => issueService.StoreAllIssuesAsync(repoId, repositoryId));
-            var commitTask = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
-            
-             
-            //Task.WaitAll(tasklist.ToArray());
 
+            //var contriTask =  Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId));
+            /*var issueTask = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; });
+            var commitTask = Task.Run(() => { commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; });
+            */
+            var list = new List<Task>();
+
+            list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
+            //list.Add(Task.Run(async () => { await commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; }));
+             
+            await Task.WhenAll(list.ToArray());
+
+            DateTime end = DateTime.Now;
+            var dif = end - start;
 
 
             /*            await issueService.StoreAllIssuesAsync(repoId, repositoryId);

@@ -21,7 +21,7 @@ namespace Sentiment.Services.Service
         ApiOptions option;
         ContributorService contributorService;
         CommentService commentService;
-        List<string> shaList = new List<string>();
+        HashSet<string> shaList = new HashSet<string>();
 
         public CommitService()
         {
@@ -53,7 +53,7 @@ namespace Sentiment.Services.Service
                     await ExecuteBranchAsync(branch, repoId, repositoryId);
                 }
             }
-            await commentService.StoreAllCommitCommentsAsync(repoId, shaList);
+            await commentService.StoreAllCommitCommentsAsync(repoId, shaList.ToList());
         }
 
         private async Task ExecuteBranchAsync(BranchT branch, long repoId, int repositoryId)
@@ -61,17 +61,24 @@ namespace Sentiment.Services.Service
             var list = new List<Task>();
             request.Sha = branch.Name;
             var page = 0;
-            while (true)
+            var allCommits = await commitClient.GetAll(repoId, request);
+            StoreBranchCommit(branch.Id, repositoryId, allCommits);
+
+
+
+
+
+            /*while (true)
             {
                 option.StartPage = ++page;
-                var allCommits = await commitClient.GetAll(repoId, request, option);
+                var allCommits = await commitClient.GetAll(repoId, request);
                 if (allCommits.Count == 0) break;
                 else
                 {
                     list.Add(Task.Run(() => { StoreBranchCommit(branch.Id, repositoryId, allCommits); return 1; }));
                 }
             }
-            await Task.WhenAll(list.ToArray());
+            await Task.WhenAll(list.ToArray());*/
         }
 
         private void StoreBranchCommit(int branchId, int repositoryId, IReadOnlyList<GitHubCommit> allCommits)

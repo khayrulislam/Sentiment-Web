@@ -43,16 +43,15 @@ namespace Sentiment.Services.Service
         public async Task StoreAllCommitCommentsAsync(long repoId, List<string> shaList)
         {
             var list = new List<Task>();
-
-            foreach(string sha in shaList)
+            using (var unitOfWork = new UnitOfWork())
             {
-                using (var unitOfWork = new UnitOfWork())
+                foreach (string sha in shaList)
                 {
                     var commit = unitOfWork.Commit.GetBySha(sha);
                     var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
                     var commentList = new List<CommitCommentT>();
                     // problem in exist
-                    list.Add(Task.Run(()=> {
+                    list.Add(Task.Run(() => {
                         foreach (var comment in comments)
                         {
                             if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
@@ -72,15 +71,11 @@ namespace Sentiment.Services.Service
                         }
                         unitOfWork.CommitComment.AddRange(commentList);
                         unitOfWork.Complete();
-
                         return 1;
                     }));
-
                 }
             }
-
             await Task.WhenAll(list.ToArray());
-
         }
 
         private async Task StoreCommitCommentAsync(long repoId, string sha)
@@ -115,45 +110,40 @@ namespace Sentiment.Services.Service
 
         public async Task StoreAllIssueCommentsAsync(long repoId, List<int> issueNumberList)
         {
+            var list = new List<Task>();
             foreach (var issueNumber in issueNumberList)
             {
-                await StoreIssueCommentAsync(repoId, issueNumber);
+                list.Add(Task.Run(async ()=> { await StoreIssueCommentAsync(repoId, issueNumber); return 1; }));
             }
+            await Task.WhenAll(list.ToArray());
         }
 
         public async Task StoreIssueCommentAsync(long repoId, int issueNumber)
         {
-            var list = new List<Task>();
+            
             using (var unitOfWork = new UnitOfWork())
             {
                 var issue = unitOfWork.Issue.GetByNumber(issueNumber);
-                var comments = await issueCommentClient.GetAllForIssue(repoId,issueNumber);
+                var comments = await issueCommentClient.GetAllForIssue(repoId, issueNumber);
                 var commentList = new List<IssueCommentT>();
-
-                list.Add( Task.Run(()=> {
-
-                    foreach (var comment in comments)
+                foreach (var comment in comments)
+                {
+                    if (!unitOfWork.IssueComment.Exist(issue.Id, comment.Id))
                     {
-                        if (!unitOfWork.IssueComment.Exist(issue.Id, comment.Id))
+                        var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+                        sentimentCal.CalculateSentiment(comment.Body);
+                        commentList.Add(new IssueCommentT()
                         {
-                            var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
-                            sentimentCal.CalculateSentiment(comment.Body);
-                            commentList.Add(new IssueCommentT()
-                            {
-                                IssueId = issue.Id,
-                                CommentNumber = comment.Id,
-                                PosSentiment = sentimentCal.PositoiveSentiScore,
-                                NegSentiment = sentimentCal.NegativeSentiScore,
-                                WriterId = issuer.Id
-                            });
-                        }
+                            IssueId = issue.Id,
+                            CommentNumber = comment.Id,
+                            PosSentiment = sentimentCal.PositoiveSentiScore,
+                            NegSentiment = sentimentCal.NegativeSentiScore,
+                            WriterId = issuer.Id
+                        });
                     }
-                    unitOfWork.IssueComment.AddRange(commentList);
-                    unitOfWork.Complete();
-                    return 1;
-                }));
-
-                await Task.WhenAll(list.ToArray());
+                }
+                unitOfWork.IssueComment.AddRange(commentList);
+                unitOfWork.Complete();
             }
         }
     }

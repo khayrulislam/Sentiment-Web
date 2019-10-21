@@ -22,7 +22,7 @@ namespace Sentiment.Services.Service
         ApiOptions option;
         ContributorService contributorService;
         CommentService commentService;
-        List<int> commentList = new List<int>();
+        HashSet<int> commentList = new HashSet<int>();
         public IssueService()
         {
             Initialize();
@@ -38,20 +38,55 @@ namespace Sentiment.Services.Service
 
             this.request = new RepositoryIssueRequest()
             {
-                State = ItemStateFilter.All
+                State = ItemStateFilter.All,
+                SortDirection = SortDirection.Ascending,
+//                Since = new DateTimeOffset(2017,1,1,12,00,00, new TimeSpan(3, 0, 0))
+            };
+
+            var filr = new IssueFilter() {
+                
             };
             this.option = new ApiOptions()
             {
                 PageCount = 1,
                 PageSize = 100
+                
             };
         }
 
         public async Task StoreAllIssuesAsync(long repoId, int repositoryId)
         {
-            int sPage = 0;
-            var list = new List<Task>();
-            while (true)
+            var issueBlock = await issueClient.GetAllForRepository(repoId, request);
+            using (var unitOfWork = new UnitOfWork())
+            {
+                if (repositoryId != 0)
+                {
+                    var issueList = new List<IssueT>();
+                    var taskList = new List<Task>();
+                    var list = new List<Task>();
+                    foreach (var issue in issueBlock)
+                    {
+                        //if (issue.Comments > 0) commentList.Add(issue.Number);
+                        if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
+                        {
+                            unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
+                            unitOfWork.Complete();
+                        }
+                        if (issue.Comments > 0)
+                        {
+                            await commentService.StoreIssueCommentAsync(repoId, issue.Number);
+                            //list.Add(Task.Run(async () => { await commentService.StoreIssueCommentAsync(repoId, issue.Number); return 1; }));
+                        }
+                    }
+                    /*unitOfWork.Issue.AddRange(issueList);
+                    unitOfWork.Complete();*/
+                    //await Task.WhenAll(list.ToArray());
+                }
+            }
+            /*
+            //StoreIssueBlockAsync(repositoryId, issueBlock);
+             * 
+             * while (true)
             {
                 option.StartPage = ++sPage;
                 var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
@@ -60,8 +95,8 @@ namespace Sentiment.Services.Service
                     list.Add(Task.Run( () => { StoreIssueBlockAsync(repositoryId, issueBlock); return 1; }));
                 } 
             }
-            Task.WaitAll(list.ToArray());
-            await commentService.StoreAllIssueCommentsAsync(repoId, commentList);
+            Task.WaitAll(list.ToArray());*/
+            //await commentService.StoreAllIssueCommentsAsync(repoId, commentList.ToList());
         }
 
         private void StoreIssueBlockAsync(int repositoryId, IReadOnlyList<Issue> issueBlock)
