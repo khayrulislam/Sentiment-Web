@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 namespace Sentiment.DataAccess.DataClass
 {
     [Table("IssueComment")]
-    public class IssueCommentT:SentimentComment
+    public class IssueCommentT:Sentiment
     {
         public int Id { get; set; }
-        public long CommentNumber { get; set; }
         public int IssueId { get; set; }
         public IssueT Issue { get; set; }
-        public DateTimeOffset DateTime { get; set; }
-
+        public int RepositoryId { get; set; }
+        public long CommentNumber { get; set; }
+        public DateTimeOffset Date { get; set; }
     }
 }

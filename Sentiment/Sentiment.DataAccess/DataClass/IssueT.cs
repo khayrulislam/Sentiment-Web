@@ -15,11 +15,11 @@ namespace Sentiment.DataAccess.DataClass
         public int RepositoryId { get; set; }
         public RepositoryT Repository { get; set; }
         public int IssueNumber { get; set; }
-        public int PosSentimentTitle { get; set; }
-        public int NegSentimentTitle { get; set; }
+        public int PosTitle { get; set; }
+        public int NegTitle { get; set; }
         public string State { get; set; }
         public IssueType IssueType { get; set; }
-        public DateTimeOffset? DateTime { get; set; }
+        public DateTimeOffset? UpdateDate { get; set; }
         public ICollection<IssueCommentT> Comments { get; set; }
 
     }

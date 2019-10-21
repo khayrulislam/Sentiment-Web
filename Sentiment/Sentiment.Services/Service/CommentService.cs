@@ -61,8 +61,8 @@ namespace Sentiment.Services.Service
                                 commentList.Add(new CommitCommentT()
                                 {
                                     CommitId = commit.Id,
-                                    PosSentiment = sentimentCal.PositoiveSentiScore,
-                                    NegSentiment = sentimentCal.NegativeSentiScore,
+                                    Pos = sentimentCal.PositoiveSentiScore,
+                                    Neg = sentimentCal.NegativeSentiScore,
                                     WriterId = commenter.Id,
                                     CommentNumber = comment.Id,
                                     DateTime = comment.UpdatedAt
@@ -94,8 +94,8 @@ namespace Sentiment.Services.Service
                         commentList.Add(new CommitCommentT()
                         {
                             CommitId = commit.Id,
-                            PosSentiment = sentimentCal.PositoiveSentiScore,
-                            NegSentiment = sentimentCal.NegativeSentiScore,
+                            Pos = sentimentCal.PositoiveSentiScore,
+                            Neg = sentimentCal.NegativeSentiScore,
                             WriterId = commenter.Id,
                             CommentNumber = comment.Id,
                             DateTime = comment.UpdatedAt
@@ -136,8 +136,8 @@ namespace Sentiment.Services.Service
                         {
                             IssueId = issue.Id,
                             CommentNumber = comment.Id,
-                            PosSentiment = sentimentCal.PositoiveSentiScore,
-                            NegSentiment = sentimentCal.NegativeSentiScore,
+                            Pos = sentimentCal.PositoiveSentiScore,
+                            Neg = sentimentCal.NegativeSentiScore,
                             WriterId = issuer.Id
                         });
                     }

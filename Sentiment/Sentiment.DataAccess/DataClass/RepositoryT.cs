@@ -14,6 +14,7 @@ namespace Sentiment.DataAccess.DataClass
         public long RepoId { get; set; }
         public string Name { get; set; }
         public string OwnerName { get; set; }
+        public DateTimeOffset AnalysisDate { get; set; }
         public string Url { get; set; }
         public ICollection<BranchT> Branch { get; set; }
         public IList<RepositoryContributorT> RepositoryContributors { get; set; }

@@ -128,14 +128,14 @@ namespace Sentiment.Services.Service
             {
                 RepositoryId = repositoryId,
                 IssueNumber = issue.Number,
-                PosSentiment = bodyPos,
-                NegSentiment = bodyNeg,
+                Pos = bodyPos,
+                Neg = bodyNeg,
                 WriterId = issuer.Id,
                 State = issue.State.StringValue,
                 IssueType = issueType,
-                NegSentimentTitle = titleNeg,
-                PosSentimentTitle = titlePos,
-                DateTime = issue.UpdatedAt
+                NegTitle = titleNeg,
+                PosTitle = titlePos,
+                UpdateDate = issue.UpdatedAt
             };
         }
     }

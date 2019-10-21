@@ -167,8 +167,8 @@ namespace Sentiment.Services.Service
             {
                 Sha = commit.Sha,
                 Writer = commiter,
-                PosSentiment = sentimentCal.PositoiveSentiScore,
-                NegSentiment = sentimentCal.NegativeSentiScore,
+                Pos = sentimentCal.PositoiveSentiScore,
+                Neg = sentimentCal.NegativeSentiScore,
                 RepositoryId = repositoryId
             };
         }
