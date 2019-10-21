@@ -94,6 +94,8 @@
     <Compile Include="RepositoryPattern\IRepository\I_AllRepository.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Repository.cs" />
     <Compile Include="Shared\Constant.cs" />
+    <Compile Include="Shared\Filter.cs" />
+    <Compile Include="Shared\Reply.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

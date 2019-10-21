@@ -3,6 +3,7 @@ using Sentiment.DataAccess;
 using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.Implement;
 using Sentiment.DataAccess.RepositoryPattern.IRepository;
+using Sentiment.DataAccess.Shared;
 using Sentiment.Services.GitHub;
 using Sentiment.Services.Library;
 using System;
@@ -45,12 +46,6 @@ namespace Sentiment.Services.Service
             var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
             await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
-
-
-            //var contriTask =  Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId));
-            /*var issueTask = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; });
-            var commitTask = Task.Run(() => { commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; });
-            */
             var list = new List<Task>();
 
             list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
@@ -60,54 +55,6 @@ namespace Sentiment.Services.Service
 
             DateTime end = DateTime.Now;
             var dif = end - start;
-
-
-            /*            await issueService.StoreAllIssuesAsync(repoId, repositoryId);
-
-                        var tt = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
-
-                        if (tt.IsCompleted)
-                        {
-                            DateTime end = DateTime.Now;
-                            var dif = end - start;
-                        }*/
-
-            /*
-                        var t2 = Task.Run(()=> { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
-                        var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
-                        var t3 = Task.Run(()=> { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
-                        await Task.WhenAll(t2, t3, t4);*/
-
-            //await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
-            //await issueService.StoreAllIssuesAsync(repoId, repositoryId);
-            //await commitService.StoreAllCommitsAsync(repoId, repositoryId);
-
-            /*            var x = Task.Factory.StartNew(() => contributorService.StoreAllContributorsAsync(repoId, repositoryId));
-                        var y = Task.Factory.StartNew(() => issueService.StoreAllIssuesAsync(repoId, repositoryId));
-                        var z = Task.Factory.StartNew(() => commitService.StoreAllCommitsAsync(repoId, repositoryId));
-
-
-                        x.Wait();
-                        y.Wait();
-                        z.Wait();
-            */
-
-
-
-
-
-
-
-            //if(tasks.All().IsCompleted)
-
-            /*
-
-                        var t2 = Task.Run(() => { contributorService.StoreAllContributorsAsync(repoId, repositoryId); });
-                        var t4 = Task.Run(() => { issueService.StoreAllIssuesAsync(repoId, repositoryId); });
-                        var t3 = Task.Run(() => { commitService.StoreAllCommitsAsync(repoId, repositoryId); });
-                        await Task.WhenAll(t2, t3, t4);*/
-
-
         }
 
         private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
@@ -128,14 +75,35 @@ namespace Sentiment.Services.Service
                     unitOfWork.Repository.Add(repoData);
                     unitOfWork.Complete();
                 }
-                var repo = GetRepositoryByNameOwnerName(repository.Name, repository.Owner.Login);
+                var repo = GetByNameOwnerName(repository.Name, repository.Owner.Login);
                 repoId = repo.RepoId;
                 return repo.Id;
             }
         }
 
 
-        public RepositoryT GetRepositoryById(long repoId)
+        public Reply<RepositoryT> GetList()
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var list = unitOfWork.Repository.GetAll().ToList();
+                return new Reply<RepositoryT>()
+                {
+                    Data = list,
+                    TotalData = list.Count
+                };
+            }
+        }
+
+        public RepositoryT Get(int id)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Repository.Get(id);
+            }
+        }
+
+        public RepositoryT GetById(long repoId)
         {
             using (var unitOfWork = new UnitOfWork())
             {
@@ -143,7 +111,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public RepositoryT GetRepositoryByNameOwnerName(string name, string ownerName)
+        public RepositoryT GetByNameOwnerName(string name, string ownerName)
         {
             using (var unitOfWork = new UnitOfWork())
             {

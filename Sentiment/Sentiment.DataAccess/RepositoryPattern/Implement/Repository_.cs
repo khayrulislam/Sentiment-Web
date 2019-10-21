@@ -23,12 +23,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName)
         {
-            /*var repos = _dbContext.Repositories.Where(repo => repo.Name == repositoryName && repo.OwnerName == ownerName).
-                FirstOrDefault();*/
-            //repos.RepositoryContributors = _dbContext.RepositoryContributors.Where(rc => rc.RepositoryId == repos.Id)
-            //   .ToList();
-
-
             var repos = _dbContext.Repositories.Where(rep => rep.Name == repositoryName && rep.OwnerName == ownerName).FirstOrDefault();
 
             repos.Contributors = _dbContext.Repositories.Where(rep => rep.Name == repositoryName && rep.OwnerName == ownerName)
@@ -40,6 +34,11 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         public bool Exist(string repositoryName, string ownerName)
         {
             return _dbContext.Repositories.Any(repo => repo.Name == repositoryName && repo.OwnerName == ownerName );
+        }
+
+        public List<RepositoryT> GetList()
+        {
+            return _dbContext.Repositories.ToList();
         }
     }
 }
