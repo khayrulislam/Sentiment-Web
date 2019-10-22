@@ -1,4 +1,5 @@
-﻿using Sentiment.Services.Service;
+﻿using Sentiment.DataAccess.Shared;
+using Sentiment.Services.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,37 @@ namespace Sentiment.WebAPI.Controllers
         private RepositoryService repositoryService = new RepositoryService();
         
         [HttpGet]
-        public HttpResponseMessage ExecuteRepositoryAnalysis( string repoName, string repoOwnerName)
+        public HttpResponseMessage ExecuteAnalysis(string repoOwnerName, string repoName)
         {
             Task.Run(() =>
             {
                 repositoryService.ExecuteAnalysisAsync(repoName, repoOwnerName);
             });
-            //await repositoryService.ExecuteAnalysisAsync(userId,repoName,repoOwnerName).ConfigureAwait(false);
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetList()
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetList());
+        }
+
+        [HttpGet]
+        public HttpResponseMessage Get(int id)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.Get(id));
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetById(long repoId)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetById(repoId));
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetListByFilter(RepositroyFilter filter)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetFilterList(filter));
         }
     }
 }

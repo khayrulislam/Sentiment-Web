@@ -1,4 +1,5 @@
 ﻿using Sentiment.DataAccess.DataClass;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         bool Exist(string repositoryName, string ownerName);
         RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName);
         RepositoryT GetById(long repoId);
-        List<RepositoryT> GetFilterList();
+        Reply<RepositoryT> GetFilterList(RepositroyFilter repoFilter);
+
     }
 }

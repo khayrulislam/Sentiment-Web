@@ -59,8 +59,7 @@ namespace Sentiment.Services.Service
 
         private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
         {
-            var repository = await gitHubClient.Repository.Get(repoName, repoOwner);
-
+            var repository = await gitHubClient.Repository.Get(repoOwner, repoName);
             using (var unitOfWork = new UnitOfWork())
             {
                 if (!unitOfWork.Repository.Exist(repository.Name, repository.Owner.Login))
@@ -116,6 +115,14 @@ namespace Sentiment.Services.Service
             using (var unitOfWork = new UnitOfWork())
             {
                 return unitOfWork.Repository.GetByNameAndOwnerName(name, ownerName);
+            }
+        }
+
+        public Reply<RepositoryT> GetFilterList(RepositroyFilter filter)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Repository.GetFilterList(filter);
             }
         }
 

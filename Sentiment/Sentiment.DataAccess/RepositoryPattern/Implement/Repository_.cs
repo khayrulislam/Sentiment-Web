@@ -1,5 +1,6 @@
 ﻿using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.IRepository;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,5 +41,21 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             return _dbContext.Repositories.ToList();
         }
+
+        public Reply<RepositoryT> GetFilterList(RepositroyFilter repoFilter)
+        {
+            var list = _dbContext.Repositories.ToList();
+            var total = list.Count;
+            if (repoFilter.SearchText != null) list = list.Where(repo=>repo.Name.ToLower().Contains(repoFilter.SearchText.ToLower())).ToList();
+            if (repoFilter.SortOrder == "asc") list = list.OrderBy(repo => repo.Name).ToList();
+            if (repoFilter.SortOrder == "dsc") list = list.OrderByDescending(repo => repo.Name).ToList();
+            if (repoFilter.PageSize != 0 && repoFilter.PageNumber != 0) list = list.Skip(repoFilter.PageNumber * repoFilter.PageSize).Take(repoFilter.PageSize).ToList();
+
+            return new Reply<RepositoryT>() {
+                Data = list,
+                TotalData = total
+            };
+        }
+
     }
 }
