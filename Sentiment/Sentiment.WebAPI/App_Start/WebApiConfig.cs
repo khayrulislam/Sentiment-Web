@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Sentiment.WebAPI
 {
@@ -12,7 +13,9 @@ namespace Sentiment.WebAPI
             // Web API configuration and services
 
             // Web API routes
-            config.EnableCors();
+            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "GET,POST");
+
+            config.EnableCors(cors);
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

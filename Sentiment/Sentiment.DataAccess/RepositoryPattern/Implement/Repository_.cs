@@ -49,7 +49,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             if (repoFilter.SearchText != null) list = list.Where(repo=>repo.Name.ToLower().Contains(repoFilter.SearchText.ToLower())).ToList();
             if (repoFilter.SortOrder == "asc") list = list.OrderBy(repo => repo.Name).ToList();
             if (repoFilter.SortOrder == "dsc") list = list.OrderByDescending(repo => repo.Name).ToList();
-            if (repoFilter.PageSize != 0 && repoFilter.PageNumber != 0) list = list.Skip(repoFilter.PageNumber * repoFilter.PageSize).Take(repoFilter.PageSize).ToList();
+            if (repoFilter.PageSize != 0 && repoFilter.PageNumber+1 != 0) list = list.Skip(repoFilter.PageNumber * repoFilter.PageSize).Take(repoFilter.PageSize).ToList();
 
             return new Reply<RepositoryT>() {
                 Data = list,
