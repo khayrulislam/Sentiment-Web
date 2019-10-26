@@ -40,44 +40,6 @@ namespace Sentiment.Services.Service
             };
         }
 
-        public async Task StoreAllCommitCommentsAsync(long repoId, List<string> shaList)
-        {
-            var list = new List<Task>();
-            using (var unitOfWork = new UnitOfWork())
-            {
-                foreach (string sha in shaList)
-                {
-                    var commit = unitOfWork.Commit.GetBySha(sha);
-                    var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
-                    var commentList = new List<CommitCommentT>();
-                    // problem in exist
-                    list.Add(Task.Run(() => {
-                        foreach (var comment in comments)
-                        {
-                            if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
-                            {
-                                var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
-                                sentimentCal.CalculateSentiment(comment.Body);
-                                commentList.Add(new CommitCommentT()
-                                {
-                                    CommitId = commit.Id,
-                                    Pos = sentimentCal.PositoiveSentiScore,
-                                    Neg = sentimentCal.NegativeSentiScore,
-                                    WriterId = commenter.Id,
-                                    CommentNumber = comment.Id,
-                                    Date = comment.UpdatedAt
-                                });
-                            }
-                        }
-                        unitOfWork.CommitComment.AddRange(commentList);
-                        unitOfWork.Complete();
-                        return 1;
-                    }));
-                }
-            }
-            await Task.WhenAll(list.ToArray());
-        }
-
         public async Task StoreCommitCommentAsync(long repoId, string sha)
         {
             using (var unitOfWork = new UnitOfWork())
@@ -120,17 +82,6 @@ namespace Sentiment.Services.Service
             };
         }
 
-
-        /*        public async Task StoreAllIssueCommentsAsync(long repoId, List<int> issueNumberList)
-                {
-                    var list = new List<Task>();
-                    foreach (var issueNumber in issueNumberList)
-                    {
-                        list.Add(Task.Run(async ()=> { await StoreIssueCommentAsync(repoId, issueNumber); return 1; }));
-                    }
-                    await Task.WhenAll(list.ToArray());
-                }*/
-
         public async Task StoreIssueCommentAsync(long repoId,int repositoryId, int issueNumber)
         {
             using (var unitOfWork = new UnitOfWork())
@@ -149,9 +100,9 @@ namespace Sentiment.Services.Service
                         commentStore.Date = comment.UpdatedAt;
                         unitOfWork.Complete();
                     }
-                    else
+                    else if(commentStore == null)
                     {
-                        commentList.Add(GetAIssueComment(comment, issue.Id));
+                        commentList.Add(GetAIssueComment(comment, repositoryId, issue.Id));
                     }
                 });
                 unitOfWork.IssueComment.AddRange(commentList);
@@ -159,7 +110,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private IssueCommentT GetAIssueComment(IssueComment comment, int issueId)
+        private IssueCommentT GetAIssueComment(IssueComment comment,int repositoryId, int issueId)
         {
             var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
             sentimentCal.CalculateSentiment(comment.Body);
@@ -170,7 +121,8 @@ namespace Sentiment.Services.Service
                 Pos = sentimentCal.PositoiveSentiScore,
                 Neg = sentimentCal.NegativeSentiScore,
                 WriterId = issuer.Id,
-                Date = comment.UpdatedAt
+                Date = comment.UpdatedAt,
+                RepositoryId = repositoryId
             };
         }
 

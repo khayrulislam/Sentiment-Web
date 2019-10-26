@@ -21,7 +21,6 @@ namespace Sentiment.Services.Service
         ApiOptions option;
         ContributorService contributorService;
         CommentService commentService;
-        HashSet<string> shaList = new HashSet<string>();
 
         public CommitService()
         {
@@ -59,15 +58,6 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task ExecuteBranchAsync(BranchT branch, long repoId, RepositoryT repository)
-        {
-            request.Sha = branch.Name;
-            request.Since = repository.AnalysisDate;
-            var allCommits = await commitClient.GetAll(repoId, request);
-            StoreBranchCommit(branch.Id, repoId, repository.Id, allCommits);
-
-        }
-
         private void StoreBranchCommit(int branchId,long repoId, int repositoryId, IReadOnlyList<GitHubCommit> allCommits)
         {
             using (var unitOfWork = new UnitOfWork())
@@ -100,58 +90,15 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task StoreBranchCommitAsync(long repoId, int id, int repositoryId)
-        {
-            using (var unitOfWork = new UnitOfWork())
-            {
-                var branch = unitOfWork.Branch.Get(id);
-                request.Sha = branch.Name;
-                var count = 0;
-
-                while (true)
-                {
-                    option.StartPage = ++count;
-                    var allCommits = await commitClient.GetAll(repoId, request, option);
-                    if (allCommits.Count == 0) break;
-                    else
-                    {
-                        var commitList = new List<CommitT>();
-                        var branchCommitList = new List<BranchCommitT>();
-                        var commentedShaList = new List<string>();
-                        foreach (var commit in allCommits)
-                        {
-                            if (commit.Commit.CommentCount > 0) commentedShaList.Add(commit.Sha);
-                            if (!unitOfWork.Commit.Exist(commit.Sha))
-                            {
-                                CommitT comm = GetACommit(commit, repositoryId);
-                                commitList.Add(comm);
-                                branchCommitList.Add(new BranchCommitT()
-                                {
-                                    Branch = branch,
-                                    Commit = comm
-                                });
-                            }
-                        }
-                        unitOfWork.Commit.AddRange(commitList);
-                        unitOfWork.Complete();
-                        unitOfWork.BranchCommit.AddRange(branchCommitList);
-                        unitOfWork.Complete();
-                        /*if(commentedShaList.Count > 0)
-                        {
-                            var xx = Task.Factory.StartNew(() => commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList));
-
-                        }*/
-                        //await commentService.StoreAllCommitCommentsAsync(repoId, commentedShaList);
-
-                    }
-                }
-            }
-        }
-
         private CommitT GetACommit(GitHubCommit commit, int repositoryId)
         {
             ContributorT commiter = null;
-            if (commit.Committer != null) commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
+            var Date = new DateTimeOffset();
+            if (commit.Committer != null)
+            {
+                commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
+                Date = commit.Commit.Committer.Date;
+            }
             sentimentCal.CalculateSentiment(commit.Commit.Message);
             return new CommitT()
             {
@@ -159,7 +106,8 @@ namespace Sentiment.Services.Service
                 WriterId = commiter.Id,
                 Pos = sentimentCal.PositoiveSentiScore,
                 Neg = sentimentCal.NegativeSentiScore,
-                RepositoryId = repositoryId
+                RepositoryId = repositoryId,
+                DateTime = Date
             };
         }
 

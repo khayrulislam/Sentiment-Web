@@ -64,7 +64,7 @@ namespace Sentiment.Services.Service
                     var list = new List<Task>();
                     issueBlock.ToList().ForEach(async (issue) => {
                         var issueStore = unitOfWork.Issue.GetByNumber(repositoryId, issue.Number);
-                        if (issueStore!=null)
+                        if (issueStore != null)
                         {
                             sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
                             issueStore.IssueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
@@ -82,40 +82,6 @@ namespace Sentiment.Services.Service
                             await commentService.StoreIssueCommentAsync(repoId, repositoryId, issue.Number);
                         }
                     });
-/*
-                    foreach (var issue in issueBlock)
-                    {
-                        //if (issue.Comments > 0) commentList.Add(issue.Number);
-                        if (!unitOfWork.Issue.Exist(repositoryId, issue.Number))
-                        {
-                            unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
-                            unitOfWork.Complete();
-                        }
-                        if (issue.Comments > 0)
-                        {
-                            await commentService.StoreIssueCommentAsync(repoId, issue.Number);
-                            //list.Add(Task.Run(async () => { await commentService.StoreIssueCommentAsync(repoId, issue.Number); return 1; }));
-                        }
-                    }*/
-                }
-            }
-        }
-
-        private void StoreIssueBlockAsync(int repositoryId, IReadOnlyList<Issue> issueBlock)
-        {
-            using (var unitOfWork = new UnitOfWork())
-            {
-                if (repositoryId != 0)
-                {
-                    var issueList = new List<IssueT>();
-                    var taskList = new List<Task>();
-                    foreach (var issue in issueBlock)
-                    {
-                        if (issue.Comments > 0) commentList.Add(issue.Number);
-                        if (!unitOfWork.Issue.Exist(repositoryId, issue.Number)) issueList.Add(GetAIssue(issue, repositoryId));
-                    }
-                    unitOfWork.Issue.AddRange(issueList);
-                    unitOfWork.Complete();
                 }
             }
         }
