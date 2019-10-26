@@ -20,5 +20,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             return _dbContext.IssueComments.Any(ic=>ic.IssueId == issueId && ic.CommentNumber == commentNumber);
         }
+
+        public IssueCommentT GetByNumber(int issueId, long commentNumber)
+        {
+            return _dbContext.IssueComments.Where(ic=> ic.IssueId == issueId && ic.CommentNumber == commentNumber).FirstOrDefault();
+        }
     }
 }

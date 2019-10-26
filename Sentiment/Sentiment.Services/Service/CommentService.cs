@@ -65,7 +65,7 @@ namespace Sentiment.Services.Service
                                     Neg = sentimentCal.NegativeSentiScore,
                                     WriterId = commenter.Id,
                                     CommentNumber = comment.Id,
-                                    DateTime = comment.UpdatedAt
+                                    Date = comment.UpdatedAt
                                 });
                             }
                         }
@@ -85,66 +85,94 @@ namespace Sentiment.Services.Service
                 var commit = unitOfWork.Commit.GetBySha(sha);
                 var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
                 var commentList = new List<CommitCommentT>();
-                foreach (var comment in comments)
-                {
-                    if (!unitOfWork.CommitComment.Exist(commit.Id, comment.Id))
+
+                comments.ToList().ForEach((comment)=> {
+                    var commentStore = unitOfWork.CommitComment.GetByNumber(commit.Id,comment.Id);
+                    if (commentStore != null && commentStore.Date != comment.UpdatedAt)
                     {
-                        var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
                         sentimentCal.CalculateSentiment(comment.Body);
-                        commentList.Add(new CommitCommentT()
-                        {
-                            CommitId = commit.Id,
-                            Pos = sentimentCal.PositoiveSentiScore,
-                            Neg = sentimentCal.NegativeSentiScore,
-                            WriterId = commenter.Id,
-                            CommentNumber = comment.Id,
-                            DateTime = comment.UpdatedAt
-                        });
+                        commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                        commentStore.Neg = sentimentCal.NegativeSentiScore;
+                        unitOfWork.Complete();
                     }
-                    unitOfWork.CommitComment.AddRange(commentList);
-                    unitOfWork.Complete();
-                }
+                    else
+                    {
+                        commentList.Add(GetACommitComment(comment,commit.Id));
+                    }
+                });
+                unitOfWork.CommitComment.AddRange(commentList);
+                unitOfWork.Complete();
             }
         }
 
-
-        public async Task StoreAllIssueCommentsAsync(long repoId, List<int> issueNumberList)
+        private CommitCommentT GetACommitComment(CommitComment comment, int commitId)
         {
-            var list = new List<Task>();
-            foreach (var issueNumber in issueNumberList)
+            var commenter = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+            sentimentCal.CalculateSentiment(comment.Body);
+            return new CommitCommentT()
             {
-                list.Add(Task.Run(async ()=> { await StoreIssueCommentAsync(repoId, issueNumber); return 1; }));
-            }
-            await Task.WhenAll(list.ToArray());
+                CommitId = commitId,
+                Pos = sentimentCal.PositoiveSentiScore,
+                Neg = sentimentCal.NegativeSentiScore,
+                WriterId = commenter.Id,
+                CommentNumber = comment.Id,
+                Date = comment.UpdatedAt
+            };
         }
 
-        public async Task StoreIssueCommentAsync(long repoId, int issueNumber)
+
+        /*        public async Task StoreAllIssueCommentsAsync(long repoId, List<int> issueNumberList)
+                {
+                    var list = new List<Task>();
+                    foreach (var issueNumber in issueNumberList)
+                    {
+                        list.Add(Task.Run(async ()=> { await StoreIssueCommentAsync(repoId, issueNumber); return 1; }));
+                    }
+                    await Task.WhenAll(list.ToArray());
+                }*/
+
+        public async Task StoreIssueCommentAsync(long repoId,int repositoryId, int issueNumber)
         {
-            
             using (var unitOfWork = new UnitOfWork())
             {
-                var issue = unitOfWork.Issue.GetByNumber(issueNumber);
+                var issue = unitOfWork.Issue.GetByNumber(repositoryId,issueNumber);
                 var comments = await issueCommentClient.GetAllForIssue(repoId, issueNumber);
                 var commentList = new List<IssueCommentT>();
-                foreach (var comment in comments)
-                {
-                    if (!unitOfWork.IssueComment.Exist(issue.Id, comment.Id))
+
+                comments.ToList().ForEach((comment)=> {
+                    var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
+                    if (commentStore != null && commentStore.Date != comment.UpdatedAt)
                     {
-                        var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
                         sentimentCal.CalculateSentiment(comment.Body);
-                        commentList.Add(new IssueCommentT()
-                        {
-                            IssueId = issue.Id,
-                            CommentNumber = comment.Id,
-                            Pos = sentimentCal.PositoiveSentiScore,
-                            Neg = sentimentCal.NegativeSentiScore,
-                            WriterId = issuer.Id
-                        });
+                        commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                        commentStore.Neg = sentimentCal.NegativeSentiScore;
+                        commentStore.Date = comment.UpdatedAt;
+                        unitOfWork.Complete();
                     }
-                }
+                    else
+                    {
+                        commentList.Add(GetAIssueComment(comment, issue.Id));
+                    }
+                });
                 unitOfWork.IssueComment.AddRange(commentList);
                 unitOfWork.Complete();
             }
         }
+
+        private IssueCommentT GetAIssueComment(IssueComment comment, int issueId)
+        {
+            var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+            sentimentCal.CalculateSentiment(comment.Body);
+            return new IssueCommentT()
+            {
+                IssueId = issueId,
+                CommentNumber = comment.Id,
+                Pos = sentimentCal.PositoiveSentiScore,
+                Neg = sentimentCal.NegativeSentiScore,
+                WriterId = issuer.Id,
+                Date = comment.UpdatedAt
+            };
+        }
+
     }
 }

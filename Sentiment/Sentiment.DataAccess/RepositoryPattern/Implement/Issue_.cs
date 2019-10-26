@@ -16,25 +16,19 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             this._dbContext = dbContext;
         }
 
-        /*public bool Exist(long issueId)
-        {
-            return _dbContext.Issues.Any(i=>i.IssueId == issueId);
-        }*/
-
         public bool Exist(int repositoryId, int issueNumber)
         {
             return _dbContext.Issues.Any(i=>i.RepositoryId == repositoryId && i.IssueNumber == issueNumber);
         }
 
-
-        public IssueT GetByNumber(int issueNumber)
+        public IssueT GetByNumber(int repositoryId, int issueNumber)
         {
-            return _dbContext.Issues.Where(i=>i.IssueNumber == issueNumber).FirstOrDefault();
+            return _dbContext.Issues.Where(i=>i .RepositoryId == repositoryId && i.IssueNumber == issueNumber).FirstOrDefault();
         }
 
         public IEnumerable<IssueT> GetList(int repositoryId)
         {
-            return _dbContext.Issues.Where(i => i.RepositoryId == repositoryId).ToList();
+            throw new NotImplementedException();
         }
     }
 }

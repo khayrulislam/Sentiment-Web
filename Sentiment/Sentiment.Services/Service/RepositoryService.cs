@@ -53,8 +53,19 @@ namespace Sentiment.Services.Service
              
             await Task.WhenAll(list.ToArray());
 
+            UpdateAnalysisDate(repositoryId);
+
             DateTime end = DateTime.Now;
             var dif = end - start;
+        }
+
+        private void UpdateAnalysisDate(int repositoryId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                unitOfWork.Repository.UpdateStateAndDate(repositoryId);
+                unitOfWork.Complete();
+            }
         }
 
         private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
@@ -68,8 +79,10 @@ namespace Sentiment.Services.Service
                     {
                         Name = repository.Name,
                         OwnerName = repository.Owner.Login,
-                        Url = repository.Url,
-                        RepoId = repository.Id
+                        Url = repository.HtmlUrl,
+                        RepoId = repository.Id,
+                        State = AnalysisState.Runnig,
+                        AnalysisDate = repository.CreatedAt 
                     };
                     unitOfWork.Repository.Add(repoData);
                     unitOfWork.Complete();
@@ -79,7 +92,6 @@ namespace Sentiment.Services.Service
                 return repo.Id;
             }
         }
-
 
         public Reply<RepositoryT> GetList()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sentiment.DataAccess.Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -15,15 +16,13 @@ namespace Sentiment.DataAccess.DataClass
         public string Name { get; set; }
         public string OwnerName { get; set; }
         public DateTimeOffset AnalysisDate { get; set; }
+        public AnalysisState State { get; set; }
         public string Url { get; set; }
         public ICollection<BranchT> Branch { get; set; }
         public IList<RepositoryContributorT> RepositoryContributors { get; set; }
         public ICollection<CommitT> Commits{ get; set; }
         public ICollection<IssueT> Issues { get; set; }
-
         [NotMapped]
         public ICollection<ContributorT> Contributors { get; set; }
-
-
     }
 }

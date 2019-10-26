@@ -32,9 +32,9 @@ namespace Sentiment.Services.Service
             this.gitHubClient = GitHubConnection.Instance;
             this.commitClient = gitHubClient.Repository.Commit;
             this.sentimentCal = SentimentCal.Instance;
-            this.request = new CommitRequest();
             this.contributorService = new ContributorService();
             this.commentService = new CommentService();
+            this.request = new CommitRequest();
 
             this.option = new ApiOptions()
             {
@@ -48,37 +48,24 @@ namespace Sentiment.Services.Service
             using (var unitOfWork = new UnitOfWork())
             {
                 var list = unitOfWork.Branch.GetList(repositoryId);
+                var repository = unitOfWork.Repository.Get(repositoryId);
                 foreach(var branch in list)
                 {
-                    await ExecuteBranchAsync(branch, repoId, repositoryId);
+                    request.Sha = branch.Name;
+                    request.Since = repository.AnalysisDate;
+                    var allCommits = await commitClient.GetAll(repoId, request);
+                    StoreBranchCommit(branch.Id, repoId, repositoryId, allCommits);
                 }
             }
-            //await commentService.StoreAllCommitCommentsAsync(repoId, shaList.ToList());
         }
 
-        private async Task ExecuteBranchAsync(BranchT branch, long repoId, int repositoryId)
+        private async Task ExecuteBranchAsync(BranchT branch, long repoId, RepositoryT repository)
         {
-            var list = new List<Task>();
             request.Sha = branch.Name;
-            var page = 0;
+            request.Since = repository.AnalysisDate;
             var allCommits = await commitClient.GetAll(repoId, request);
-            StoreBranchCommit(branch.Id, repoId, repositoryId, allCommits);
+            StoreBranchCommit(branch.Id, repoId, repository.Id, allCommits);
 
-
-
-
-
-            /*while (true)
-            {
-                option.StartPage = ++page;
-                var allCommits = await commitClient.GetAll(repoId, request);
-                if (allCommits.Count == 0) break;
-                else
-                {
-                    list.Add(Task.Run(() => { StoreBranchCommit(branch.Id, repositoryId, allCommits); return 1; }));
-                }
-            }
-            await Task.WhenAll(list.ToArray());*/
         }
 
         private void StoreBranchCommit(int branchId,long repoId, int repositoryId, IReadOnlyList<GitHubCommit> allCommits)
@@ -94,17 +81,20 @@ namespace Sentiment.Services.Service
                     comm = unitOfWork.Commit.GetBySha(commit.Sha);
                     if (comm == null) {
                         comm = GetACommit(commit, repositoryId);
-                        unitOfWork.Commit.Add(comm);
-                        unitOfWork.Complete();
                     }
-                    if (commit.Commit.CommentCount > 0) await commentService.StoreCommitCommentAsync(repoId,commit.Sha);
                     branchCommitList.Add(new BranchCommitT()
                     {
                         Branch = branch,
                         Commit = comm
                     });
+                    if (commit.Commit.CommentCount > 0) {
+                        unitOfWork.Commit.Add(comm);
+                        unitOfWork.Complete();
+                        await commentService.StoreCommitCommentAsync(repoId, commit.Sha);
+                    }
                 });
                 unitOfWork.Commit.AddRange(commitList);
+                unitOfWork.Complete();
                 unitOfWork.BranchCommit.AddRange(branchCommitList);
                 unitOfWork.Complete();
             }
@@ -166,7 +156,7 @@ namespace Sentiment.Services.Service
             return new CommitT()
             {
                 Sha = commit.Sha,
-                Writer = commiter,
+                WriterId = commiter.Id,
                 Pos = sentimentCal.PositoiveSentiScore,
                 Neg = sentimentCal.NegativeSentiScore,
                 RepositoryId = repositoryId

@@ -10,5 +10,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface I_CommitComment:I_AllRepository<CommitCommentT>
     {
         bool Exist(int commitId, long commentNumber);
+        CommitCommentT GetByNumber(int commitId, long commentNumber);
     }
 }

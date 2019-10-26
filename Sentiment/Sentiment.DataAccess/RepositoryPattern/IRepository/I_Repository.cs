@@ -14,6 +14,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName);
         RepositoryT GetById(long repoId);
         Reply<RepositoryT> GetFilterList(RepositroyFilter repoFilter);
+        void UpdateStateAndDate(int repositoryId);
 
     }
 }

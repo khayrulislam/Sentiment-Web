@@ -16,6 +16,6 @@ namespace Sentiment.DataAccess.DataClass
         public IssueT Issue { get; set; }
         public int RepositoryId { get; set; }
         public long CommentNumber { get; set; }
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? Date { get; set; }
     }
 }

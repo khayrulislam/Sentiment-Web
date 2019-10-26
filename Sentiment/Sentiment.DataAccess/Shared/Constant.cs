@@ -17,6 +17,12 @@ namespace Sentiment.DataAccess.Shared
         Review
     }
 
+    public enum AnalysisState
+    {
+        Runnig = 0,
+        Complete
+    }
+
     public enum IssueType
     {
         Issue=1,

@@ -39,31 +39,50 @@ namespace Sentiment.Services.Service
             this.request = new RepositoryIssueRequest()
             {
                 State = ItemStateFilter.All,
-                SortDirection = SortDirection.Ascending,
-//                Since = new DateTimeOffset(2017,1,1,12,00,00, new TimeSpan(3, 0, 0))
+                SortDirection = SortDirection.Ascending
             };
 
-            var filr = new IssueFilter() {
-                
-            };
             this.option = new ApiOptions()
             {
                 PageCount = 1,
                 PageSize = 100
-                
             };
         }
 
         public async Task StoreAllIssuesAsync(long repoId, int repositoryId)
         {
-            var issueBlock = await issueClient.GetAllForRepository(repoId, request);
             using (var unitOfWork = new UnitOfWork())
             {
+                var repository = unitOfWork.Repository.Get(repositoryId);
+                request.Since = repository.AnalysisDate;
+                var issueBlock = await issueClient.GetAllForRepository(repoId,request);
+
                 if (repositoryId != 0)
                 {
                     var issueList = new List<IssueT>();
                     var taskList = new List<Task>();
                     var list = new List<Task>();
+                    issueBlock.ToList().ForEach(async (issue) => {
+                        var issueStore = unitOfWork.Issue.GetByNumber(repositoryId, issue.Number);
+                        if (issueStore!=null)
+                        {
+                            sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
+                            issueStore.IssueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
+                            issueStore.Pos = bodyPos;
+                            issueStore.Neg = bodyNeg;
+                            unitOfWork.Complete();
+                        }
+                        else
+                        {
+                            unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
+                            unitOfWork.Complete();
+                        }
+                        if (issue.Comments > 0)
+                        {
+                            await commentService.StoreIssueCommentAsync(repoId, repositoryId, issue.Number);
+                        }
+                    });
+/*
                     foreach (var issue in issueBlock)
                     {
                         //if (issue.Comments > 0) commentList.Add(issue.Number);
@@ -77,26 +96,9 @@ namespace Sentiment.Services.Service
                             await commentService.StoreIssueCommentAsync(repoId, issue.Number);
                             //list.Add(Task.Run(async () => { await commentService.StoreIssueCommentAsync(repoId, issue.Number); return 1; }));
                         }
-                    }
-                    /*unitOfWork.Issue.AddRange(issueList);
-                    unitOfWork.Complete();*/
-                    //await Task.WhenAll(list.ToArray());
+                    }*/
                 }
             }
-            /*
-            //StoreIssueBlockAsync(repositoryId, issueBlock);
-             * 
-             * while (true)
-            {
-                option.StartPage = ++sPage;
-                var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
-                if (issueBlock.Count == 0) break;
-                else {
-                    list.Add(Task.Run( () => { StoreIssueBlockAsync(repositoryId, issueBlock); return 1; }));
-                } 
-            }
-            Task.WaitAll(list.ToArray());*/
-            //await commentService.StoreAllIssueCommentsAsync(repoId, commentList.ToList());
         }
 
         private void StoreIssueBlockAsync(int repositoryId, IReadOnlyList<Issue> issueBlock)

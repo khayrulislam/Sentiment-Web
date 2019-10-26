@@ -14,7 +14,7 @@ namespace Sentiment.DataAccess.DataClass
         public int CommitId { get; set; }
         public CommitT Commit { get; set; }
         public long CommentNumber { get; set; }
-        public DateTimeOffset? DateTime { get; set; }
+        public DateTimeOffset? Date { get; set; }
 
     }
 }
