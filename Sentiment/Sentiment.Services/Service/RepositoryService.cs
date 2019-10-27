@@ -147,5 +147,11 @@ namespace Sentiment.Services.Service
             }
         }
 
+/*        public List<AnalysisState> GetStatusList(RepositroyFilter filter)
+        {
+            var repositoryList = GetFilterList(filter).Data;
+           *//* return repositoryList.Select(repo => repo.State).ToList();
+        }*/
+
     }
 }

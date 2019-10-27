@@ -47,5 +47,12 @@ namespace Sentiment.WebAPI.Controllers
         {
             return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetFilterList(filter));
         }
+
+/*        public HttpResponseMessage GetStatusByFilter(RepositroyFilter filter)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetStatusList(filter));
+        }*/
+
+
     }
 }
