@@ -63,7 +63,10 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                unitOfWork.Repository.UpdateStateAndDate(repositoryId);
+                var repository = unitOfWork.Repository.Get(repositoryId);
+                unitOfWork.Repository.Update(repository);
+                repository.AnalysisDate = new DateTimeOffset(DateTime.UtcNow);
+                repository.State = AnalysisState.Complete;
                 unitOfWork.Complete();
             }
         }
@@ -73,21 +76,27 @@ namespace Sentiment.Services.Service
             var repository = await gitHubClient.Repository.Get(repoOwner, repoName);
             using (var unitOfWork = new UnitOfWork())
             {
-                if (!unitOfWork.Repository.Exist(repository.Name, repository.Owner.Login))
+                var repo = GetByNameOwnerName(repository.Name, repository.Owner.Login);
+                if (repo != null)
                 {
-                    var repoData = new RepositoryT()
+                    unitOfWork.Repository.Update(repo);
+                    repo.State = AnalysisState.Runnig;
+                    unitOfWork.Complete();
+                }
+                else
+                {
+                    repo = new RepositoryT()
                     {
                         Name = repository.Name,
                         OwnerName = repository.Owner.Login,
                         Url = repository.HtmlUrl,
                         RepoId = repository.Id,
                         State = AnalysisState.Runnig,
-                        AnalysisDate = repository.CreatedAt 
+                        AnalysisDate = repository.CreatedAt
                     };
-                    unitOfWork.Repository.Add(repoData);
+                    unitOfWork.Repository.Add(repo);
                     unitOfWork.Complete();
                 }
-                var repo = GetByNameOwnerName(repository.Name, repository.Owner.Login);
                 repoId = repo.RepoId;
                 return repo.Id;
             }

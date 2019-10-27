@@ -40,5 +40,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             dbContext.Set<TEntity>().Remove(entity);
         }
+
+        public void Update(TEntity entity)
+        {
+            dbContext.Set<TEntity>().Attach(entity);
+        }
     }
 }

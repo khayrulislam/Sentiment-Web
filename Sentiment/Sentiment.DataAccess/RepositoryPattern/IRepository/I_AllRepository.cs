@@ -13,5 +13,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
+        void Update(TEntity entity);
     }
 }
