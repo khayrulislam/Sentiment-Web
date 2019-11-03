@@ -15,6 +15,7 @@ namespace Sentiment.DataAccess.DataClass
         public int? RepositoryId { get; set; }
         public RepositoryT Repository { get; set; }
         public DateTimeOffset DateTime { get; set; }
+        public string Message{ get; set; }               
         public IList<BranchCommitT> BranchCommits { get; set; }
         public ICollection<CommitCommentT> Comments { get; set; }
     }

@@ -107,7 +107,9 @@ namespace Sentiment.Services.Service
                 Pos = sentimentCal.PositoiveSentiScore,
                 Neg = sentimentCal.NegativeSentiScore,
                 RepositoryId = repositoryId,
-                DateTime = Date
+                DateTime = Date,
+                Message = commit.Commit.Message
+                
             };
         }
 
