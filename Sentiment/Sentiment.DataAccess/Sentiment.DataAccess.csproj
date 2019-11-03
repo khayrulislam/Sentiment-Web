@@ -65,9 +65,9 @@
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\201911030512016_create.cs" />
-    <Compile Include="Migrations\201911030512016_create.Designer.cs">
-      <DependentUpon>201911030512016_create.cs</DependentUpon>
+    <Compile Include="Migrations\201911031637481_create.cs" />
+    <Compile Include="Migrations\201911031637481_create.Designer.cs">
+      <DependentUpon>201911031637481_create.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -102,8 +102,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201911030512016_create.resx">
-      <DependentUpon>201911030512016_create.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911031637481_create.resx">
+      <DependentUpon>201911031637481_create.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

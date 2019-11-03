@@ -92,7 +92,7 @@ namespace Sentiment.Services.Service
                         Url = repository.HtmlUrl,
                         RepoId = repository.Id,
                         State = AnalysisState.Runnig,
-                        AnalysisDate = repository.CreatedAt
+                        AnalysisDate = new DateTimeOffset(new DateTime(2000,1,1,12,00,00))
                     };
                     unitOfWork.Repository.Add(repo);
                     unitOfWork.Complete();
