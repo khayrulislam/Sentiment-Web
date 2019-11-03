@@ -101,19 +101,22 @@ namespace Sentiment.Services.Service
                 {
                     var issueId = GetIssueId(comment.HtmlUrl);
                     var issue = unitOfWork.Issue.GetByNumber(repositoryId,issueId);
-                    var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
-                    if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                    if(issue!= null)
                     {
-                        sentimentCal.CalculateSentiment(comment.Body);
-                        commentStore.Pos = sentimentCal.PositoiveSentiScore;
-                        commentStore.Neg = sentimentCal.NegativeSentiScore;
-                        commentStore.Date = comment.UpdatedAt;
-                        unitOfWork.Complete();
-                    }
-                    else if (commentStore == null)
-                    {
-                        unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue.Id));
-                        unitOfWork.Complete();
+                        var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
+                        if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                        {
+                            sentimentCal.CalculateSentiment(comment.Body);
+                            commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                            commentStore.Neg = sentimentCal.NegativeSentiScore;
+                            commentStore.Date = comment.UpdatedAt;
+                            unitOfWork.Complete();
+                        }
+                        else if (commentStore == null)
+                        {
+                            unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue.Id));
+                            unitOfWork.Complete();
+                        }
                     }
                 });
                
