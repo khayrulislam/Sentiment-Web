@@ -103,7 +103,9 @@ namespace Sentiment.Services.Service
                 IssueType = issueType,
                 NegTitle = titleNeg,
                 PosTitle = titlePos,
-                UpdateDate = issue.UpdatedAt
+                UpdateDate = issue.UpdatedAt,
+                Title = issue.Title,
+                Body = issue.Body
             };
         }
     }

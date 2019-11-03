@@ -20,6 +20,8 @@ namespace Sentiment.DataAccess.DataClass
         public string State { get; set; }
         public IssueType IssueType { get; set; }
         public DateTimeOffset? UpdateDate { get; set; }
+        public string Title { get; set; }
+        public string Body { get; set; }
         public ICollection<IssueCommentT> Comments { get; set; }
 
     }
