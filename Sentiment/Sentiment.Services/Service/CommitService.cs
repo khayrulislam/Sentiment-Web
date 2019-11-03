@@ -103,7 +103,7 @@ namespace Sentiment.Services.Service
             return new CommitT()
             {
                 Sha = commit.Sha,
-                WriterId = commiter.Id,
+                Writer = commiter,
                 Pos = sentimentCal.PositoiveSentiScore,
                 Neg = sentimentCal.NegativeSentiScore,
                 RepositoryId = repositoryId,

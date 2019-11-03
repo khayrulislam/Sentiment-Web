@@ -62,11 +62,12 @@ namespace Sentiment.Services.Service
                     var issueList = new List<IssueT>();
                     var taskList = new List<Task>();
                     var list = new List<Task>();
-                    issueBlock.ToList().ForEach(async (issue) => {
+                    issueBlock.ToList().ForEach( (issue) => {
                         var issueStore = unitOfWork.Issue.GetByNumber(repositoryId, issue.Number);
                         if (issueStore != null)
                         {
-                            sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
+                            var bodyPos = 0; var bodyNeg = 0;
+                            if(issue.Body!=null)sentimentCal.CalculateSentiment(issue.Body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;
                             issueStore.IssueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
                             issueStore.Pos = bodyPos;
                             issueStore.Neg = bodyNeg;
@@ -77,19 +78,18 @@ namespace Sentiment.Services.Service
                             unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
                             unitOfWork.Complete();
                         }
-                        if (issue.Comments > 0)
-                        {
-                            await commentService.StoreIssueCommentAsync(repoId, repositoryId, issue.Number);
-                        }
                     });
+
+                    await commentService.StoreIssueCommentAsync(repoId, repositoryId);
                 }
             }
         }
 
         private IssueT GetAIssue(Issue issue, int repositoryId)
         {
-            sentimentCal.CalculateSentiment(issue.Title); var titlePos = sentimentCal.PositoiveSentiScore; var titleNeg = sentimentCal.NegativeSentiScore;
-            sentimentCal.CalculateSentiment(issue.Body); var bodyPos = sentimentCal.PositoiveSentiScore; var bodyNeg = sentimentCal.NegativeSentiScore;
+            int titlePos = 0; int titleNeg = 0;int bodyPos = 0;int bodyNeg = 0;
+            sentimentCal.CalculateSentiment(issue.Title);  titlePos = sentimentCal.PositoiveSentiScore;  titleNeg = sentimentCal.NegativeSentiScore;
+            if(issue.Body!=null) sentimentCal.CalculateSentiment(issue.Body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;
             var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
             var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
             return new IssueT()

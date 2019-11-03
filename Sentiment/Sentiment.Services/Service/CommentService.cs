@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Sentiment.Services.Service
@@ -17,6 +18,7 @@ namespace Sentiment.Services.Service
         GitHubClient gitHubClient;
         IRepositoryCommentsClient commitCommentClient;
         IIssueCommentsClient issueCommentClient;
+        IssueCommentRequest request;
         SentimentCal sentimentCal;
         ApiOptions option;
         ContributorService contributorService;
@@ -32,6 +34,10 @@ namespace Sentiment.Services.Service
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
             this.issueCommentClient = gitHubClient.Issue.Comment;
+            this.request = new IssueCommentRequest()
+            {
+                Direction = SortDirection.Ascending,
+            };
 
             this.option = new ApiOptions()
             {
@@ -83,15 +89,18 @@ namespace Sentiment.Services.Service
             };
         }
 
-        public async Task StoreIssueCommentAsync(long repoId,int repositoryId, int issueNumber)
+        public async Task StoreIssueCommentAsync(long repoId,int repositoryId)
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                var issue = unitOfWork.Issue.GetByNumber(repositoryId,issueNumber);
-                var comments = await issueCommentClient.GetAllForIssue(repoId, issueNumber);
-                var commentList = new List<IssueCommentT>();
+                var repository = unitOfWork.Repository.Get(repositoryId);
+                request.Since = repository.AnalysisDate;
+                var comments = await issueCommentClient.GetAllForRepository(repoId,request);
 
-                comments.ToList().ForEach((comment)=> {
+                comments.ToList().ForEach((comment) =>
+                {
+                    var issueId = GetIssueId(comment.HtmlUrl);
+                    var issue = unitOfWork.Issue.GetByNumber(repositoryId,issueId);
                     var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
                     if (commentStore != null && commentStore.Date != comment.UpdatedAt)
                     {
@@ -101,14 +110,19 @@ namespace Sentiment.Services.Service
                         commentStore.Date = comment.UpdatedAt;
                         unitOfWork.Complete();
                     }
-                    else if(commentStore == null)
+                    else if (commentStore == null)
                     {
-                        commentList.Add(GetAIssueComment(comment, repositoryId, issue.Id));
+                        unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue.Id));
+                        unitOfWork.Complete();
                     }
                 });
-                unitOfWork.IssueComment.AddRange(commentList);
-                unitOfWork.Complete();
+               
             }
+        }
+
+        private int GetIssueId(string url)
+        {
+            return int.Parse(Regex.Match(url, @"\d+").Value);
         }
 
         private IssueCommentT GetAIssueComment(IssueComment comment,int repositoryId, int issueId)
