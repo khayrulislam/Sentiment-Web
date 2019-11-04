@@ -43,20 +43,30 @@ namespace Sentiment.Services.Service
         public async Task ExecuteAnalysisAsync(string repoName, string repoOwnerName)
         {
             DateTime start = DateTime.Now;
-            var repositoryId = await StoreRepositoryAsync(repoName, repoOwnerName);
+            var repository = await StoreRepositoryAsync(repoName, repoOwnerName);
+            /*
+                        if (repository.State == AnalysisState.Complete) {
+
+
+                        }*/
+
+            var repositoryId = repository.Id;
+            repoId = repository.RepoId;
+
             await branchService.StoreAllBranchesAsync(repoId, repositoryId);
             await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
             var list = new List<Task>();
 
-            //list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
+            list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
             list.Add(Task.Run(async () => { await commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; }));
-             
+
             await Task.WhenAll(list.ToArray());
 
             UpdateAnalysisDate(repositoryId);
 
             DateTime end = DateTime.Now;
             var dif = end - start;
+
         }
 
         private void UpdateAnalysisDate(int repositoryId)
@@ -71,7 +81,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        private async Task<int> StoreRepositoryAsync(string repoName, string repoOwner)
+        private async Task<RepositoryT> StoreRepositoryAsync(string repoName, string repoOwner)
         {
             var repository = await gitHubClient.Repository.Get(repoOwner, repoName);
             using (var unitOfWork = new UnitOfWork())
@@ -97,8 +107,8 @@ namespace Sentiment.Services.Service
                     unitOfWork.Repository.Add(repo);
                     unitOfWork.Complete();
                 }
-                repoId = repo.RepoId;
-                return repo.Id;
+                //repoId = repo.RepoId;
+                return repo;
             }
         }
 
@@ -147,11 +157,6 @@ namespace Sentiment.Services.Service
             }
         }
 
-/*        public List<AnalysisState> GetStatusList(RepositroyFilter filter)
-        {
-            var repositoryList = GetFilterList(filter).Data;
-           *//* return repositoryList.Select(repo => repo.State).ToList();
-        }*/
 
     }
 }

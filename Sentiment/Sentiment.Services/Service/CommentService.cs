@@ -22,6 +22,7 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         ApiOptions option;
         ContributorService contributorService;
+        private static readonly Object obj = new Object();
         public CommentService()
         {
             Initialize();
@@ -93,10 +94,11 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
+                HashSet<IssueCommentT> issueComments = new HashSet<IssueCommentT>();
+
                 var repository = unitOfWork.Repository.Get(repositoryId);
                 request.Since = repository.AnalysisDate;
                 var comments = await issueCommentClient.GetAllForRepository(repoId,request);
-
                 comments.ToList().ForEach((comment) =>
                 {
                     var issueId = GetIssueId(comment.HtmlUrl);
@@ -104,7 +106,13 @@ namespace Sentiment.Services.Service
                     if(issue!= null)
                     {
                         var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
-                        if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                        if (commentStore == null)
+                        {
+                            issueComments.Add(GetAIssueComment(comment, repositoryId, issue.Id));
+                            //unitOfWork.IssueComment.Add();
+                            //unitOfWork.Complete();
+                        }
+                        else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
                         {
                             sentimentCal.CalculateSentiment(comment.Body);
                             commentStore.Pos = sentimentCal.PositoiveSentiScore;
@@ -112,14 +120,15 @@ namespace Sentiment.Services.Service
                             commentStore.Date = comment.UpdatedAt;
                             unitOfWork.Complete();
                         }
-                        else if (commentStore == null)
-                        {
-                            unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue.Id));
-                            unitOfWork.Complete();
-                        }
+                        
                     }
                 });
-               
+                lock (obj)
+                {
+                    unitOfWork.IssueComment.AddRange(issueComments.ToList());
+                    unitOfWork.Complete();
+                    issueComments.Clear();
+                }
             }
         }
 
