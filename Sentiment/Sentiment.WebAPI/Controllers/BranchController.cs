@@ -1,4 +1,5 @@
 ﻿using Sentiment.DataAccess.DataClass;
+using Sentiment.DataAccess.Shared;
 using Sentiment.Services.Service;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,14 @@ namespace Sentiment.WebAPI.Controllers
         private BranchService branchService = new BranchService();
 
         [ResponseType(typeof(List<BranchT>))]
-        [HttpGet]
-        public HttpResponseMessage GetBranchList(int repoId)
+        [HttpPost]
+        public HttpResponseMessage GetBranchFilterList(BranchFilter filter)
         {
-            return  Request.CreateResponse(HttpStatusCode.OK, branchService.GetBranchList(repoId));
+            return  Request.CreateResponse(HttpStatusCode.OK, branchService.GetBranchFilterList(filter));
         }
+
+
+        
 
     }
 }

@@ -2,6 +2,7 @@
 using Sentiment.DataAccess;
 using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.Implement;
+using Sentiment.DataAccess.Shared;
 using Sentiment.Services.GitHub;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,14 @@ namespace Sentiment.Services.Service
             using (var unitOfWork = new UnitOfWork())
             {
                 return (List<BranchT>) unitOfWork.Branch.GetList(repositoryId);
+            }
+        }
+
+        public Reply<BranchT> GetBranchFilterList(BranchFilter filter)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Branch.GetList(filter);
             }
         }
     }

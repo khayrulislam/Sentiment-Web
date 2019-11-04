@@ -18,4 +18,10 @@ namespace Sentiment.DataAccess.Shared
     {
 
     }
+
+    public class BranchFilter: Filter
+    {
+        public int Id { get; set; }
+    }
+
 }
