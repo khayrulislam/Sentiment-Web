@@ -25,4 +25,17 @@ namespace Sentiment.DataAccess.DataClass
         [NotMapped]
         public ICollection<ContributorT> Contributors { get; set; }
     }
+
+
+    public class RepositoryView
+    {
+        public int Id { get; set; }
+        public long RepoId { get; set; }
+        public string Name { get; set; }
+        public string OwnerName { get; set; }
+        public DateTimeOffset AnalysisDate { get; set; }
+        public AnalysisState State { get; set; }
+        public string Url { get; set; }
+    }
+
 }

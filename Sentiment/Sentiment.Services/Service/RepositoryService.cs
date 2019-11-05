@@ -44,11 +44,9 @@ namespace Sentiment.Services.Service
         {
             DateTime start = DateTime.Now;
             var repository = await StoreRepositoryAsync(repoName, repoOwnerName);
-            /*
-                        if (repository.State == AnalysisState.Complete) {
 
 
-                        }*/
+            // check for running process will not execute
 
             var repositoryId = repository.Id;
             repoId = repository.RepoId;
@@ -107,7 +105,6 @@ namespace Sentiment.Services.Service
                     unitOfWork.Repository.Add(repo);
                     unitOfWork.Complete();
                 }
-                //repoId = repo.RepoId;
                 return repo;
             }
         }
@@ -149,7 +146,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public Reply<RepositoryT> GetFilterList(RepositroyFilter filter)
+        public Reply<RepositoryView> GetFilterList(RepositroyFilter filter)
         {
             using (var unitOfWork = new UnitOfWork())
             {

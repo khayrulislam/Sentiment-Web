@@ -37,16 +37,52 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Repositories.ToList();
         }
 
-        public Reply<RepositoryT> GetFilterList(RepositroyFilter repoFilter)
+        public Reply<RepositoryView> GetFilterList(RepositroyFilter repoFilter)
         {
-            var list = _dbContext.Repositories.ToList();
-            var total = list.Count;
-            if (repoFilter.SearchText != null) list = list.Where(repo=>repo.Name.ToLower().Contains(repoFilter.SearchText.ToLower())).ToList();
-            if (repoFilter.SortOrder == "asc") list = list.OrderBy(repo => repo.Name).ToList();
-            if (repoFilter.SortOrder == "dsc") list = list.OrderByDescending(repo => repo.Name).ToList();
-            if (repoFilter.PageSize != 0 && repoFilter.PageNumber+1 != 0) list = list.Skip(repoFilter.PageNumber * repoFilter.PageSize).Take(repoFilter.PageSize).ToList();
+            int total = 0;
+            var list = new List<RepositoryView>();
 
-            return new Reply<RepositoryT>() {
+            repoFilter.SearchText = repoFilter.SearchText.ToLower();
+
+            if(repoFilter.SearchText != null)
+            {
+                total = _dbContext.Repositories.Where(repo => repo.Name.ToLower().Contains(repoFilter.SearchText)).Count();
+                if (repoFilter.SortOrder == "asc")
+                {
+                    list = _dbContext.Repositories.Select( repo => new RepositoryView()
+                            {Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate,OwnerName = repo.OwnerName,State = repo.State, Url = repo.Url } )
+                            .Where(repo => repo.Name.ToLower().Contains(repoFilter.SearchText))
+                            .OrderBy(r => r.Name).Skip(repoFilter.PageNumber * repoFilter.PageSize)
+                            .Take(repoFilter.PageSize).ToList();
+                }
+                else if (repoFilter.SortOrder == "dsc")
+                {
+                    list = _dbContext.Repositories.Select(repo => new RepositoryView()
+                            { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
+                            .Where(repo => repo.Name.ToLower().Contains(repoFilter.SearchText))
+                            .OrderByDescending(r => r.Name).Skip(repoFilter.PageNumber * repoFilter.PageSize)
+                            .Take(repoFilter.PageSize).ToList();
+                }
+            }
+            else{
+                total = _dbContext.Repositories.Count();
+                if (repoFilter.SortOrder == "asc")
+                {
+                    list = _dbContext.Repositories.Select(repo => new RepositoryView()
+                            { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
+                            .OrderBy(r => r.Name).Skip(repoFilter.PageNumber * repoFilter.PageSize)
+                            .Take(repoFilter.PageSize).ToList();
+                }
+                else if (repoFilter.SortOrder == "dsc")
+                {
+                    list = _dbContext.Repositories.Select(repo => new RepositoryView()
+                            { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
+                            .OrderByDescending(r => r.Name).Skip(repoFilter.PageNumber * repoFilter.PageSize)
+                            .Take(repoFilter.PageSize).ToList();
+                }
+            }
+
+            return new Reply<RepositoryView>() {
                 Data = list,
                 TotalData = total
             };

@@ -17,4 +17,13 @@ namespace Sentiment.DataAccess.DataClass
         public int RepositoryId { get; set; }
         public IList<BranchCommitT> BranchCommits{ get; set; }
     }
+
+    public class BranchView
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Sha { get; set; }
+        public int RepositoryId { get; set; }
+    }
+
 }

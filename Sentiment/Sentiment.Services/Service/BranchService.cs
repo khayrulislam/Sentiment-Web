@@ -72,11 +72,11 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public Reply<BranchT> GetBranchFilterList(BranchFilter filter)
+        public Reply<BranchView> GetBranchFilterList(BranchFilter filter)
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                return unitOfWork.Branch.GetList(filter);
+                return unitOfWork.Branch.GetFilterList(filter);
             }
         }
     }

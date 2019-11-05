@@ -22,20 +22,62 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Branches.Where(b => b.RepositoryId == repoId).ToList();
         }
 
-        public Reply<BranchT> GetList(BranchFilter filter)
+        public Reply<BranchView> GetFilterList(BranchFilter filter)
         {
-            var list = GetList(filter.Id);
-            var total = list.Count();
+            int total;
+            List<BranchView> list = new List<BranchView>();
 
-            if (filter.SearchText != null) list = list.Where(repo => repo.Name.ToLower().Contains(filter.SearchText.ToLower())).ToList();
-            if (filter.SortOrder == "asc") list = list.OrderBy(repo => repo.Name).ToList();
-            if (filter.SortOrder == "dsc") list = list.OrderByDescending(repo => repo.Name).ToList();
-            if (filter.PageSize != 0 && filter.PageNumber + 1 != 0) list = list.Skip(filter.PageNumber * filter.PageSize).Take(filter.PageSize).ToList();
+            filter.SearchText = filter.SearchText.ToLower();
 
-            return new Reply<BranchT>()
+            if(filter.SearchText != null)
+            {
+                total = _dbContext.Branches.Where(br => br.RepositoryId==filter.Id && br.Name.ToLower().Contains(filter.SearchText)).Count();
+
+                if (filter.SortOrder == "asc")
+                {
+                    list = _dbContext.Branches.Select(br => new BranchView()
+                            { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId})
+                            .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
+                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                }
+
+                else if (filter.SortOrder == "dsc")
+                {
+                    list = _dbContext.Branches.Select(br => new BranchView()
+                            { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                            .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
+                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                }
+            }
+            else
+            {
+                total = _dbContext.Branches.Where(br => br.RepositoryId == filter.Id).Count();
+
+                if (filter.SortOrder == "asc")
+                {
+                    list = _dbContext.Branches.Select(br => new BranchView()
+                    { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                            .Where(br => br.RepositoryId == filter.Id)
+                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                }
+
+                else if (filter.SortOrder == "dsc")
+                {
+                    list = _dbContext.Branches.Select(br => new BranchView()
+                    { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                            .Where(br => br.RepositoryId == filter.Id )
+                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                }
+            }
+
+            return new Reply<BranchView>()
             {
                 TotalData = total,
-                Data = list.ToList()
+                Data = list
             };
         }
     }
