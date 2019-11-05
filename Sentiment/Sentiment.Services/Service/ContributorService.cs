@@ -70,6 +70,14 @@ namespace Sentiment.Services.Service
             }
         }
 
+        public int GetContributorCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Contributor.GetCount(repoId);
+            }
+        }
+
         public ContributorT GetContributor(long id, string name)
         {
             using (var unitOfWork = new UnitOfWork())

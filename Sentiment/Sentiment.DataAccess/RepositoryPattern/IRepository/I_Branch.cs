@@ -12,5 +12,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     {
         IEnumerable<BranchT> GetList(int repoId);
         Reply<BranchView> GetFilterList(BranchFilter filter);
+        int GetCount(int repoId);
+
     }
 }

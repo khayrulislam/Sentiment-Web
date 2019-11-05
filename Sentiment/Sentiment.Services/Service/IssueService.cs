@@ -108,5 +108,23 @@ namespace Sentiment.Services.Service
                 Body = issue.Body
             };
         }
+
+
+        public int GetIssueCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Issue.GetIssueCount(repoId);
+            }
+        }
+
+        public int GetPullRequestCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Issue.GetPullRequestCount(repoId);
+            }
+        }
+
     }
 }

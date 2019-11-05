@@ -25,5 +25,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         {
             return _dbContext.Commits.Where(c=>c.Sha == sha).FirstOrDefault();
         }
+
+        public int GetCount(int repoId)
+        {
+            return _dbContext.Commits.Where(c=>c.RepositoryId == repoId).Count();
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     {
         I_Branch Branch { get; }
         I_Commit Commit { get; }
-        I_ContributorRepository Contributor { get; }
+        I_Contributor Contributor { get; }
         I_Repository Repository { get; }
         I_RepositoryContributor RepositoryContributor { get; }
         I_BranchCommit BranchCommit { get; }

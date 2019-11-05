@@ -11,7 +11,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
     {
         public I_Branch Branch { get; private set; }
         public I_Commit Commit { get; private set; }
-        public I_ContributorRepository Contributor { get; private set; }
+        public I_Contributor Contributor { get; private set; }
         public I_Repository Repository { get; private set; }
         public I_RepositoryContributor RepositoryContributor { get; private set; }
         public I_BranchCommit BranchCommit { get; private set; }

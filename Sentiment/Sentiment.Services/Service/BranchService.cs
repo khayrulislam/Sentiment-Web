@@ -79,5 +79,13 @@ namespace Sentiment.Services.Service
                 return unitOfWork.Branch.GetFilterList(filter);
             }
         }
+
+        public int GetBranchCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Branch.GetCount(repoId);
+            }
+        }
     }
 }

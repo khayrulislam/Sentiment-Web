@@ -120,5 +120,14 @@ namespace Sentiment.Services.Service
                 return unitOfWork.Commit.GetBySha(sha);
             }
         }
+
+        public int GetCommitCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Commit.GetCount(repoId);
+            }
+        }
+
     }
 }

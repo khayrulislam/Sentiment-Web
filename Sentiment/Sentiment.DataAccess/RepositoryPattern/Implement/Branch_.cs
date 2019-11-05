@@ -80,5 +80,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
                 Data = list
             };
         }
+
+        public int GetCount(int repoId)
+        {
+            return _dbContext.Branches.Where(br=>br.RepositoryId == repoId).Count();
+        }
     }
 }

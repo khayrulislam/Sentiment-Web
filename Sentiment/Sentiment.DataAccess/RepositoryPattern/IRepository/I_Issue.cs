@@ -13,5 +13,8 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         IEnumerable<IssueT> GetList(int repositoryId);
         bool Exist(int repositoryId,int issueNumber);
         IssueT GetByNumber(int repositoryId,int issueNumber);
+        int GetIssueCount(int repoId);
+        int GetPullRequestCount(int repoId);
+
     }
 }

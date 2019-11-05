@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.Implement
 {
-    public class Contributor_: AllRepository<ContributorT>,I_ContributorRepository
+    public class Contributor_: AllRepository<ContributorT>,I_Contributor
     {
         SentiDbContext _dbContext;
         public Contributor_(SentiDbContext dbContext):base(dbContext)
@@ -29,6 +29,11 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         public ContributorT GetByName(string name)
         {
             return _dbContext.Contributors.Where(c=>c.Name == name).FirstOrDefault();
+        }
+
+        public int GetCount(int repoId)
+        {
+            return _dbContext.RepositoryContributors.Where(rc=>rc.RepositoryId== repoId).Count();
         }
 
         public IEnumerable<ContributorT> GetList(int repoId)

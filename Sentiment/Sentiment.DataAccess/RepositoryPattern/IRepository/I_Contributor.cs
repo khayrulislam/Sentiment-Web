@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
-    public interface I_ContributorRepository: I_AllRepository<ContributorT>
+    public interface I_Contributor: I_AllRepository<ContributorT>
     {
         IEnumerable<ContributorT> GetList(int repoId);
         ContributorT GetByName(string name);
         ContributorT GetById(long contributorId);
         ContributorT GetByIdName(long contributorId, string Name);
+        int GetCount(int repoId);
     }
 }

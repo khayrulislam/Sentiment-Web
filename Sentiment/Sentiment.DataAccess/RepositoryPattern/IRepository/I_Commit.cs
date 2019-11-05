@@ -11,5 +11,6 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     {
         bool Exist(string sha);
         CommitT GetBySha(string sha);
+        int GetCount(int repoId);
     }
 }
