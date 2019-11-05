@@ -108,7 +108,7 @@ namespace Sentiment.Services.Service
                         var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
                         if (commentStore == null)
                         {
-                            issueComments.Add(GetAIssueComment(comment, repositoryId, issue.Id));
+                            issueComments.Add(GetAIssueComment(comment, repositoryId, issue));
                             //unitOfWork.IssueComment.Add();
                             //unitOfWork.Complete();
                         }
@@ -137,20 +137,21 @@ namespace Sentiment.Services.Service
             return int.Parse(Regex.Match(url, @"\d+").Value);
         }
 
-        private IssueCommentT GetAIssueComment(IssueComment comment,int repositoryId, int issueId)
+        private IssueCommentT GetAIssueComment(IssueComment comment,int repositoryId, IssueT issue)
         {
             var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
             sentimentCal.CalculateSentiment(comment.Body);
             return new IssueCommentT()
             {
-                IssueId = issueId,
+                IssueId = issue.Id,
                 CommentNumber = comment.Id,
                 Pos = sentimentCal.PositoiveSentiScore,
                 Neg = sentimentCal.NegativeSentiScore,
                 WriterId = issuer.Id,
                 Date = comment.UpdatedAt,
                 RepositoryId = repositoryId,
-                Message = comment.Body
+                Message = comment.Body,
+                Type = issue.IssueType
             };
         }
 
