@@ -47,12 +47,6 @@ namespace Sentiment.Services.Service
             });
             dashboardDataList.Add(new CardData()
             {
-                name = "Collaborator",
-                value = contributorService.GetContributorCount(repoId),
-                extra = new ExtraCode() { code = "collaborator" }
-            });
-            dashboardDataList.Add(new CardData()
-            {
                 name = "Issue",
                 value = issueService.GetIssueCount(repoId),
                 extra = new ExtraCode() { code = "issue" }
@@ -62,6 +56,12 @@ namespace Sentiment.Services.Service
                 name = "Pull Request",
                 value = issueService.GetPullRequestCount(repoId),
                 extra = new ExtraCode() { code = "pull_request" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Collaborator",
+                value = contributorService.GetContributorCount(repoId),
+                extra = new ExtraCode() { code = "collaborator" }
             });
             dashboardDataList.Add(new CardData()
             {
@@ -81,14 +81,6 @@ namespace Sentiment.Services.Service
                 value = commentService.GetPullRequestCommentCount(repoId),
                 extra = new ExtraCode() { code = "pull_request_comment" }
             });
-            //var branchCount = branchService.GetBranchCount(repoId);
-            //var issueCount = issueService.GetIssueCount(repoId);
-            //var pullRequestCount = issueService.GetPullRequestCount(repoId);
-            //var contributorCount = contributorService.GetContributorCount(repoId);
-            //var commitCount = commitService.GetCommitCount(repoId);
-            //var commitCommentCount = commentService.GetCommitCommentCount(repoId);
-            //var issueCommentCount = commentService.GetIssueCommentCount(repoId);
-            //var pullRequestCommentCount = commentService.GetPullRequestCommentCount(repoId);
             return dashboardDataList;
         }
     }
