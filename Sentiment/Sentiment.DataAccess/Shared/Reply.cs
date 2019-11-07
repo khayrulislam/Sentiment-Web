@@ -15,4 +15,17 @@ namespace Sentiment.DataAccess.Shared
         public int TotalData { get; set; }
         public List<TEntity> Data { get; set; }
     }
+
+    public class ExtraCode
+    {
+        public string code { get; set; }
+    }
+
+    public class CardData
+    {
+        public string name { get; set; }
+        public int value { get; set; }
+        public ExtraCode extra { get; set; }
+    }
+
 }

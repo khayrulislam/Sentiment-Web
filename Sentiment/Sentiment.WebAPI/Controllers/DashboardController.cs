@@ -15,7 +15,7 @@ namespace Sentiment.WebAPI.Controllers
         [HttpGet]
         public HttpResponseMessage GetDashboardData(int repoId)
         {
-            return Request.CreateResponse(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.OK, dashboard.GetDashboardData(repoId));
         }
     }
 }

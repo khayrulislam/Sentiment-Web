@@ -44,7 +44,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
             repoFilter.SearchText = repoFilter.SearchText.ToLower();
 
-            if(repoFilter.SearchText != null)
+            if(repoFilter.SearchText != "")
             {
                 total = _dbContext.Repositories.Where(repo => repo.Name.ToLower().Contains(repoFilter.SearchText)).Count();
                 if (repoFilter.SortOrder == "asc")

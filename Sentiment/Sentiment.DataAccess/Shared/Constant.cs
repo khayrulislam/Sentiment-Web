@@ -41,4 +41,6 @@ namespace Sentiment.DataAccess.Shared
         public int NegSentiment { get; set; }
         public string Type { get; set; }
     }
+
+
 }

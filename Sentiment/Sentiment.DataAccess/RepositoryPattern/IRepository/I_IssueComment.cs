@@ -10,7 +10,8 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface I_IssueComment:I_AllRepository<IssueCommentT>
     {
         bool Exist(int issueId,int commentNumber);
-
         IssueCommentT GetByNumber(int issueId, long commentNumber);
+        int GetIssueCommentCount(int repoId);
+        int GetPullRequestCommentCount(int repoId);
     }
 }

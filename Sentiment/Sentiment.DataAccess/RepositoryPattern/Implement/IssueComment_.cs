@@ -1,5 +1,6 @@
 ﻿using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.IRepository;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,16 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         public IssueCommentT GetByNumber(int issueId, long commentNumber)
         {
             return _dbContext.IssueComments.Where(ic=> ic.IssueId == issueId && ic.CommentNumber == commentNumber).FirstOrDefault();
+        }
+
+        public int GetIssueCommentCount(int repoId)
+        {
+            return _dbContext.Issues.Where(i => i.RepositoryId == repoId && i.IssueType == IssueType.Issue).Select(i => i.Comments.Count()).Sum();
+        }
+
+        public int GetPullRequestCommentCount(int repoId)
+        {
+            return _dbContext.Issues.Where(i => i.RepositoryId == repoId && i.IssueType == IssueType.PullRequest).Select(i => i.Comments.Count()).Sum();
         }
     }
 }

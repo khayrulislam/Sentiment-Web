@@ -1,4 +1,5 @@
 ﻿using Sentiment.DataAccess.RepositoryPattern.Implement;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,16 +31,65 @@ namespace Sentiment.Services.Service
         }
 
 
-        public void GetDashboardData(int repoId)
+        public List<CardData> GetDashboardData(int repoId)
         {
-            var branchCount = branchService.GetBranchCount(repoId);
-            var issueCount = issueService.GetIssueCount(repoId);
-            var pullRequestCount = issueService.GetPullRequestCount(repoId);
-            var contributorCount = contributorService.GetContributorCount(repoId);
-            var commitCount = commitService.GetCommitCount(repoId);
-            var commitCommentCount = commentService.GetCommitCommentCount(repoId);
-
-
+            List<CardData> dashboardDataList = new List<CardData>();
+            dashboardDataList.Add(new CardData() {
+                name = "Branch",
+                value = branchService.GetBranchCount(repoId),
+                extra = new ExtraCode() { code = "branch" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Commit",
+                value = commitService.GetCommitCount(repoId),
+                extra = new ExtraCode() { code = "commit" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Collaborator",
+                value = contributorService.GetContributorCount(repoId),
+                extra = new ExtraCode() { code = "collaborator" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Issue",
+                value = issueService.GetIssueCount(repoId),
+                extra = new ExtraCode() { code = "issue" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Pull Request",
+                value = issueService.GetPullRequestCount(repoId),
+                extra = new ExtraCode() { code = "pull_request" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Commit Comment",
+                value = commentService.GetCommitCommentCount(repoId),
+                extra = new ExtraCode() { code = "commit_comment" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Issue Comment",
+                value = commentService.GetIssueCommentCount(repoId),
+                extra = new ExtraCode() { code = "issue_comment" }
+            });
+            dashboardDataList.Add(new CardData()
+            {
+                name = "Pull Request Comment",
+                value = commentService.GetPullRequestCommentCount(repoId),
+                extra = new ExtraCode() { code = "pull_request_comment" }
+            });
+            //var branchCount = branchService.GetBranchCount(repoId);
+            //var issueCount = issueService.GetIssueCount(repoId);
+            //var pullRequestCount = issueService.GetPullRequestCount(repoId);
+            //var contributorCount = contributorService.GetContributorCount(repoId);
+            //var commitCount = commitService.GetCommitCount(repoId);
+            //var commitCommentCount = commentService.GetCommitCommentCount(repoId);
+            //var issueCommentCount = commentService.GetIssueCommentCount(repoId);
+            //var pullRequestCommentCount = commentService.GetPullRequestCommentCount(repoId);
+            return dashboardDataList;
         }
     }
 }

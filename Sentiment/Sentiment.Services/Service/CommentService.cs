@@ -164,5 +164,21 @@ namespace Sentiment.Services.Service
             }
         }
 
+        public int GetIssueCommentCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.IssueComment.GetIssueCommentCount(repoId);
+            }
+        }
+
+        public int GetPullRequestCommentCount(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.IssueComment.GetPullRequestCommentCount(repoId);
+            }
+        }
+
     }
 }
