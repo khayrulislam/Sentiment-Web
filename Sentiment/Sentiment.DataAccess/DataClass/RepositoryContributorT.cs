@@ -16,6 +16,6 @@ namespace Sentiment.DataAccess.DataClass
         public virtual RepositoryT Repository { get; set; }
         public int ContributorId { get; set; }
         public virtual ContributorT Contributor { get; set; }
-
+        public int Contribution { get; set; }
     }
 }

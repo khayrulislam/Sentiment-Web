@@ -65,13 +65,9 @@
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\201911040422179_create.cs" />
-    <Compile Include="Migrations\201911040422179_create.Designer.cs">
-      <DependentUpon>201911040422179_create.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911061417284_change.cs" />
-    <Compile Include="Migrations\201911061417284_change.Designer.cs">
-      <DependentUpon>201911061417284_change.cs</DependentUpon>
+    <Compile Include="Migrations\201911090935026_create.cs" />
+    <Compile Include="Migrations\201911090935026_create.Designer.cs">
+      <DependentUpon>201911090935026_create.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,11 +102,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201911040422179_create.resx">
-      <DependentUpon>201911040422179_create.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911061417284_change.resx">
-      <DependentUpon>201911061417284_change.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911090935026_create.resx">
+      <DependentUpon>201911090935026_create.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

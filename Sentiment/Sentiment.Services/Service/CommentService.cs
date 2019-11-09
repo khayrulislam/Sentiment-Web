@@ -150,8 +150,7 @@ namespace Sentiment.Services.Service
                 WriterId = issuer.Id,
                 Date = comment.UpdatedAt,
                 RepositoryId = repositoryId,
-                Message = comment.Body,
-                Type = issue.IssueType
+                Message = comment.Body
             };
         }
 

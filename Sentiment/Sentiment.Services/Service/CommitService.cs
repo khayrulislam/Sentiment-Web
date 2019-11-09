@@ -92,25 +92,33 @@ namespace Sentiment.Services.Service
 
         private CommitT GetACommit(GitHubCommit commit, int repositoryId)
         {
-            ContributorT commiter = null;
-            var Date = new DateTimeOffset();
-            if (commit.Committer != null)
+            CommitT commitT = new CommitT();
+            try
             {
-                commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
-                Date = commit.Commit.Committer.Date;
+                ContributorT commiter = null;
+                var Date = new DateTimeOffset();
+                if (commit.Commit.Committer != null) Date = commit.Commit.Committer.Date;
+                else if (commit.Commit.Author != null) Date = commit.Commit.Author.Date;
+
+                if (commit.Committer != null) commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
+                sentimentCal.CalculateSentiment(commit.Commit.Message);
+
+                commitT.Sha = commit.Sha;
+                commitT.Writer = commiter;
+                commitT.Sha = commit.Sha;
+                commitT.Writer = commiter;
+                commitT.Pos = sentimentCal.PositoiveSentiScore;
+                commitT.Neg = sentimentCal.NegativeSentiScore;
+                commitT.RepositoryId = repositoryId;
+                commitT.DateTime = Date;
+                commitT.Message = commit.Commit.Message;
+
             }
-            sentimentCal.CalculateSentiment(commit.Commit.Message);
-            return new CommitT()
+            catch (Exception e)
             {
-                Sha = commit.Sha,
-                Writer = commiter,
-                Pos = sentimentCal.PositoiveSentiScore,
-                Neg = sentimentCal.NegativeSentiScore,
-                RepositoryId = repositoryId,
-                DateTime = Date,
-                Message = commit.Commit.Message
-                
-            };
+                throw ;
+            }
+            return commitT;
         }
 
         public CommitT GetBySha(string sha)
