@@ -110,7 +110,7 @@ namespace Sentiment.Services.Service
         }
 
 
-        public int GetIssueCount(int repoId)
+        public int GetCount(int repoId)
         {
             using (var unitOfWork = new UnitOfWork())
             {

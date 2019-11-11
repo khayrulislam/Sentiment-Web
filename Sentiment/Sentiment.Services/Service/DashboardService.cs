@@ -31,55 +31,55 @@ namespace Sentiment.Services.Service
         }
 
 
-        public List<CardData> GetDashboardData(int repoId)
+        public List<ChartData> GetDashboardData(int repoId)
         {
-            List<CardData> dashboardDataList = new List<CardData>();
-            dashboardDataList.Add(new CardData() {
+            List<ChartData> dashboardDataList = new List<ChartData>();
+            dashboardDataList.Add(new ChartData() {
                 name = "Branch",
-                value = branchService.GetBranchCount(repoId),
+                value = branchService.GetCount(repoId),
                 extra = new ExtraCode() { code = "branch" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Commit",
-                value = commitService.GetCommitCount(repoId),
+                value = commitService.GetCount(repoId),
                 extra = new ExtraCode() { code = "commit" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Issue",
-                value = issueService.GetIssueCount(repoId),
+                value = issueService.GetCount(repoId),
                 extra = new ExtraCode() { code = "issue" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Pull Request",
                 value = issueService.GetPullRequestCount(repoId),
-                extra = new ExtraCode() { code = "pull_request" }
+                extra = new ExtraCode() { code = "pull-request" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Collaborator",
-                value = contributorService.GetContributorCount(repoId),
+                value = contributorService.GetCount(repoId),
                 extra = new ExtraCode() { code = "collaborator" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Commit Comment",
                 value = commentService.GetCommitCommentCount(repoId),
-                extra = new ExtraCode() { code = "commit_comment" }
+                extra = new ExtraCode() { code = "commit-comment" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Issue Comment",
                 value = commentService.GetIssueCommentCount(repoId),
-                extra = new ExtraCode() { code = "issue_comment" }
+                extra = new ExtraCode() { code = "issue-comment" }
             });
-            dashboardDataList.Add(new CardData()
+            dashboardDataList.Add(new ChartData()
             {
                 name = "Pull Request Comment",
                 value = commentService.GetPullRequestCommentCount(repoId),
-                extra = new ExtraCode() { code = "pull_request_comment" }
+                extra = new ExtraCode() { code = "pull-request-comment" }
             });
             return dashboardDataList;
         }

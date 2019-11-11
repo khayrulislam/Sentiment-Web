@@ -21,11 +21,25 @@ namespace Sentiment.DataAccess.Shared
         public string code { get; set; }
     }
 
-    public class CardData
+    public class ChartData
     {
         public string name { get; set; }
         public int value { get; set; }
         public ExtraCode extra { get; set; }
+    }
+
+    public class CommitData
+    {
+        public int Pos { get; set; }
+        public int Neg { get; set; }
+        public DateTimeOffset Datetime { get; set; }
+    }
+
+
+    public class ReplyCommitChart
+    {
+        public List<List<long>> LineData { get; set; }
+        public List<ChartData> PieData { get; set; }
     }
 
 }
