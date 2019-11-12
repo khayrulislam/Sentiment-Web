@@ -138,16 +138,16 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public ReplyCommitChart GetChartData(int repoId, string option)
+        public ReplyChart GetChartData(int repoId, string option)
         {
             List<CommitData> data = new List<CommitData>();
-            ReplyCommitChart result = new ReplyCommitChart();
+            ReplyChart result = new ReplyChart();
             try
             {
                 using (var unitOfWork = new UnitOfWork())
                 {
-                    if (option == "all") data = unitOfWork.Commit.GetAllSentimentData(repoId);
-                    else if (option == "only") data = unitOfWork.Commit.GetOnlySentimentData(repoId);
+                    if (option == "all") data = unitOfWork.Commit.GetAllSentiment(repoId);
+                    else if (option == "only") data = unitOfWork.Commit.GetOnlySentiment(repoId);
                     result.LineData = GetSentimentLineChart(data);
                     result.PieData = GetSentimentPieChart(data);
                 }
@@ -159,7 +159,7 @@ namespace Sentiment.Services.Service
             return result;
         }
 
-        private List<List<long>> GetSentimentLineChart(List<CommitData> data)
+        public List<List<long>> GetSentimentLineChart(List<CommitData> data)
         {
             List<List<long>> result = new List<List<long>>();
             data.ForEach(element => {
@@ -170,7 +170,7 @@ namespace Sentiment.Services.Service
             return result;
         }
 
-        private List<ChartData> GetSentimentPieChart(List<CommitData> data)
+        public List<ChartData> GetSentimentPieChart(List<CommitData> data)
         {
             List<ChartData> commitData = new List<ChartData>();
             int pos5 = 0, pos4 = 0, pos3 = 0, pos2 = 0, neg5 = 0, neg4 = 0, neg3 = 0, neg2 = 0, neutral = 0;

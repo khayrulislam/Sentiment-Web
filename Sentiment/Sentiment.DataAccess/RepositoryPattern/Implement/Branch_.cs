@@ -22,7 +22,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Branches.Where(b => b.RepositoryId == repoId).ToList();
         }
 
-        public Reply<BranchView> GetFilterList(BranchFilter filter)
+        public ReplyList<BranchView> GetFilterList(BranchFilter filter)
         {
             int total;
             List<BranchView> list = new List<BranchView>();
@@ -74,7 +74,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
                 }
             }
 
-            return new Reply<BranchView>()
+            return new ReplyList<BranchView>()
             {
                 TotalData = total,
                 Data = list

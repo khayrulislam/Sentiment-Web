@@ -22,7 +22,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Commits.Any(c => c.Sha == sha);
         }
 
-        public List<CommitData> GetAllSentimentData(int repoId)
+        public List<CommitData> GetAllSentiment(int repoId)
         {
             return _dbContext.Commits.Where(c => c.RepositoryId == repoId).
                 OrderBy(com => new { com.DateTime, com.Id })
@@ -40,7 +40,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Commits.Where(c=>c.RepositoryId == repoId).Count();
         }
 
-        public List<CommitData> GetOnlySentimentData(int repoId)
+        public List<CommitData> GetOnlySentiment(int repoId)
         {
             return _dbContext.Commits.Where(com => com.RepositoryId == repoId && (com.Pos != 1 || com.Neg != -1)).OrderBy(com  => new { com.DateTime, com.Id } )
                 .Select(com => new CommitData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos }).ToList();

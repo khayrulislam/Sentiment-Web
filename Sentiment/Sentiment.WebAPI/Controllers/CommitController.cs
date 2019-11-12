@@ -1,4 +1,5 @@
-﻿using Sentiment.Services.Service;
+﻿using Sentiment.DataAccess.Shared;
+using Sentiment.Services.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace Sentiment.WebAPI.Controllers
     {
         private CommitService commitService = new CommitService();
 
-        [HttpGet]
-        public HttpResponseMessage GetOnlySentimentCommitData(int repoId, string option)
+        [HttpPost]
+        public HttpResponseMessage GetSentimentData(Chart chartParams)
         {
-            return Request.CreateResponse(HttpStatusCode.OK,commitService.GetChartData(repoId,option));
+            return Request.CreateResponse(HttpStatusCode.OK,commitService.GetChartData(chartParams.RepoId, chartParams.Option));
         }
 
     }

@@ -37,7 +37,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Repositories.ToList();
         }
 
-        public Reply<RepositoryView> GetFilterList(RepositroyFilter repoFilter)
+        public ReplyList<RepositoryView> GetFilterList(RepositroyFilter repoFilter)
         {
             int total = 0;
             var list = new List<RepositoryView>();
@@ -82,7 +82,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
                 }
             }
 
-            return new Reply<RepositoryView>() {
+            return new ReplyList<RepositoryView>() {
                 Data = list,
                 TotalData = total
             };

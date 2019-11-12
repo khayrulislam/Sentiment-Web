@@ -11,7 +11,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     public interface I_Branch:I_AllRepository<BranchT>
     {
         IEnumerable<BranchT> GetList(int repoId);
-        Reply<BranchView> GetFilterList(BranchFilter filter);
+        ReplyList<BranchView> GetFilterList(BranchFilter filter);
         int GetCount(int repoId);
 
     }

@@ -24,4 +24,15 @@ namespace Sentiment.DataAccess.Shared
         public int Id { get; set; }
     }
 
+    public class Chart
+    {
+        public int RepoId { get; set; }
+        public string Option { get; set; }
+    }
+
+    public class BranchChart : Chart
+    {
+        public int BranchId { get; set; }
+    }
+
 }

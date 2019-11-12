@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sentiment.DataAccess.Shared
 {
-    public class Reply<TEntity>
+    public class ReplyList<TEntity>
     {
-        public Reply()
+        public ReplyList()
         {
             Data = new List<TEntity>();
         }
@@ -36,7 +36,7 @@ namespace Sentiment.DataAccess.Shared
     }
 
 
-    public class ReplyCommitChart
+    public class ReplyChart
     {
         public List<List<long>> LineData { get; set; }
         public List<ChartData> PieData { get; set; }

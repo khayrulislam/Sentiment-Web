@@ -109,12 +109,12 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public Reply<RepositoryT> GetList()
+        public ReplyList<RepositoryT> GetList()
         {
             using (var unitOfWork = new UnitOfWork())
             {
                 var list = unitOfWork.Repository.GetAll().ToList();
-                return new Reply<RepositoryT>()
+                return new ReplyList<RepositoryT>()
                 {
                     Data = list,
                     TotalData = list.Count
@@ -146,7 +146,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public Reply<RepositoryView> GetFilterList(RepositroyFilter filter)
+        public ReplyList<RepositoryView> GetFilterList(RepositroyFilter filter)
         {
             using (var unitOfWork = new UnitOfWork())
             {

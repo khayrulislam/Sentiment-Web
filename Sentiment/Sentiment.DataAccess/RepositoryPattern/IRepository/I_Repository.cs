@@ -13,7 +13,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         bool Exist(string repositoryName, string ownerName);
         RepositoryT GetByNameAndOwnerName(string repositoryName, string ownerName);
         RepositoryT GetById(long repoId);
-        Reply<RepositoryView> GetFilterList(RepositroyFilter repoFilter);
+        ReplyList<RepositoryView> GetFilterList(RepositroyFilter repoFilter);
 
     }
 }

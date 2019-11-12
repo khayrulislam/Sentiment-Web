@@ -17,6 +17,7 @@ namespace Sentiment.Services.Service
         GitHubClient gitHubClient;
         IRepositoriesClient repositoryClient;
         ApiOptions option;
+        CommitService commitService;
 
         public BranchService()
         {
@@ -27,6 +28,7 @@ namespace Sentiment.Services.Service
         {
             this.gitHubClient = GitHubConnection.Instance;
             this.repositoryClient = gitHubClient.Repository;
+            this.commitService = new CommitService();
             this.option = new ApiOptions()
             {
                 PageCount = 1,
@@ -72,7 +74,7 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public Reply<BranchView> GetBranchFilterList(BranchFilter filter)
+        public ReplyList<BranchView> GetBranchFilterList(BranchFilter filter)
         {
             using (var unitOfWork = new UnitOfWork())
             {
@@ -86,6 +88,27 @@ namespace Sentiment.Services.Service
             {
                 return unitOfWork.Branch.GetCount(repoId);
             }
+        }
+
+        public ReplyChart GetChartData(BranchChart branchChart)
+        {
+            List<CommitData> data = new List<CommitData>();
+            ReplyChart result = new ReplyChart();
+            try
+            {
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    if(branchChart.Option == "all")data = unitOfWork.BranchCommit.GetBranchAllSentiment(branchChart.RepoId, branchChart.BranchId);
+                    else if(branchChart.Option == "only") data = unitOfWork.BranchCommit.GetBranchOnlySentiment(branchChart.RepoId,branchChart.BranchId);
+                    result.LineData = commitService.GetSentimentLineChart(data);
+                    result.PieData = commitService.GetSentimentPieChart(data);
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return result;
         }
     }
 }
