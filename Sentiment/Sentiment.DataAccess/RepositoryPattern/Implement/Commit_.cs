@@ -19,31 +19,76 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public bool Exist(string sha)
         {
-            return _dbContext.Commits.Any(c => c.Sha == sha);
+            bool exist = false;
+            try
+            {
+                exist = _dbContext.Commits.Any(c => c.Sha == sha);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return exist;
         }
 
         public List<CommitData> GetAllSentiment(int repoId)
         {
-            return _dbContext.Commits.Where(c => c.RepositoryId == repoId).
+            List<CommitData> allcommits = new List<CommitData>();
+            try
+            {
+                allcommits = _dbContext.Commits.Where(c => c.RepositoryId == repoId).
                 OrderBy(com => new { com.DateTime, com.Id })
                 .Select(cc => new CommitData() { Datetime = cc.DateTime, Pos = cc.Pos, Neg = cc.Neg })
                 .ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return allcommits;
         }
 
         public CommitT GetBySha(string sha)
         {
-            return _dbContext.Commits.Where(c=>c.Sha == sha).FirstOrDefault();
+            CommitT commit = new CommitT();
+            try
+            {
+                commit = _dbContext.Commits.Where(c => c.Sha == sha).FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return commit;
         }
 
         public int GetCount(int repoId)
         {
-            return _dbContext.Commits.Where(c=>c.RepositoryId == repoId).Count();
+            int count=0;
+            try
+            {
+                count = _dbContext.Commits.Where(c => c.RepositoryId == repoId).Count();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return count;
         }
 
         public List<CommitData> GetOnlySentiment(int repoId)
         {
-            return _dbContext.Commits.Where(com => com.RepositoryId == repoId && (com.Pos != 1 || com.Neg != -1)).OrderBy(com  => new { com.DateTime, com.Id } )
+            List<CommitData> sentimentCommits = new List<CommitData>();
+            try
+            {
+                sentimentCommits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && (com.Pos != 1 || com.Neg != -1)).OrderBy(com => new { com.DateTime, com.Id })
                 .Select(com => new CommitData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return sentimentCommits;
         }
     }
 }
