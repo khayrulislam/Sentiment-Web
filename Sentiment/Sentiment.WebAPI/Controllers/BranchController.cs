@@ -16,12 +16,12 @@ namespace Sentiment.WebAPI.Controllers
         private BranchService branchService = new BranchService();
 
         [HttpPost]
-        public HttpResponseMessage GetBranchFilterList(BranchFilter filter)
+        public HttpResponseMessage GetFilterList(BranchFilter filter)
         {
             return  Request.CreateResponse(HttpStatusCode.OK, branchService.GetBranchFilterList(filter));
         }
         [HttpPost]
-        public HttpResponseMessage GetCommitSentimentData(BranchChart chartParams)
+        public HttpResponseMessage GetCommitChartData(BranchChart chartParams)
         {
             return Request.CreateResponse(HttpStatusCode.OK, branchService.GetChartData(chartParams));
         }

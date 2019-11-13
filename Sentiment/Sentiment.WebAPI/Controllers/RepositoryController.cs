@@ -24,6 +24,19 @@ namespace Sentiment.WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [HttpPost]
+        public HttpResponseMessage GetFilterList(RepositroyFilter filter)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetFilterList(filter));
+        }
+
+
+
+
+
+
+
+
         [HttpGet]
         public HttpResponseMessage GetList()
         {
@@ -41,18 +54,6 @@ namespace Sentiment.WebAPI.Controllers
         {
             return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetById(repoId));
         }
-
-        [HttpPost]
-        public HttpResponseMessage GetListByFilter(RepositroyFilter filter)
-        {
-            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetFilterList(filter));
-        }
-
-/*        public HttpResponseMessage GetStatusByFilter(RepositroyFilter filter)
-        {
-            return Request.CreateResponse(HttpStatusCode.OK, repositoryService.GetStatusList(filter));
-        }*/
-
 
     }
 }

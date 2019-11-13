@@ -15,7 +15,7 @@ namespace Sentiment.WebAPI.Controllers
         private CommitService commitService = new CommitService();
 
         [HttpPost]
-        public HttpResponseMessage GetSentimentData(Chart chartParams)
+        public HttpResponseMessage GetChartData(Chart chartParams)
         {
             return Request.CreateResponse(HttpStatusCode.OK,commitService.GetChartData(chartParams.RepoId, chartParams.Option));
         }

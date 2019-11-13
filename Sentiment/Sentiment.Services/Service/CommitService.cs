@@ -154,6 +154,7 @@ namespace Sentiment.Services.Service
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 throw;
             }
             return result;
@@ -221,49 +222,49 @@ namespace Sentiment.Services.Service
 
             commitData.Add(new ChartData()
             {
-                name = "Positive sentiment (5)",
+                name = "Positive[5]",
                 value = pos5,
                 extra = new ExtraCode() { code = "pos5" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Positive sentiment (4)",
+                name = "Positive[4]",
                 value = pos4,
                 extra = new ExtraCode() { code = "pos4" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Positive sentiment (3)",
+                name = "Positive[3]",
                 value = pos3,
                 extra = new ExtraCode() { code = "pos3" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Positive sentiment (2)",
+                name = "Positive[2]",
                 value = pos2,
                 extra = new ExtraCode() { code = "pos2" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Negative sentiment (5)",
+                name = "Negative[5]",
                 value = neg5,
                 extra = new ExtraCode() { code = "neg5" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Negative sentiment (4)",
+                name = "Negative[4]",
                 value = neg4,
                 extra = new ExtraCode() { code = "neg4" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Negative sentiment (3)",
+                name = "Negative[3]",
                 value = neg3,
                 extra = new ExtraCode() { code = "neg3" }
             });
             commitData.Add(new ChartData()
             {
-                name = "Negative sentiment (2)",
+                name = "Negative[2]",
                 value = neg2,
                 extra = new ExtraCode() { code = "neg2" }
             });

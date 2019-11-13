@@ -13,7 +13,7 @@ namespace Sentiment.WebAPI.Controllers
         private DashboardService dashboard = new DashboardService();
 
         [HttpGet]
-        public HttpResponseMessage GetDashboardData(int repoId)
+        public HttpResponseMessage GetCardData(int repoId)
         {
             return Request.CreateResponse(HttpStatusCode.OK, dashboard.GetDashboardData(repoId));
         }
