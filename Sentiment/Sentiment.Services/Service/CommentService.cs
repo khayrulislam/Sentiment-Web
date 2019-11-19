@@ -49,29 +49,36 @@ namespace Sentiment.Services.Service
 
         public async Task StoreCommitCommentAsync(long repoId, string sha)
         {
-            using (var unitOfWork = new UnitOfWork())
+            try
             {
-                var commit = unitOfWork.Commit.GetBySha(sha);
-                var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
-                var commentList = new List<CommitCommentT>();
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var commit = unitOfWork.Commit.GetBySha(sha);
+                    var comments = await commitCommentClient.GetAllForCommit(repoId, sha);
+                    var commentList = new List<CommitCommentT>();
 
-                comments.ToList().ForEach((comment)=> {
-                    var commentStore = unitOfWork.CommitComment.GetByNumber(commit.Id,comment.Id);
-                    if (commentStore != null && commentStore.Date != comment.UpdatedAt)
-                    {
-                        sentimentCal.CalculateSentiment(comment.Body);
-                        commentStore.Pos = sentimentCal.PositoiveSentiScore;
-                        commentStore.Neg = sentimentCal.NegativeSentiScore;
-                        unitOfWork.Complete();
-                    }
-                    else
-                    {
-                        commentList.Add(GetACommitComment(comment,commit.Id));
-                    }
-                });
-                unitOfWork.CommitComment.AddRange(commentList);
-                unitOfWork.Complete();
+                    comments.ToList().ForEach((comment) => {
+                        var commentStore = unitOfWork.CommitComment.GetByNumber(commit.Id, comment.Id);
+                        if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                        {
+                            sentimentCal.CalculateSentiment(comment.Body);
+                            commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                            commentStore.Neg = sentimentCal.NegativeSentiScore;
+                            unitOfWork.Complete();
+                        }
+                        else
+                        {
+                            unitOfWork.CommitComment.Add(GetACommitComment(comment, commit.Id));
+                            unitOfWork.Complete();
+                        }
+                    });
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+           
         }
 
         private CommitCommentT GetACommitComment(CommitComment comment, int commitId)
@@ -92,44 +99,44 @@ namespace Sentiment.Services.Service
 
         public async Task StoreIssueCommentAsync(long repoId,int repositoryId)
         {
-            using (var unitOfWork = new UnitOfWork())
+            try
             {
-                HashSet<IssueCommentT> issueComments = new HashSet<IssueCommentT>();
-
-                var repository = unitOfWork.Repository.Get(repositoryId);
-                request.Since = repository.AnalysisDate;
-                var comments = await issueCommentClient.GetAllForRepository(repoId,request);
-                comments.ToList().ForEach((comment) =>
+                using (var unitOfWork = new UnitOfWork())
                 {
-                    var issueId = GetIssueId(comment.HtmlUrl);
-                    var issue = unitOfWork.Issue.GetByNumber(repositoryId,issueId);
-                    if(issue!= null)
+                    var repository = unitOfWork.Repository.Get(repositoryId);
+                    request.Since = repository.AnalysisDate;
+                    var comments = await issueCommentClient.GetAllForRepository(repoId, request);
+                    comments.ToList().ForEach((comment) =>
                     {
-                        var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
-                        if (commentStore == null)
+                        var issueId = GetIssueId(comment.HtmlUrl);
+                        var issue = unitOfWork.Issue.GetByNumber(repositoryId, issueId);
+                        if (issue != null)
                         {
-                            issueComments.Add(GetAIssueComment(comment, repositoryId, issue));
-                            //unitOfWork.IssueComment.Add();
-                            //unitOfWork.Complete();
+                            var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
+                            if (commentStore == null)
+                            {
+                                //issueComments.Add();
+                                unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue));
+                                unitOfWork.Complete();
+                            }
+                            else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                            {
+                                sentimentCal.CalculateSentiment(comment.Body);
+                                commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                                commentStore.Neg = sentimentCal.NegativeSentiScore;
+                                commentStore.Date = comment.UpdatedAt;
+                                unitOfWork.Complete();
+                            }
+
                         }
-                        else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
-                        {
-                            sentimentCal.CalculateSentiment(comment.Body);
-                            commentStore.Pos = sentimentCal.PositoiveSentiScore;
-                            commentStore.Neg = sentimentCal.NegativeSentiScore;
-                            commentStore.Date = comment.UpdatedAt;
-                            unitOfWork.Complete();
-                        }
-                        
-                    }
-                });
-                lock (obj)
-                {
-                    unitOfWork.IssueComment.AddRange(issueComments.ToList());
-                    unitOfWork.Complete();
-                    issueComments.Clear();
+                    });
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
         }
 
         private int GetIssueId(string url)

@@ -26,5 +26,11 @@ namespace Sentiment.WebAPI.Controllers
         {
             return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetFilterList(filter));
         }
+
+        [HttpPost]
+        public HttpResponseMessage GetDetail(ContributorChart contributorChart)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetDetail(contributorChart));
+        }
     }
 }

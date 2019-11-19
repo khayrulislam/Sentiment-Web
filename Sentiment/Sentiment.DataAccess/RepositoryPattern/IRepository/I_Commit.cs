@@ -13,7 +13,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         bool Exist(string sha);
         CommitT GetBySha(string sha);
         int GetCount(int repoId);
-        List<CommitData> GetOnlySentiment(int repoId);
-        List<CommitData> GetAllSentiment(int repoId);
+        List<SentimentData> GetOnlySentiment(int repoId);
+        List<SentimentData> GetAllSentiment(int repoId);
+        List<SentimentData> GetOnlySentiment(int repoId, int contributorId);
+        List<SentimentData> GetAllSentiment(int repoId, int contributorId);
+        List<SentimentData> GetContributorAllSentiment(int repoId, int contributorId);
     }
 }

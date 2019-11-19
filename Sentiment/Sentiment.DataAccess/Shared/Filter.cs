@@ -39,4 +39,9 @@ namespace Sentiment.DataAccess.Shared
         public int BranchId { get; set; }
     }
 
+    public class ContributorChart : Chart
+    {
+        public int ContributorId { get; set; }
+    }
+
 }

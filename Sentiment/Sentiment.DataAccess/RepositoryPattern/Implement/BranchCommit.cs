@@ -17,18 +17,18 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             this._dbContext = dbContext;
         }
 
-        public List<CommitData> GetBranchAllSentiment(int repoId, int branchId)
+        public List<SentimentData> GetBranchAllSentiment(int repoId, int branchId)
         {
             return _dbContext.BranchCommits.Where(bc => bc.BranchId == branchId)
                 .OrderBy(bc => new { bc.Commit.DateTime, bc.Commit.Id })
-                .Select(bc => new CommitData() { Datetime = bc.Commit.DateTime, Neg = bc.Commit.Neg, Pos = bc.Commit.Pos }).ToList();
+                .Select(bc => new SentimentData() { Datetime = bc.Commit.DateTime, Neg = bc.Commit.Neg, Pos = bc.Commit.Pos }).ToList();
         }
 
-        public List<CommitData> GetBranchOnlySentiment(int repoId, int branchId)
+        public List<SentimentData> GetBranchOnlySentiment(int repoId, int branchId)
         {
             return _dbContext.BranchCommits.Where(bc => bc.BranchId == branchId && (bc.Commit.Pos != 1 || bc.Commit.Neg != -1))
                 .OrderBy(bc => new { bc.Commit.DateTime, bc.Commit.Id })
-                .Select(bc => new CommitData() { Datetime = bc.Commit.DateTime, Neg = bc.Commit.Neg, Pos = bc.Commit.Pos }).ToList();
+                .Select(bc => new SentimentData() { Datetime = bc.Commit.DateTime, Neg = bc.Commit.Neg, Pos = bc.Commit.Pos }).ToList();
 
         }
     }

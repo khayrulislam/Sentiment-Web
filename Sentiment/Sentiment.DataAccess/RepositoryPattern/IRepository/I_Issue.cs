@@ -1,5 +1,6 @@
 ﻿
 using Sentiment.DataAccess.DataClass;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,14 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         int GetIssueCount(int repoId);
         int GetPullRequestCount(int repoId);
 
+        List<SentimentData> GetAllSentiment(int repoId);
+        List<SentimentData> GetOnlySentiment(int repoId);
+        List<SentimentData> GetAllSentiment(int repoId, int contributorId);
+        List<SentimentData> GetOnlySentiment(int repoId, int contributorId);
+
+        List<SentimentData> GetPullRequestAllSentiment(int repoId);
+        List<SentimentData> GetPullRequestOnlySentiment(int repoId);
+        List<SentimentData> GetPullRequestAllSentiment(int repoId, int contributorId);
+        List<SentimentData> GetPullRequestOnlySentiment(int repoId, int contributorId);
     }
 }

@@ -31,45 +31,52 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             var list = new List<ContributorView>();
             filter.SearchText = filter.SearchText.ToLower();
 
-            if(filter.SearchText != "")
+            try
             {
-                total = _dbContext.RepositoryContributors
-                    .Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText))
-                    .Count();
-                if (filter.SortOrder == "asc")
+                if (filter.SearchText != "")
                 {
-                    list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText))
-                        .Select(cont => new ContributorView(){ Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution=cont.Contribution})
-                        .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                        .Take(filter.PageSize).ToList();
+                    total = _dbContext.RepositoryContributors
+                        .Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText))
+                        .Count();
+                    if (filter.SortOrder == "asc")
+                    {
+                        list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText))
+                            .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
+                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                    }
+                    else if (filter.SortOrder == "dsc")
+                    {
+                        list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText))
+                            .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
+                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                    }
                 }
-                else if (filter.SortOrder == "dsc")
+                else
                 {
-                    list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText))
-                        .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
-                        .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                        .Take(filter.PageSize).ToList();
+                    total = _dbContext.RepositoryContributors
+                        .Where(repo => repo.RepositoryId == filter.Id)
+                        .Count();
+                    if (filter.SortOrder == "asc")
+                    {
+                        list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id)
+                            .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
+                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                    }
+                    else if (filter.SortOrder == "dsc")
+                    {
+                        list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id)
+                            .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
+                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .Take(filter.PageSize).ToList();
+                    }
                 }
             }
-            else
+            catch (Exception e)
             {
-                total = _dbContext.RepositoryContributors
-                    .Where(repo => repo.RepositoryId == filter.Id)
-                    .Count();
-                if (filter.SortOrder == "asc")
-                {
-                    list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id)
-                        .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
-                        .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                        .Take(filter.PageSize).ToList();
-                }
-                else if (filter.SortOrder == "dsc")
-                {
-                    list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id)
-                        .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
-                        .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                        .Take(filter.PageSize).ToList();
-                }
+                Console.WriteLine(e.Message);
             }
 
             return new ReplyList<ContributorView>()
@@ -82,67 +89,4 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 }
 
 
-/*public ReplyList<ContributorView> GetFilterList(ContributorFilter filter)
-{
-    int total = 0;
-    var list = new List<ContributorView>();
 
-    filter.SearchText = filter.SearchText.ToLower();
-
-    if (filter.SearchText != "")
-    {
-
-        total = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower().Contains(filter.SearchText)).Count();
-        //total = _dbContext.Repositories.Where(repo => repo.Name.ToLower().Contains(filter.SearchText)).Count();
-        if (filter.SortOrder == "asc")
-        {
-
-            var li = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id && repo.Contributor.Name.ToLower()
-            .Contains(filter.SearchText)).Select(cont => new ContributorView()
-            { Id = cont.ContributorId, });
-
-            *//*list = _dbContext.Repositories.Select(repo => new RepositoryView()
-            { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
-                    .Where(repo => repo.Name.ToLower().Contains(filter.SearchText))
-                    .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                    .Take(filter.PageSize).ToList();*//*
-        }
-*//*                else if (filter.SortOrder == "dsc")
-                {
-                    list = _dbContext.Repositories.Select(repo => new RepositoryView()
-                    { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
-                            .Where(repo => repo.Name.ToLower().Contains(filter.SearchText))
-                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                   *//*         .Take(filter.PageSize).ToList();
-    }
-}
-            else
-            {
-*//*                total = _dbContext.Repositories.Count();
-                if (filter.SortOrder == "asc")
-                {
-                    list = _dbContext.Repositories.Select(repo => new RepositoryView()
-                    { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
-                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                            .Take(filter.PageSize).ToList();
-                }
-                else if (filter.SortOrder == "dsc")
-                {
-                    list = _dbContext.Repositories.Select(repo => new RepositoryView()
-                    { Id = repo.Id, Name = repo.Name, RepoId = repo.RepoId, AnalysisDate = repo.AnalysisDate, OwnerName = repo.OwnerName, State = repo.State, Url = repo.Url })
-                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                            .Take(filter.PageSize).ToList();
-                }*//*
-            }
-
-            *//*            return new ReplyList<RepositoryView>()
-                        {
-                            Data = list,
-                            TotalData = total
-                        };*//*
-
-
-
-
-            return null;
-        }*/

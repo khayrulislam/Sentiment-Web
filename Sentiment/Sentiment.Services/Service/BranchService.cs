@@ -17,7 +17,8 @@ namespace Sentiment.Services.Service
         GitHubClient gitHubClient;
         IRepositoriesClient repositoryClient;
         ApiOptions option;
-        CommitService commitService;
+        CommonService commonService;
+        //CommitService commitService;
 
         public BranchService()
         {
@@ -28,7 +29,7 @@ namespace Sentiment.Services.Service
         {
             this.gitHubClient = GitHubConnection.Instance;
             this.repositoryClient = gitHubClient.Repository;
-            this.commitService = new CommitService();
+            this.commonService = new CommonService();
             this.option = new ApiOptions()
             {
                 PageCount = 1,
@@ -92,7 +93,7 @@ namespace Sentiment.Services.Service
 
         public ReplyChart GetChartData(BranchChart branchChart)
         {
-            List<CommitData> data = new List<CommitData>();
+            List<SentimentData> data = new List<SentimentData>();
             ReplyChart result = new ReplyChart();
             try
             {
@@ -100,8 +101,8 @@ namespace Sentiment.Services.Service
                 {
                     if(branchChart.Option == "all")data = unitOfWork.BranchCommit.GetBranchAllSentiment(branchChart.RepoId, branchChart.BranchId);
                     else if(branchChart.Option == "only") data = unitOfWork.BranchCommit.GetBranchOnlySentiment(branchChart.RepoId,branchChart.BranchId);
-                    result.LineData = commitService.GetSentimentLineChart(data);
-                    result.PieData = commitService.GetSentimentPieChart(data);
+                    result.LineData = commonService.GetSentimentLineChart(data);
+                    result.PieData = commonService.GetSentimentPieChart(data);
                 }
             }
             catch (Exception e)

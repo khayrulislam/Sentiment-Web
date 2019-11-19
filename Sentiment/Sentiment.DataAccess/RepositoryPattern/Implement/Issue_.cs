@@ -37,9 +37,137 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             throw new NotImplementedException();
         }
 
+        public List<SentimentData> GetAllSentiment(int repoId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.Issue)
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetOnlySentiment(int repoId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.Issue && (iss.Pos != 1 || iss.Neg != -1))
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetAllSentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.Issue && iss.WriterId == contributorId )
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetOnlySentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType==IssueType.Issue && iss.WriterId == contributorId && (iss.Pos != 1 || iss.Neg != -1))
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value , Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
         public int GetPullRequestCount(int repoId)
         {
             return _dbContext.Issues.Where(i => i.RepositoryId == repoId && i.IssueType == IssueType.PullRequest).Count();
+        }
+
+        public List<SentimentData> GetPullRequestAllSentiment(int repoId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest)
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetPullRequestOnlySentiment(int repoId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && (iss.Pos != 1 || iss.Neg != -1))
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetPullRequestAllSentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.WriterId == contributorId)
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetPullRequestOnlySentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.WriterId == contributorId && (iss.Pos != 1 || iss.Neg != -1))
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
         }
     }
 }

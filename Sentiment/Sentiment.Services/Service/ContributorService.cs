@@ -17,6 +17,7 @@ namespace Sentiment.Services.Service
         GitHubClient gitHubClient;
         IRepositoriesClient repositoryClient;
         ApiOptions option;
+        CommonService commonService;
         public ContributorService()
         {
             Initialize();
@@ -26,6 +27,7 @@ namespace Sentiment.Services.Service
         {
             this.gitHubClient = GitHubConnection.Instance;
             this.repositoryClient = gitHubClient.Repository;
+            commonService = new CommonService();
             this.option = new ApiOptions()
             {
                 PageCount = 1,
@@ -105,6 +107,29 @@ namespace Sentiment.Services.Service
             {
                 return unitOfWork.RepositoryContributor.GetFilterList(filter);
             }
+        }
+
+
+        public ReplyContributorDetail GetDetail(ContributorChart contributorChart)
+        {
+            var result = new ReplyContributorDetail();
+            List<SentimentData> data = new List<SentimentData>();
+            using (var unitOfWork = new UnitOfWork())
+            {
+                if (contributorChart.Option== "all") data = unitOfWork.Commit.GetAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                else if (contributorChart.Option == "only") data = unitOfWork.Commit.GetOnlySentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                result.CommitPieData = commonService.GetSentimentPieChart(data);
+
+                if (contributorChart.Option == "all") data = unitOfWork.Issue.GetAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                else if (contributorChart.Option == "only") data = unitOfWork.Issue.GetOnlySentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                result.IssuePieData = commonService.GetSentimentPieChart(data);
+
+                if (contributorChart.Option == "all") data = unitOfWork.Issue.GetPullRequestAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                else if (contributorChart.Option == "only") data = unitOfWork.Issue.GetPullRequestOnlySentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                result.PullRequestPieData = commonService.GetSentimentPieChart(data);
+            }
+
+            return result;
         }
 
     }

@@ -145,6 +145,7 @@
     <Compile Include="Service\BranchService.cs" />
     <Compile Include="Service\CommentService.cs" />
     <Compile Include="Service\CommitService.cs" />
+    <Compile Include="Service\CommonService.cs" />
     <Compile Include="Service\ContributorService.cs" />
     <Compile Include="Service\DashboardService.cs" />
     <Compile Include="Service\IssueService.cs" />

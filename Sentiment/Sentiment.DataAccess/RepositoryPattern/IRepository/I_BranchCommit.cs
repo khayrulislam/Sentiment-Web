@@ -10,7 +10,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
 {
     public interface I_BranchCommit: I_AllRepository<BranchCommitT>
     {
-        List<CommitData> GetBranchOnlySentiment(int repoId, int branchId);
-        List<CommitData> GetBranchAllSentiment(int repoId, int branchId);
+        List<SentimentData> GetBranchOnlySentiment(int repoId, int branchId);
+        List<SentimentData> GetBranchAllSentiment(int repoId, int branchId);
     }
 }

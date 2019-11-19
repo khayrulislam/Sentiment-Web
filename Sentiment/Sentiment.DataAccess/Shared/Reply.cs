@@ -28,7 +28,7 @@ namespace Sentiment.DataAccess.Shared
         public ExtraCode extra { get; set; }
     }
 
-    public class CommitData
+    public class SentimentData
     {
         public int Pos { get; set; }
         public int Neg { get; set; }
@@ -40,6 +40,14 @@ namespace Sentiment.DataAccess.Shared
     {
         public List<List<long>> LineData { get; set; }
         public List<ChartData> PieData { get; set; }
+    }
+
+    public class ReplyContributorDetail
+    {
+        public List<ChartData> CommitPieData { get; set; }
+        public List<ChartData> IssuePieData { get; set; }
+        public List<ChartData> PullRequestPieData { get; set; }
+
     }
 
 }

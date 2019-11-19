@@ -31,14 +31,14 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return exist;
         }
 
-        public List<CommitData> GetAllSentiment(int repoId)
+        public List<SentimentData> GetAllSentiment(int repoId)
         {
-            List<CommitData> allcommits = new List<CommitData>();
+            List<SentimentData> allcommits = new List<SentimentData>();
             try
             {
                 allcommits = _dbContext.Commits.Where(c => c.RepositoryId == repoId).
                 OrderBy(com => new { com.DateTime, com.Id })
-                .Select(cc => new CommitData() { Datetime = cc.DateTime, Pos = cc.Pos, Neg = cc.Neg })
+                .Select(cc => new SentimentData() { Datetime = cc.DateTime, Pos = cc.Pos, Neg = cc.Neg })
                 .ToList();
             }
             catch (Exception e)
@@ -46,6 +46,23 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
                 Console.WriteLine(e.Message);
             }
             return allcommits;
+        }
+
+        public List<SentimentData> GetAllSentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> commits = new List<SentimentData>();
+            try
+            {
+                commits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.WriterId == contributorId)
+                    .OrderBy(com => new { com.DateTime, com.Id })
+                    .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos })
+                    .ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return commits;
         }
 
         public CommitT GetBySha(string sha)
@@ -62,6 +79,23 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return commit;
         }
 
+        public List<SentimentData> GetContributorAllSentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> commits = new List<SentimentData>();
+            try
+            {
+                commits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.WriterId == contributorId)
+                    .OrderBy(com => new { com.DateTime, com.Id })
+                    .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos })
+                    .ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return commits;
+        }
+
         public int GetCount(int repoId)
         {
             int count=0;
@@ -76,13 +110,29 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return count;
         }
 
-        public List<CommitData> GetOnlySentiment(int repoId)
+        public List<SentimentData> GetOnlySentiment(int repoId)
         {
-            List<CommitData> sentimentCommits = new List<CommitData>();
+            List<SentimentData> sentimentCommits = new List<SentimentData>();
             try
             {
                 sentimentCommits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && (com.Pos != 1 || com.Neg != -1)).OrderBy(com => new { com.DateTime, com.Id })
-                .Select(com => new CommitData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos }).ToList();
+                .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return sentimentCommits;
+        }
+
+        public List<SentimentData> GetOnlySentiment(int repoId, int contributorId)
+        {
+            List<SentimentData> sentimentCommits = new List<SentimentData>();
+            try
+            {
+                sentimentCommits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.WriterId==contributorId && (com.Pos != 1 || com.Neg != -1))
+                    .OrderBy(com => new { com.DateTime, com.Id })
+                    .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos }).ToList();
             }
             catch (Exception e)
             {
