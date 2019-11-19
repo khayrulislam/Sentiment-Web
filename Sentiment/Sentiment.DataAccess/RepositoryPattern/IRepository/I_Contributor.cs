@@ -1,4 +1,5 @@
 ﻿using Sentiment.DataAccess.DataClass;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         ContributorT GetById(long contributorId);
         ContributorT GetByIdName(long contributorId, string Name);
         int GetCount(int repoId);
+        //ReplyList<ContributorT> GetFilterList(ContributorFilter filter);
+
     }
 }

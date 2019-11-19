@@ -2,6 +2,7 @@
 using Sentiment.DataAccess;
 using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.Implement;
+using Sentiment.DataAccess.Shared;
 using Sentiment.Services.GitHub;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,8 @@ namespace Sentiment.Services.Service
                         var repositoryContributor = new RepositoryContributorT()
                         {
                             ContributorId = contributorData.Id,
-                            RepositoryId = repository.Id
+                            RepositoryId = repository.Id,
+                            Contribution = contributor.Contributions
                         };
                         repositoryContributorsList.Add(repositoryContributor);
                     }
@@ -94,6 +96,14 @@ namespace Sentiment.Services.Service
                     unitOfWork.Complete();
                 }
                 return contributor;
+            }
+        }
+
+        public ReplyList<ContributorView> GetFilterList(ContributorFilter filter)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.RepositoryContributor.GetFilterList(filter);
             }
         }
 

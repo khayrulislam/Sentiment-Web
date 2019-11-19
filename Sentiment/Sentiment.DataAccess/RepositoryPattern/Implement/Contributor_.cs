@@ -1,5 +1,6 @@
 ﻿using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.IRepository;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;

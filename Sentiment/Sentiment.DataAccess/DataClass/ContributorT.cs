@@ -19,4 +19,14 @@ namespace Sentiment.DataAccess.DataClass
         public ICollection<IssueCommentT> IssueComments { get; set; }
         public ICollection<IssueT> Issues { get; set; }
     }
+
+
+
+    public class ContributorView
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public long ContributorId { get; set; }
+        public int Contribution { get; set; }
+    }
 }

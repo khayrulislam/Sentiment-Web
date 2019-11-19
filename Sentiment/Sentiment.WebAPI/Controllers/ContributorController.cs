@@ -1,4 +1,5 @@
 ﻿using Sentiment.DataAccess.DataClass;
+using Sentiment.DataAccess.Shared;
 using Sentiment.Services.Service;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,16 @@ namespace Sentiment.WebAPI.Controllers
     {
         private ContributorService contributorService = new ContributorService();
 
-        [ResponseType(typeof(List<ContributorT>))]
         [HttpGet]
         public HttpResponseMessage GetContributorList(int repoId)
         {
             return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetContributorList(repoId));
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetFilterList(ContributorFilter filter)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetFilterList(filter));
         }
     }
 }

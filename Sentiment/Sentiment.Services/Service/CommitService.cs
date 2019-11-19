@@ -222,30 +222,6 @@ namespace Sentiment.Services.Service
 
             commitData.Add(new ChartData()
             {
-                name = "Positive[5]",
-                value = pos5,
-                extra = new ExtraCode() { code = "pos5" }
-            });
-            commitData.Add(new ChartData()
-            {
-                name = "Positive[4]",
-                value = pos4,
-                extra = new ExtraCode() { code = "pos4" }
-            });
-            commitData.Add(new ChartData()
-            {
-                name = "Positive[3]",
-                value = pos3,
-                extra = new ExtraCode() { code = "pos3" }
-            });
-            commitData.Add(new ChartData()
-            {
-                name = "Positive[2]",
-                value = pos2,
-                extra = new ExtraCode() { code = "pos2" }
-            });
-            commitData.Add(new ChartData()
-            {
                 name = "Negative[5]",
                 value = neg5,
                 extra = new ExtraCode() { code = "neg5" }
@@ -273,6 +249,30 @@ namespace Sentiment.Services.Service
                 name = "Neutral",
                 value = neutral,
                 extra = new ExtraCode() { code = "neutral" }
+            });
+            commitData.Add(new ChartData()
+            {
+                name = "Positive[2]",
+                value = pos2,
+                extra = new ExtraCode() { code = "pos2" }
+            });
+            commitData.Add(new ChartData()
+            {
+                name = "Positive[3]",
+                value = pos3,
+                extra = new ExtraCode() { code = "pos3" }
+            });
+            commitData.Add(new ChartData()
+            {
+                name = "Positive[4]",
+                value = pos4,
+                extra = new ExtraCode() { code = "pos4" }
+            });
+            commitData.Add(new ChartData()
+            {
+                name = "Positive[5]",
+                value = pos5,
+                extra = new ExtraCode() { code = "pos5" }
             });
 
             return commitData;
