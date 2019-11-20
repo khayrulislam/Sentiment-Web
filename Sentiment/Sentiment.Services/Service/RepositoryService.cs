@@ -65,6 +65,7 @@ namespace Sentiment.Services.Service
             DateTime end = DateTime.Now;
             var dif = end - start;
 
+
         }
 
         private void UpdateAnalysisDate(int repositoryId)
