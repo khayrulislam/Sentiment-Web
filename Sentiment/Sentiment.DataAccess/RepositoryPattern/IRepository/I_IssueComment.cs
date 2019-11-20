@@ -1,4 +1,5 @@
 ﻿using Sentiment.DataAccess.DataClass;
+using Sentiment.DataAccess.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
     {
         bool Exist(int issueId,int commentNumber);
         IssueCommentT GetByNumber(int issueId, long commentNumber);
-        int GetIssueCommentCount(int repoId);
-        int GetPullRequestCommentCount(int repoId);
+        int GetCount(int repoId);
+        int GetPullRequestCount(int repoId);
+
+
     }
 }

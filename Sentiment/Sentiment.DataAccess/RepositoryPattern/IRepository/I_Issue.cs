@@ -26,5 +26,9 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         List<SentimentData> GetPullRequestOnlySentiment(int repoId);
         List<SentimentData> GetPullRequestAllSentiment(int repoId, int contributorId);
         List<SentimentData> GetPullRequestOnlySentiment(int repoId, int contributorId);
+
+        ReplyList<IssueView> GetFilterList(IssueFilter filter); // contain comment
+        ReplyList<IssueView> GetPullRequestFilterList(IssueFilter filter); // contain comments
+
     }
 }

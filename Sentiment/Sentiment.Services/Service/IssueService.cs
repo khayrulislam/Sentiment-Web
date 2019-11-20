@@ -127,18 +127,19 @@ namespace Sentiment.Services.Service
             }
         }
 
-        public List<ChartData> GetChartData(int repoId, int contributorId, string option)
+        public ReplyChart GetChartData(int repoId, string option)
         {
-            List<ChartData> chart = new List<ChartData>();
+            ReplyChart result = new ReplyChart();
             List<SentimentData> data = new List<SentimentData>();
 
             try
             {
                 using (var unitOfWork = new UnitOfWork())
                 {
-                    if (option == "all") data = unitOfWork.Issue.GetAllSentiment(repoId, contributorId);
-                    else if (option == "only") data = unitOfWork.Issue.GetOnlySentiment(repoId, contributorId);
-                    chart = commonService.GetSentimentPieChart(data);
+                    if (option == "all") data = unitOfWork.Issue.GetAllSentiment(repoId);
+                    else if (option == "only") data = unitOfWork.Issue.GetOnlySentiment(repoId);
+                    result.PieData = commonService.GetSentimentPieChart(data);
+                    result.LineData = commonService.GetSentimentLineChart(data);
                 }
             }
             catch (Exception e)
@@ -146,21 +147,22 @@ namespace Sentiment.Services.Service
                 Console.WriteLine(e.Message);
             }
 
-            return chart;
+            return result;
         }
 
-        public List<ChartData> GetPullRequestChartData(int repoId, int contributorId, string option)
+        public ReplyChart GetPullRequestChartData(int repoId, string option)
         {
-            List<ChartData> chart = new List<ChartData>();
+            ReplyChart result = new ReplyChart();
             List<SentimentData> data = new List<SentimentData>();
 
             try
             {
                 using (var unitOfWork = new UnitOfWork())
                 {
-                    if (option == "all") data = unitOfWork.Issue.GetPullRequestAllSentiment(repoId, contributorId);
-                    else if (option == "only") data = unitOfWork.Issue.GetPullRequestOnlySentiment(repoId, contributorId);
-                    chart = commonService.GetSentimentPieChart(data);
+                    if (option == "all") data = unitOfWork.Issue.GetPullRequestAllSentiment(repoId);
+                    else if (option == "only") data = unitOfWork.Issue.GetPullRequestOnlySentiment(repoId);
+                    result.PieData = commonService.GetSentimentPieChart(data);
+                    result.LineData = commonService.GetSentimentLineChart(data);
                 }
             }
             catch (Exception e)
@@ -168,7 +170,7 @@ namespace Sentiment.Services.Service
                 Console.WriteLine(e.Message);
             }
 
-            return chart;
+            return result;
         }
 
     }

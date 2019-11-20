@@ -97,10 +97,11 @@ namespace Sentiment.Services.Service
             {
                 ContributorT commiter = null;
                 var Date = new DateTimeOffset();
-                if (commit.Commit.Committer != null) Date = commit.Commit.Committer.Date;
-                else if (commit.Commit.Author != null) Date = commit.Commit.Author.Date;
+                if (commit.Commit.Author != null) Date = commit.Commit.Author.Date;
+                else if (commit.Commit.Committer != null) Date = commit.Commit.Committer.Date;
 
-                if (commit.Committer != null) commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
+                if (commit.Author != null) commiter = contributorService.GetContributor(commit.Author.Id, commit.Author.Login);
+                else if(commit.Committer != null) commiter = contributorService.GetContributor(commit.Committer.Id, commit.Committer.Login);
                 sentimentCal.CalculateSentiment(commit.Commit.Message);
 
                 commitT.Sha = commit.Sha;

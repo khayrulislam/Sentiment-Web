@@ -169,5 +169,76 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             }
             return list;
         }
+
+        public ReplyList<IssueView> GetFilterList(IssueFilter filter)
+        {
+            int total = 0;
+            List<IssueView> list = new List<IssueView>();
+            try
+            {
+                filter.SearchText = filter.SearchText.ToLower();
+
+                if (filter.SearchText != null)
+                {
+                    total = _dbContext.Issues.Where(iss => iss.RepositoryId == filter.RepoId && iss.Comments.Count() > 0 ).Count();
+
+                    if (filter.SortOrder == "asc")
+                    {
+                        list = _dbContext.Issues.Select(iss => new IssueView() {
+                            Id = iss.Id, IssueNumber = iss.IssueNumber, CommentCount = iss.Comments.Count()
+                        }).ToList();
+
+
+                        /*list = _dbContext.Branches.Select(br => new BranchView()
+                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                                .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
+                                .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                                .Take(filter.PageSize).ToList();*/
+                    }
+
+                    else if (filter.SortOrder == "dsc")
+                    {
+                        /*list = _dbContext.Branches.Select(br => new BranchView()
+                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                                .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
+                                .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                                .Take(filter.PageSize).ToList();*/
+                    }
+                }
+                else
+                {
+                    //total = _dbContext.Branches.Where(br => br.RepositoryId == filter.Id).Count();
+
+                    if (filter.SortOrder == "asc")
+                    {
+                        /*list = _dbContext.Branches.Select(br => new BranchView()
+                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                                .Where(br => br.RepositoryId == filter.Id)
+                                .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                                .Take(filter.PageSize).ToList();*/
+                    }
+
+                    else if (filter.SortOrder == "dsc")
+                    {
+                       /* list = _dbContext.Branches.Select(br => new BranchView()
+                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                                .Where(br => br.RepositoryId == filter.Id)
+                                .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                                .Take(filter.PageSize).ToList();*/
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            return null;
+        }
+
+        public ReplyList<IssueView> GetPullRequestFilterList(IssueFilter filter)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

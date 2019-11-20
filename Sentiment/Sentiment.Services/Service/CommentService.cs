@@ -174,7 +174,7 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                return unitOfWork.IssueComment.GetIssueCommentCount(repoId);
+                return unitOfWork.IssueComment.GetCount(repoId);
             }
         }
 
@@ -182,9 +182,19 @@ namespace Sentiment.Services.Service
         {
             using (var unitOfWork = new UnitOfWork())
             {
-                return unitOfWork.IssueComment.GetPullRequestCommentCount(repoId);
+                return unitOfWork.IssueComment.GetPullRequestCount(repoId);
             }
         }
+
+
+        public void GetIssueCommentFilterList(IssueFilter filter)
+        {
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+
+            }
+        }
+
 
     }
 }

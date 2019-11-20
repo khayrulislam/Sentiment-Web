@@ -110,25 +110,55 @@ namespace Sentiment.Services.Service
         }
 
 
-        public ReplyContributorDetail GetDetail(ContributorChart contributorChart)
+        public ReplyChart GetCommitDetail(ContributorChart contributorChart)
         {
-            var result = new ReplyContributorDetail();
+            ReplyChart result = new ReplyChart();
             List<SentimentData> data = new List<SentimentData>();
             using (var unitOfWork = new UnitOfWork())
             {
-                if (contributorChart.Option== "all") data = unitOfWork.Commit.GetAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
+                if (contributorChart.Option == "all") data = unitOfWork.Commit.GetAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
                 else if (contributorChart.Option == "only") data = unitOfWork.Commit.GetOnlySentiment(contributorChart.RepoId, contributorChart.ContributorId);
-                result.CommitPieData = commonService.GetSentimentPieChart(data);
+                result.PieData = commonService.GetSentimentPieChart(data);
+                result.LineData = commonService.GetSentimentLineChart(data);
+            }
+            return result;
+        }
 
+        public ReplyChart GetIssueDetail(ContributorChart contributorChart)
+        {
+            ReplyChart result = new ReplyChart();
+            List<SentimentData> data = new List<SentimentData>();
+            using (var unitOfWork = new UnitOfWork())
+            {
                 if (contributorChart.Option == "all") data = unitOfWork.Issue.GetAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
                 else if (contributorChart.Option == "only") data = unitOfWork.Issue.GetOnlySentiment(contributorChart.RepoId, contributorChart.ContributorId);
-                result.IssuePieData = commonService.GetSentimentPieChart(data);
+                result.PieData = commonService.GetSentimentPieChart(data);
+                result.LineData = commonService.GetSentimentLineChart(data);
+            }
+            return result;
+        }
 
+        public ReplyChart GetPullRequestDetail(ContributorChart contributorChart)
+        {
+            ReplyChart result = new ReplyChart();
+            List<SentimentData> data = new List<SentimentData>();
+            using (var unitOfWork = new UnitOfWork())
+            {
                 if (contributorChart.Option == "all") data = unitOfWork.Issue.GetPullRequestAllSentiment(contributorChart.RepoId, contributorChart.ContributorId);
                 else if (contributorChart.Option == "only") data = unitOfWork.Issue.GetPullRequestOnlySentiment(contributorChart.RepoId, contributorChart.ContributorId);
-                result.PullRequestPieData = commonService.GetSentimentPieChart(data);
+                result.PieData = commonService.GetSentimentPieChart(data);
+                result.LineData = commonService.GetSentimentLineChart(data);
             }
+            return result;
+        }
 
+
+        public ReplyContributorDetail GetDetail(ContributorChart contributorChart)
+        {
+            var result = new ReplyContributorDetail();
+            result.Commit = GetCommitDetail(contributorChart);
+            result.Issue = GetIssueDetail(contributorChart);
+            result.PullRequest = GetPullRequestDetail(contributorChart);
             return result;
         }
 

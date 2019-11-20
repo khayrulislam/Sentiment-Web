@@ -44,10 +44,17 @@ namespace Sentiment.DataAccess.Shared
 
     public class ReplyContributorDetail
     {
-        public List<ChartData> CommitPieData { get; set; }
-        public List<ChartData> IssuePieData { get; set; }
-        public List<ChartData> PullRequestPieData { get; set; }
 
+        public ReplyChart Commit { get; set; }
+        public ReplyChart Issue { get; set; }
+        public ReplyChart PullRequest { get; set; }
+
+        public ReplyContributorDetail()
+        {
+            Commit = new ReplyChart();
+            Issue = new ReplyChart();
+            PullRequest = new ReplyChart();
+        }
     }
 
 }

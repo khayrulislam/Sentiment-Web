@@ -25,4 +25,16 @@ namespace Sentiment.DataAccess.DataClass
         public ICollection<IssueCommentT> Comments { get; set; }
 
     }
+
+    public class IssueView
+    {
+        public int Id { get; set; }
+        public int RepositoryId { get; set; }
+        public int IssueNumber { get; set; }
+        public int PosTitle { get; set; }
+        public int NegTitle { get; set; }
+        public string State { get; set; }
+        public DateTimeOffset? UpdateDate { get; set; }
+        public int CommentCount { get; set; }
+    }
 }

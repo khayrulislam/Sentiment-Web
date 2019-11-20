@@ -62,14 +62,14 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
                     {
                         list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id)
                             .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
-                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .OrderBy(r => r.Contribution).Skip(filter.PageNumber * filter.PageSize)
                             .Take(filter.PageSize).ToList();
                     }
                     else if (filter.SortOrder == "dsc")
                     {
                         list = _dbContext.RepositoryContributors.Where(repo => repo.RepositoryId == filter.Id)
                             .Select(cont => new ContributorView() { Id = cont.ContributorId, Name = cont.Contributor.Name, ContributorId = cont.Contributor.ContributorId, Contribution = cont.Contribution })
-                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                            .OrderByDescending(r => r.Contribution).Skip(filter.PageNumber * filter.PageSize)
                             .Take(filter.PageSize).ToList();
                     }
                 }

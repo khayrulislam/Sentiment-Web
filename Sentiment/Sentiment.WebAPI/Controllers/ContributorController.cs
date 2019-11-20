@@ -32,5 +32,23 @@ namespace Sentiment.WebAPI.Controllers
         {
             return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetDetail(contributorChart));
         }
+
+        [HttpPost]
+        public HttpResponseMessage GetCommitChartData(ContributorChart contributorChart)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetCommitDetail(contributorChart));
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetIssueChartData(ContributorChart contributorChart)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetIssueDetail(contributorChart));
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetpullRequestChartData(ContributorChart contributorChart)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, contributorService.GetPullRequestDetail(contributorChart));
+        }
     }
 }

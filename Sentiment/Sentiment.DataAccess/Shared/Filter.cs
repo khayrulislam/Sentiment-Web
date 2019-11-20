@@ -28,6 +28,13 @@ namespace Sentiment.DataAccess.Shared
     {
         public int Id { get; set; }
     }
+
+    public class IssueFilter: Filter
+    {
+        public int RepoId { get; set; }
+    }
+
+
     public class Chart
     {
         public int RepoId { get; set; }
