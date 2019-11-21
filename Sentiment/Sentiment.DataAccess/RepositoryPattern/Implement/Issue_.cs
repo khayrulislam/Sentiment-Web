@@ -176,69 +176,69 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<IssueView> list = new List<IssueView>();
             try
             {
-                filter.SearchText = filter.SearchText.ToLower();
+                filter.SearchText = filter.SearchText.ToLower(); // no search text apply
 
-                if (filter.SearchText != null)
-                {
-                    total = _dbContext.Issues.Where(iss => iss.RepositoryId == filter.RepoId && iss.Comments.Count() > 0 ).Count();
+                total = _dbContext.Issues
+                        .Where(iss => iss.RepositoryId == filter.RepoId && iss.IssueType == IssueType.Issue
+                        && ( (filter.Comment == "all") ? true : (filter.Comment == "only" ? iss.Comments.Count() > 0 : iss.Comments.Count() == 0) )
+                        && ( (filter.State == "all") ? true : (filter.State == "open" ? iss.State == "open" : iss.State == "closed"))).Count();
 
-                    if (filter.SortOrder == "asc")
-                    {
-                        list = _dbContext.Issues.Select(iss => new IssueView() {
-                            Id = iss.Id, IssueNumber = iss.IssueNumber, CommentCount = iss.Comments.Count()
-                        }).ToList();
+                list = _dbContext.Issues
+                        .Where(iss => iss.RepositoryId == filter.RepoId && iss.IssueType == IssueType.Issue
+                        && ( (filter.Comment == "all") ? true : (filter.Comment == "only"? iss.Comments.Count() > 0 : iss.Comments.Count() == 0) )
+                        && ( (filter.State == "all") ? true : (filter.State == "open" ? iss.State == "open" : iss.State == "closed")))
+                        .Select(iss => new IssueView() { Id = iss.Id, IssueNumber = iss.IssueNumber, CommentCount = iss.Comments.Count(), UpdateDate = iss.UpdateDate, State = iss.State, Pos = iss.Pos, Neg = iss.Neg, NegTitle = iss.NegTitle, PosTitle = iss.PosTitle })
+                        .OrderBy(iss => iss.UpdateDate)
+                        .Skip(filter.PageNumber * filter.PageSize)
+                        .Take(filter.PageSize)
+                        .ToList();
 
-
-                        /*list = _dbContext.Branches.Select(br => new BranchView()
-                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                                .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
-                                .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                                .Take(filter.PageSize).ToList();*/
-                    }
-
-                    else if (filter.SortOrder == "dsc")
-                    {
-                        /*list = _dbContext.Branches.Select(br => new BranchView()
-                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                                .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
-                                .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                                .Take(filter.PageSize).ToList();*/
-                    }
-                }
-                else
-                {
-                    //total = _dbContext.Branches.Where(br => br.RepositoryId == filter.Id).Count();
-
-                    if (filter.SortOrder == "asc")
-                    {
-                        /*list = _dbContext.Branches.Select(br => new BranchView()
-                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                                .Where(br => br.RepositoryId == filter.Id)
-                                .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                                .Take(filter.PageSize).ToList();*/
-                    }
-
-                    else if (filter.SortOrder == "dsc")
-                    {
-                       /* list = _dbContext.Branches.Select(br => new BranchView()
-                        { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                                .Where(br => br.RepositoryId == filter.Id)
-                                .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                                .Take(filter.PageSize).ToList();*/
-                    }
-                }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw;
             }
-            return null;
+            return new ReplyList<IssueView>
+            {
+                Data = list,
+                TotalData = total
+            };
         }
 
         public ReplyList<IssueView> GetPullRequestFilterList(IssueFilter filter)
         {
-            throw new NotImplementedException();
+            int total = 0;
+            List<IssueView> list = new List<IssueView>();
+            try
+            {
+                filter.SearchText = filter.SearchText.ToLower(); // no search text apply
+                total = _dbContext.Issues
+                        .Where(iss => iss.RepositoryId == filter.RepoId && iss.IssueType == IssueType.PullRequest
+                        && ((filter.Comment == "all") ? true : (filter.Comment == "only" ? iss.Comments.Count() > 0 : iss.Comments.Count() == 0))
+                        && ((filter.State == "all") ? true : (filter.State == "open" ? iss.State == "open" : iss.State == "closed"))).Count();
+
+                list = _dbContext.Issues
+                        .Where(iss => iss.RepositoryId == filter.RepoId && iss.IssueType == IssueType.PullRequest
+                        && ( (filter.Comment == "all") ? true : (filter.Comment == "only" ? iss.Comments.Count() > 0 : iss.Comments.Count() == 0))
+                        && ( (filter.State == "all") ? true : (filter.State == "open" ? iss.State == "open" : iss.State == "closed")))
+                        .Select(iss => new IssueView() { Id = iss.Id, IssueNumber = iss.IssueNumber, CommentCount = iss.Comments.Count(), UpdateDate = iss.UpdateDate, State = iss.State, Pos = iss.Pos, Neg = iss.Neg, NegTitle = iss.NegTitle, PosTitle = iss.PosTitle })
+                        .OrderBy(iss => iss.UpdateDate)
+                        .Skip(filter.PageNumber * filter.PageSize)
+                        .Take(filter.PageSize)
+                        .ToList();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            return new ReplyList<IssueView>
+            {
+                Data = list,
+                TotalData = total
+            };
         }
     }
 }

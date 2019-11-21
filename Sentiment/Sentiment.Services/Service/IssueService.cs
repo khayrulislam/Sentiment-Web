@@ -1,5 +1,4 @@
 ﻿using Octokit;
-using Sentiment.DataAccess;
 using Sentiment.DataAccess.DataClass;
 using Sentiment.DataAccess.RepositoryPattern.Implement;
 using Sentiment.DataAccess.Shared;
@@ -8,8 +7,8 @@ using Sentiment.Services.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using IssueFilter = Sentiment.DataAccess.Shared.IssueFilter;
 
 namespace Sentiment.Services.Service
 {
@@ -171,6 +170,23 @@ namespace Sentiment.Services.Service
             }
 
             return result;
+        }
+
+
+        public ReplyList<IssueView> GetFilterList(IssueFilter filter)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Issue.GetFilterList(filter);
+            }
+        }
+
+        public ReplyList<IssueView> GetPullRequestFilterList(IssueFilter filter)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Issue.GetPullRequestFilterList(filter);
+            }
         }
 
     }

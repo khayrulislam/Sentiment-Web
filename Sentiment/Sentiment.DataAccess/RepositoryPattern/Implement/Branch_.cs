@@ -24,54 +24,40 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public ReplyList<BranchView> GetFilterList(BranchFilter filter)
         {
-            int total;
+            int total = 0;
             List<BranchView> list = new List<BranchView>();
-
-            filter.SearchText = filter.SearchText.ToLower();
-
-            if(filter.SearchText != null)
+            try
             {
-                total = _dbContext.Branches.Where(br => br.RepositoryId==filter.Id && br.Name.ToLower().Contains(filter.SearchText)).Count();
+                filter.SearchText = filter.SearchText.ToLower();
+
+                total = _dbContext.Branches
+                        .Where(br => br.RepositoryId == filter.Id &&
+                        (string.IsNullOrEmpty(filter.SearchText) ? true : br.Name.ToLower().Contains(filter.SearchText)))
+                        .Count();
 
                 if (filter.SortOrder == "asc")
                 {
                     list = _dbContext.Branches.Select(br => new BranchView()
-                            { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId})
-                            .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
-                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                            .Take(filter.PageSize).ToList();
+                    { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                        .Where(br => br.RepositoryId == filter.Id &&
+                        (string.IsNullOrEmpty(filter.SearchText) ? true : br.Name.ToLower().Contains(filter.SearchText)))
+                        .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                        .Take(filter.PageSize).ToList();
                 }
 
                 else if (filter.SortOrder == "dsc")
                 {
                     list = _dbContext.Branches.Select(br => new BranchView()
-                            { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                            .Where(br => br.RepositoryId == filter.Id && br.Name.ToLower().Contains(filter.SearchText))
-                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                            .Take(filter.PageSize).ToList();
+                    { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
+                        .Where(br => br.RepositoryId == filter.Id &&
+                        (string.IsNullOrEmpty(filter.SearchText) ? true : br.Name.ToLower().Contains(filter.SearchText)))
+                        .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
+                        .Take(filter.PageSize).ToList();
                 }
             }
-            else
+            catch (Exception e)
             {
-                total = _dbContext.Branches.Where(br => br.RepositoryId == filter.Id).Count();
-
-                if (filter.SortOrder == "asc")
-                {
-                    list = _dbContext.Branches.Select(br => new BranchView()
-                    { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                            .Where(br => br.RepositoryId == filter.Id)
-                            .OrderBy(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                            .Take(filter.PageSize).ToList();
-                }
-
-                else if (filter.SortOrder == "dsc")
-                {
-                    list = _dbContext.Branches.Select(br => new BranchView()
-                    { Id = br.Id, Name = br.Name, Sha = br.Sha, RepositoryId = br.RepositoryId })
-                            .Where(br => br.RepositoryId == filter.Id )
-                            .OrderByDescending(r => r.Name).Skip(filter.PageNumber * filter.PageSize)
-                            .Take(filter.PageSize).ToList();
-                }
+                Console.WriteLine(e.Message); throw;
             }
 
             return new ReplyList<BranchView>()

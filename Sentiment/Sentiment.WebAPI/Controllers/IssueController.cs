@@ -24,5 +24,19 @@ namespace Sentiment.WebAPI.Controllers
         {
             return Request.CreateResponse(HttpStatusCode.OK, issueService.GetPullRequestChartData(chartParam.RepoId, chartParam.Option));
         }
+
+        [HttpPost]
+        public HttpResponseMessage GetFilterList(IssueFilter filter)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, issueService.GetFilterList(filter));
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetPullRequestFilterList(IssueFilter filter)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, issueService.GetPullRequestFilterList(filter));
+        }
+
+
     }
 }

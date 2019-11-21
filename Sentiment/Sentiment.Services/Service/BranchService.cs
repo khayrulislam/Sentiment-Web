@@ -107,7 +107,7 @@ namespace Sentiment.Services.Service
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);throw;
             }
             return result;
         }

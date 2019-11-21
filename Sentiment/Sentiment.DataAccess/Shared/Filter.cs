@@ -32,6 +32,9 @@ namespace Sentiment.DataAccess.Shared
     public class IssueFilter: Filter
     {
         public int RepoId { get; set; }
+        public string State { get; set; }
+        public string Comment { get; set; }
+
     }
 
 
