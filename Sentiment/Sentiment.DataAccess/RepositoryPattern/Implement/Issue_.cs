@@ -240,5 +240,42 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
                 TotalData = total
             };
         }
+
+        public List<SentimentData> GetFilterSentiment(IssueFilter filter)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == filter.RepoId && iss.IssueType == IssueType.Issue
+                    && ((filter.Comment == "all") ? true : (filter.Comment == "only" ? iss.Comments.Count() > 0 : iss.Comments.Count() == 0))
+                    && ((filter.State == "all") ? true : (filter.State == "open" ? iss.State == "open" : iss.State == "closed")))
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message); throw;
+            }
+            return list;
+        }
+
+        public List<SentimentData> GetPullRequestFilterSentiment(IssueFilter filter)
+        {
+            List<SentimentData> list = new List<SentimentData>();
+            try
+            {
+                list = _dbContext.Issues
+                    .Where(iss => iss.RepositoryId == filter.RepoId && iss.IssueType == IssueType.PullRequest
+                    && ((filter.Comment == "all") ? true : (filter.Comment == "only" ? iss.Comments.Count() > 0 : iss.Comments.Count() == 0))
+                    && ((filter.State == "all") ? true : (filter.State == "open" ? iss.State == "open" : iss.State == "closed")))
+                    .OrderBy(iss => new { iss.UpdateDate, iss.Id })
+                    .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message); throw;
+            }
+            return list;
+        }
     }
 }

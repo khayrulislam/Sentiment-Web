@@ -189,5 +189,30 @@ namespace Sentiment.Services.Service
             }
         }
 
+
+        public ReplyChart GetFilterChartData(IssueFilter filter)
+        {
+            ReplyChart result = new ReplyChart();
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var data = unitOfWork.Issue.GetFilterSentiment(filter);
+                result.PieData = commonService.GetSentimentPieChart(data);
+                result.LineData = commonService.GetSentimentLineChart(data);
+            }
+            return result;
+        }
+
+        public ReplyChart GetPullRequestFilterChartData(IssueFilter filter)
+        {
+            ReplyChart result = new ReplyChart();
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var data = unitOfWork.Issue.GetPullRequestFilterSentiment(filter);
+                result.PieData = commonService.GetSentimentPieChart(data);
+                result.LineData = commonService.GetSentimentLineChart(data);
+            }
+            return result;
+        }
+
     }
 }
