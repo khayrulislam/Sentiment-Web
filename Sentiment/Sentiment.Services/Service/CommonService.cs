@@ -16,7 +16,8 @@ namespace Sentiment.Services.Service
             data.ForEach(element => {
                 if (element.Datetime != null)
                 {
-                    if (element.Pos > element.Neg * -1) result.Add(new List<long>() { element.Datetime.ToUnixTimeMilliseconds(), element.Pos });
+                    if(element.Pos == element.Neg * -1) result.Add(new List<long>() { element.Datetime.ToUnixTimeMilliseconds(), 0 }); // neutral value is 0
+                    else if (element.Pos > element.Neg * -1) result.Add(new List<long>() { element.Datetime.ToUnixTimeMilliseconds(), element.Pos });
                     else result.Add(new List<long>() { element.Datetime.ToUnixTimeMilliseconds(), element.Neg });
                 }
 
@@ -31,7 +32,7 @@ namespace Sentiment.Services.Service
             int pos5 = 0, pos4 = 0, pos3 = 0, pos2 = 0, neg5 = 0, neg4 = 0, neg3 = 0, neg2 = 0, neutral = 0;
             data.ForEach(element => {
 
-                if (element.Pos == 1 && element.Neg == -1) neutral++;
+                if (element.Pos == element.Neg * -1) neutral++;
                 else if (element.Pos > element.Neg * -1)
                 {
                     switch (element.Pos)
