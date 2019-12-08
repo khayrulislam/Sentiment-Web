@@ -24,7 +24,7 @@ bld/
 [Oo]bj/
 
 # migrations
-Sentiment/Sentiment.DataAccess/Migrations
+#Sentiment/Sentiment.DataAccess/Migrations
 
 # Visual Studio 2015 cache/options directory
 .vs/
