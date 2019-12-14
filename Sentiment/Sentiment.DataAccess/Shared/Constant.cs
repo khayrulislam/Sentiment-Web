@@ -43,4 +43,47 @@ namespace Sentiment.DataAccess.Shared
     }
 
 
+    public enum RepositorySheets
+    {
+        Branch,
+        Commit,
+        Issue,
+        Pull_Request,
+        Commit_Comment,
+        Issue_Comment,
+        Pull_Request_Comment
+    }
+
+    public enum BranchHeader
+    {
+        Id,
+        Name,
+        Sha
+    }
+
+    public enum CommitHeader
+    {
+        Id,
+        Sha,
+        DateTime,
+        Pos_Sentiment,
+        Neg_Sentiment,
+        Message
+    }
+
+    public enum IssueHeader
+    {
+        Id,
+        IssueNumber,
+        Status,
+        Title_Pos_Sentiment,
+        Title_Neg_Sentiment,
+        Title,
+        Body_Pos_Sentiment,
+        Body_Neg_Sentiment,
+        Body,
+        Update_Date
+    }
+
+
 }
