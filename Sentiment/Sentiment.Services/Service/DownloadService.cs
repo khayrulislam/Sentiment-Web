@@ -44,6 +44,18 @@ namespace Sentiment.Services.Service
             return newPath;
         }
 
+
+        private string RemoveInvalidXmlChars(string text)
+        {
+            var validXmlChars = text.Where(ch => XmlConvert.IsXmlChar(ch)).ToArray();
+            //return new string(validXmlChars);
+
+            //string correctedXMlString = Regex.Replace(text, @"[^\u0000-\u007F]", string.Empty);
+            return XmlConvert.EncodeName(text).ToString();
+            //return correctedXMlString;
+        }
+
+
         public byte[] GetRepositoryContent(int repoId)
         {
             var outputPath = GetFilePath();
@@ -257,7 +269,7 @@ namespace Sentiment.Services.Service
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Title} });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Pos.ToString()} });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Neg.ToString()} });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Body} });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = RemoveInvalidXmlChars(issue.Body) } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.UpdateDate.ToString()} });
 
                 writer.WriteEndElement();
