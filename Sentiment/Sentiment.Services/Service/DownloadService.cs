@@ -22,7 +22,6 @@ namespace Sentiment.Services.Service
         private void Initialize()
         {
             repositorySheetList = new List<string>(Enum.GetNames(typeof(RepositorySheets))) ;
-            
         }
 
         private string GetFilePath()
@@ -43,58 +42,33 @@ namespace Sentiment.Services.Service
             {
                 WorkbookPart workbookPart = myDoc.WorkbookPart;
                 CreateSheets(workbookPart, repositorySheetList);
-
-                BuildSheets(workbookPart);
-
             }
             return File.ReadAllBytes(outputPath);
-
-        }
-
-        private void BuildSheets(WorkbookPart workbookPart)
-        {
-            Sheets sheets = workbookPart.Workbook.Sheets;
-
-            sheets.ToList().ForEach((sheet)=>{
-                Sheet tempSheet = (Sheet) sheet;
-
-                if (tempSheet.Name == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Branch))
-                {
-                    CreateBranchSheet(workbookPart);
-                }
-
-            });
-
-        }
-
-        private void CreateBranchSheet(WorkbookPart workbookPart)
-        {
-            
         }
 
         private void CreateSheets(WorkbookPart workbookPart, List<string> repositorySheetList)
         {
             WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+            string origninalSheetId = workbookPart.GetIdOfPart(worksheetPart);
             Sheets sheets = workbookPart.Workbook.Sheets;
-
-            UInt32Value i = Convert.ToUInt32(sheets.Count()) ;
-
-            string firstSheet = repositorySheetList[0];
-            repositorySheetList.RemoveAt(0);
+            UInt32Value i = Convert.ToUInt32(sheets.Count()) + 1;
             
             repositorySheetList.ForEach( (sheetName) => {
                 WorksheetPart newPart = workbookPart.AddNewPart<WorksheetPart>();
+
                 string newPartId = workbookPart.GetIdOfPart(newPart);
+                
                 Sheet sheet = new Sheet()
                 {
                     Id = newPartId,
                     Name = sheetName,
-                    SheetId = ++i
+                    SheetId = i++
                 };
                 sheets.Append(sheet);
 
                 OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
                 OpenXmlWriter writer = OpenXmlWriter.Create(newPart);
+
                 while (reader.Read())
                 {
                     if (reader.ElementType == typeof(SheetData))
@@ -103,8 +77,7 @@ namespace Sentiment.Services.Service
                             continue;
                         writer.WriteStartElement(new SheetData());
 
-
-
+                        WriteSheets(writer, sheetName);
 
 
                         writer.WriteEndElement();
@@ -125,8 +98,23 @@ namespace Sentiment.Services.Service
                 writer.Close();
             });
 
-            Sheet sss = sheets.GetFirstChild<Sheet>();
-            sss.Name = firstSheet;
+            Sheet _sheet = workbookPart.Workbook.Descendants<Sheet>()
+            .Where(s => s.Id.Value.Equals(origninalSheetId)).Last();
+            sheets.RemoveChild(_sheet);
+            workbookPart.DeletePart(worksheetPart);
+
+        }
+
+        private void WriteSheets(OpenXmlWriter writer, string sheetName)
+        {
+            if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Branch)) { }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit)) { }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue)) { }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit_Comment)) { }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue_Comment)) { }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request)) { }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request_Comment)) { }
+
         }
 
         private void Create(WorkbookPart workbookPart, UInt32Value id)
