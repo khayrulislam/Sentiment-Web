@@ -32,6 +32,17 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             return _dbContext.Issues.Where(i => i.RepositoryId == repoId && i.IssueType == IssueType.Issue ).Select(i => i.Comments.Count()).DefaultIfEmpty(0).Sum();
         }
 
+        public List<IssueCommentT> GetIssueCommentList(int repoId)
+        {
+            return _dbContext.IssueComments.AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.Issue.IssueType == IssueType.Issue).ToList();
+
+        }
+
+        public List<IssueCommentT> GetPullRequestCommentList(int repoId)
+        {
+            return _dbContext.IssueComments.AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.Issue.IssueType == IssueType.PullRequest).ToList();
+        }
+
         public int GetPullRequestCount(int repoId)
         {
             return _dbContext.Issues.Where(i => i.RepositoryId == repoId && i.IssueType == IssueType.PullRequest ).Select(i=> i.Comments.Count()).DefaultIfEmpty(0).Sum();

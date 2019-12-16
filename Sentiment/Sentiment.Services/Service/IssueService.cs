@@ -214,5 +214,22 @@ namespace Sentiment.Services.Service
             return result;
         }
 
+
+        public List<IssueT> GetIssueList(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Issue.GetRepositoryIssueList(repoId);
+            }
+        }
+
+        public List<IssueT> GetPullRequestList(int repoId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Issue.GetRepositoryPullRequestList(repoId);
+            }
+        }
+
     }
 }

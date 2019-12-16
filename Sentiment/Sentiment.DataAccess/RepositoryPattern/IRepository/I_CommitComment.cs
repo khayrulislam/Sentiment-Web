@@ -12,5 +12,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         bool Exist(int commitId, long commentNumber);
         CommitCommentT GetByNumber(int commitId, long commentNumber);
         int GetCount(int repoId);
+        List<CommitCommentT> GetList(int repoId);
+
     }
 }

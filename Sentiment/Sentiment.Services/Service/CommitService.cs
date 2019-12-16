@@ -181,6 +181,14 @@ namespace Sentiment.Services.Service
             return result.PieData;
         }
 
+        public List<CommitT> GetCommitList(int repositoryId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.Commit.GetRepositoryCommitList(repositoryId);
+            }
+        }
+
 
     }
 }

@@ -195,6 +195,30 @@ namespace Sentiment.Services.Service
             }
         }
 
+        public List<CommitCommentT> GetCommitCommentList(int repoId)
+        {
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.CommitComment.GetList(repoId);
+            }
+        }
+
+
+        public List<IssueCommentT> GetIssueCommentList(int repoId)
+        {
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.IssueComment.GetIssueCommentList(repoId);
+            }
+        }
+
+        public List<IssueCommentT> GetPullRequestCommentList(int repoId)
+        {
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                return unitOfWork.IssueComment.GetPullRequestCommentList(repoId);
+            }
+        }
 
     }
 }

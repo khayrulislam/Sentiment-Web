@@ -50,8 +50,8 @@ namespace Sentiment.DataAccess.Shared
         Issue,
         Pull_Request,
         Commit_Comment,
-        Issue_Comment,
-        Pull_Request_Comment
+        //Issue_Comment,
+        //Pull_Request_Comment
     }
 
     public enum BranchHeader
@@ -65,9 +65,9 @@ namespace Sentiment.DataAccess.Shared
     {
         Id,
         Sha,
-        DateTime,
         Pos_Sentiment,
         Neg_Sentiment,
+        DateTime,
         Message
     }
 
@@ -85,5 +85,26 @@ namespace Sentiment.DataAccess.Shared
         Update_Date
     }
 
+    public enum CommitCommentHeader
+    {
+        Id,
+        CommitId,
+        CommentNumber,
+        Date,
+        Pos_Sentiment,
+        Neg_Sentiment,
+        Message
+    }
+
+    public enum IssueCommentHeader
+    {
+        Id,
+        IssueId,
+        CommentNumber,
+        Date,
+        Pos_Sentiment,
+        Neg_Sentiment,
+        Message
+    }
 
 }

@@ -140,5 +140,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             }
             return sentimentCommits;
         }
+
+        public List<CommitT> GetRepositoryCommitList(int repoId)
+        {
+            return _dbContext.Commits.AsNoTracking().Where(comm => comm.RepositoryId == repoId).ToList();
+        }
     }
 }

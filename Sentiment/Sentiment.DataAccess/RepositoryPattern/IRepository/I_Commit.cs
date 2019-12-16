@@ -18,5 +18,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         List<SentimentData> GetOnlySentiment(int repoId, int contributorId);
         List<SentimentData> GetAllSentiment(int repoId, int contributorId);
         List<SentimentData> GetContributorAllSentiment(int repoId, int contributorId);
+        List<CommitT> GetRepositoryCommitList(int repoId);
+
     }
 }

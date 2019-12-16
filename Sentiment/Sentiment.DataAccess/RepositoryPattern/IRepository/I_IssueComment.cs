@@ -14,7 +14,8 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         IssueCommentT GetByNumber(int issueId, long commentNumber);
         int GetCount(int repoId);
         int GetPullRequestCount(int repoId);
-
+        List<IssueCommentT> GetIssueCommentList(int repoId);
+        List<IssueCommentT> GetPullRequestCommentList(int repoId);
 
     }
 }
