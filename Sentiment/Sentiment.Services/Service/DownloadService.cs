@@ -44,19 +44,19 @@ namespace Sentiment.Services.Service
             return newPath;
         }
 
-        public byte[] GetRepositoryContent()
+        public byte[] GetRepositoryContent(int repoId)
         {
             var outputPath = GetFilePath();
 
             using (SpreadsheetDocument myDoc = SpreadsheetDocument.Open(outputPath, true))
             {
                 WorkbookPart workbookPart = myDoc.WorkbookPart;
-                CreateSheets(workbookPart, repositorySheetList);
+                CreateSheets(workbookPart, repoId, repositorySheetList);
             }
             return File.ReadAllBytes(outputPath);
         }
 
-        private void CreateSheets(WorkbookPart workbookPart, List<string> repositorySheetList)
+        private void CreateSheets(WorkbookPart workbookPart, int repoId, List<string> repositorySheetList)
         {
             WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
             string origninalSheetId = workbookPart.GetIdOfPart(worksheetPart);
@@ -86,8 +86,7 @@ namespace Sentiment.Services.Service
                             continue;
                         writer.WriteStartElement(new SheetData());
 
-                        WriteSheets(writer, sheetName);
-
+                        WriteSheets(writer, sheetName, repoId);
 
                         writer.WriteEndElement();
                     }
@@ -114,28 +113,29 @@ namespace Sentiment.Services.Service
 
         }
 
-        private void WriteSheets(OpenXmlWriter writer, string sheetName)
+        private void WriteSheets(OpenXmlWriter writer, string sheetName, int repoId)
         {
-            if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Branch)) { WriteBranchSheet(writer); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit)) { WriteCommitSheet(writer); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue)) { WriteIssueSheet(writer); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request)) { WritePullRequestSheet(writer); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit_Comment)) { WriteCommitCommentSheet(writer); }
+            if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Branch)) { WriteBranchSheet(writer, repoId); }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit)) { WriteCommitSheet(writer, repoId); }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue)) { WriteIssueSheet(writer, repoId); }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request)) { WritePullRequestSheet(writer, repoId); }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit_Comment)) { WriteCommitCommentSheet(writer, repoId); }
             //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue_Comment)) { WriteIssueCommentSheet(writer); }
             //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request_Comment)) { /*WritePullRequestCommentSheet(writer);*/ }
 
         }
 
-        private void WritePullRequestSheet(OpenXmlWriter writer)
+        private void WritePullRequestSheet(OpenXmlWriter writer, int repoId)
         {
             List<string> issueHeaderList = new List<string>(Enum.GetNames(typeof(IssueHeader)));
+            issueHeaderList[1] = "Pull_Request_Number";
             WriteSheetHeader(writer, issueHeaderList);
-            WritePullRequestData(writer);
+            WritePullRequestData(writer, repoId);
         }
 
-        private void WritePullRequestData(OpenXmlWriter writer)
+        private void WritePullRequestData(OpenXmlWriter writer, int repoId)
         {
-            var issueList = issueService.GetPullRequestList(1);
+            var issueList = issueService.GetPullRequestList(repoId);
             issueList.ForEach((issue) => {
                 writer.WriteStartElement(new Row());
 
@@ -209,16 +209,16 @@ namespace Sentiment.Services.Service
 
         }
 
-        private void WriteCommitCommentSheet(OpenXmlWriter writer)
+        private void WriteCommitCommentSheet(OpenXmlWriter writer, int repoId)
         {
             List<string> commitCommentHeaderList = new List<string>(Enum.GetNames(typeof(CommitCommentHeader)));
             WriteSheetHeader(writer, commitCommentHeaderList);
-            WriteCommitCommentData(writer);
+            WriteCommitCommentData(writer, repoId);
         }
 
-        private void WriteCommitCommentData(OpenXmlWriter writer)
+        private void WriteCommitCommentData(OpenXmlWriter writer, int repoId)
         {
-            var commitCommentList = commentService.GetCommitCommentList(1);
+            var commitCommentList = commentService.GetCommitCommentList(repoId);
 
             commitCommentList.ForEach((comment)=> {
                 writer.WriteStartElement(new Row());
@@ -236,16 +236,16 @@ namespace Sentiment.Services.Service
 
         }
 
-        private void WriteIssueSheet(OpenXmlWriter writer)
+        private void WriteIssueSheet(OpenXmlWriter writer, int repoId)
         {
             List<string> issueHeaderList = new List<string>(Enum.GetNames(typeof(IssueHeader)));
             WriteSheetHeader(writer, issueHeaderList);
-            WriteIssueData(writer);
+            WriteIssueData(writer, repoId);
         }
 
-        private void WriteIssueData(OpenXmlWriter writer)
+        private void WriteIssueData(OpenXmlWriter writer, int repoId)
         {
-            var issueList = issueService.GetIssueList(1);
+            var issueList = issueService.GetIssueList(repoId);
             issueList.ForEach((issue)=> {
                 writer.WriteStartElement(new Row());
 
@@ -264,17 +264,16 @@ namespace Sentiment.Services.Service
             });
         }
 
-        private void WriteCommitSheet(OpenXmlWriter writer)
+        private void WriteCommitSheet(OpenXmlWriter writer, int repoId)
         {
             List <string> commitHeaderList = new List<string>(Enum.GetNames(typeof(CommitHeader)));
             WriteSheetHeader(writer, commitHeaderList);
-            WriteCommitData(writer);
+            WriteCommitData(writer, repoId);
         }
 
-        private void WriteCommitData(OpenXmlWriter writer)
+        private void WriteCommitData(OpenXmlWriter writer, int repoId)
         {
-            // repoid input
-            var commitList = commitService.GetCommitList(1);
+            var commitList = commitService.GetCommitList(repoId);
 
             commitList.ForEach((commit)=> {
                 writer.WriteStartElement(new Row());
@@ -292,16 +291,16 @@ namespace Sentiment.Services.Service
 
         }
 
-        private void WriteBranchSheet(OpenXmlWriter writer)
+        private void WriteBranchSheet(OpenXmlWriter writer, int repoId)
         {
             List <string> branchHeaderList= new List<string>(Enum.GetNames(typeof(BranchHeader)));
             WriteSheetHeader(writer, branchHeaderList);
-            WriteBranchData(writer);
+            WriteBranchData(writer,repoId);
         }
 
-        private void WriteBranchData(OpenXmlWriter writer)
+        private void WriteBranchData(OpenXmlWriter writer, int repoId)
         {
-            var branchList = branchService.GetBranchList(1);
+            var branchList = branchService.GetBranchList(repoId);
             branchList.ForEach((branch)=> {
                 writer.WriteStartElement(new Row());
 

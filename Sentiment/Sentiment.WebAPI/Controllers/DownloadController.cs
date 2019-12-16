@@ -13,10 +13,10 @@ namespace Sentiment.WebAPI.Controllers
     {
         private DownloadService downloadService = new DownloadService();
 
-        [HttpPost]
-        public HttpResponseMessage DownloadRepository()
+        [HttpGet]
+        public HttpResponseMessage DownloadRepository(int repoId)
         {
-            var data = downloadService.GetRepositoryContent();
+            var data = downloadService.GetRepositoryContent(repoId);
 
 
             var response = new HttpResponseMessage();
