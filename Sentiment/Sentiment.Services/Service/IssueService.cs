@@ -88,8 +88,10 @@ namespace Sentiment.Services.Service
         private IssueT GetAIssue(Issue issue, int repositoryId)
         {
             int titlePos = 0; int titleNeg = 0;int bodyPos = 0;int bodyNeg = 0;
-            sentimentCal.CalculateSentiment(issue.Title);  titlePos = sentimentCal.PositoiveSentiScore;  titleNeg = sentimentCal.NegativeSentiScore;
-            if(issue.Body!=null) sentimentCal.CalculateSentiment(issue.Body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;
+            var body = commonService.RemoveGitHubTag(issue.Body);
+            var title = commonService.RemoveGitHubTag(issue.Title);
+            sentimentCal.CalculateSentiment(title);  titlePos = sentimentCal.PositoiveSentiScore;  titleNeg = sentimentCal.NegativeSentiScore;
+            if(body != null) sentimentCal.CalculateSentiment(body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;
             var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
             var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
             return new IssueT()
@@ -104,8 +106,8 @@ namespace Sentiment.Services.Service
                 NegTitle = titleNeg,
                 PosTitle = titlePos,
                 UpdateDate = issue.UpdatedAt,
-                Title = issue.Title,
-                Body = issue.Body,
+                Title = title,
+                Body = body,
                 CreateDate = issue.CreatedAt,
                 CloseDate = issue.ClosedAt,
                 Lables = GetLables(issue.Labels),

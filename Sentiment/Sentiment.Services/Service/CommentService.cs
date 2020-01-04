@@ -22,6 +22,7 @@ namespace Sentiment.Services.Service
         SentimentCal sentimentCal;
         ApiOptions option;
         ContributorService contributorService;
+        CommonService commonService;
         private static readonly Object obj = new Object();
         public CommentService()
         {
@@ -35,6 +36,7 @@ namespace Sentiment.Services.Service
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
             this.issueCommentClient = gitHubClient.Issue.Comment;
+            commonService = new CommonService();
             this.request = new IssueCommentRequest()
             {
                 Direction = SortDirection.Ascending,
@@ -147,7 +149,8 @@ namespace Sentiment.Services.Service
         private IssueCommentT GetAIssueComment(IssueComment comment,int repositoryId, IssueT issue)
         {
             var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
-            sentimentCal.CalculateSentiment(comment.Body);
+            var body = commonService.RemoveGitHubTag(comment.Body);
+            sentimentCal.CalculateSentiment(body);
             return new IssueCommentT()
             {
                 IssueId = issue.Id,
@@ -157,7 +160,7 @@ namespace Sentiment.Services.Service
                 WriterId = issuer.Id,
                 Date = comment.UpdatedAt,
                 RepositoryId = repositoryId,
-                Message = comment.Body
+                Message = body
             };
         }
 

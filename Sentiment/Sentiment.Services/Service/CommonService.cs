@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Sentiment.Services.Service
@@ -134,5 +135,41 @@ namespace Sentiment.Services.Service
 
             return commitData;
         }
+
+
+        public string RemoveGitHubTag(string text)
+        {
+
+            text = Regex.Replace(text, @"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})","");
+            text = Regex.Replace(text, @"#+\s|==+|--+|\*+|_+|~+|·+|`.*`|```.*```|<.*>|!\s*\[.*\]+", "");
+            text = Regex.Replace(text, @"</.*>", " .");
+            text = Regex.Replace(text, @"<|>", "");
+
+
+            /*
+                        string header = Regex.Replace(str, @"#+\s|==+|--+", "");
+
+                        string bold = Regex.Replace(str, @"\*+|_+|~+", "");
+
+                        string list = Regex.Replace(str, @"·+", "");
+
+
+                        string inlinecode = Regex.Replace(str, @"`.*`", "");
+
+                        string code = Regex.Replace(str, @"```.*```", "");
+
+                        string starttag = Regex.Replace(str, @"<.*>", "");
+
+                        string endtag = Regex.Replace(str, @"</.*>", " .");
+
+                        @"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
+
+
+
+                        string image = Regex.Replace(str, @"!\s*\[.*\]+", "");*/
+
+            return text;
+        }
+
     }
 }

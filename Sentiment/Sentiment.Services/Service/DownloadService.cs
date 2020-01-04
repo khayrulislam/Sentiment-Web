@@ -128,12 +128,12 @@ namespace Sentiment.Services.Service
         private void WriteSheets(OpenXmlWriter writer, string sheetName, int repoId)
         {
             if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Branch)) { WriteBranchSheet(writer, repoId); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit)) { WriteCommitSheet(writer, repoId); }
+            //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit)) { WriteCommitSheet(writer, repoId); }
             else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue)) { WriteIssueSheet(writer, repoId); }
             else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request)) { WritePullRequestSheet(writer, repoId); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit_Comment)) { WriteCommitCommentSheet(writer, repoId); }
-            //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue_Comment)) { WriteIssueCommentSheet(writer); }
-            //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request_Comment)) { /*WritePullRequestCommentSheet(writer);*/ }
+            //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit_Comment)) { WriteCommitCommentSheet(writer, repoId); }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue_Comment)) { WriteIssueCommentSheet(writer); }
+            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request_Comment)) { /*WritePullRequestCommentSheet(writer);*/ }
 
         }
 
