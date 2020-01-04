@@ -105,10 +105,33 @@ namespace Sentiment.Services.Service
                 PosTitle = titlePos,
                 UpdateDate = issue.UpdatedAt,
                 Title = issue.Title,
-                Body = issue.Body
+                Body = issue.Body,
+                CreateDate = issue.CreatedAt,
+                CloseDate = issue.ClosedAt,
+                Lables = GetLables(issue.Labels),
+                Assignees = GetAssignees(issue.Assignees)
             };
         }
 
+        private string GetAssignees(IReadOnlyList<User> assignees)
+        {
+            string assigneeNames = "";
+            assignees.ToList().ForEach((assignee)=>{
+                assigneeNames += assignee.Login + ",";
+            });
+            if (assigneeNames.Length > 0) assigneeNames = assigneeNames.TrimEnd(',');
+            return assigneeNames;
+        }
+
+        private string GetLables(IReadOnlyList<Label> labels)
+        {
+            string lableNames = "";
+            labels.ToList().ForEach((lable)=> {
+                lableNames += lable.Name + ",";
+            });
+            if (lableNames.Length > 0) lableNames = lableNames.TrimEnd(',');
+            return lableNames;
+        }
 
         public int GetCount(int repoId)
         {
