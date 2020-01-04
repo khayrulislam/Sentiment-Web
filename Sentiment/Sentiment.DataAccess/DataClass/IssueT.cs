@@ -19,10 +19,14 @@ namespace Sentiment.DataAccess.DataClass
         public int NegTitle { get; set; }
         public string State { get; set; }
         public IssueType IssueType { get; set; }
+        public DateTimeOffset? CreateDate{ get; set; }
         public DateTimeOffset? UpdateDate { get; set; }
+        public DateTimeOffset? CloseDate { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
         public ICollection<IssueCommentT> Comments { get; set; }
+        public string Lables { get; set; } // comma seperated lable name
+        public string Assignees { get; set; } // comma seperated assignees login
 
     }
 

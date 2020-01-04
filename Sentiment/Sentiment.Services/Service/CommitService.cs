@@ -106,7 +106,7 @@ namespace Sentiment.Services.Service
 
                 commitT.Sha = commit.Sha;
                 if (commiter != null) commitT.WriterId = commiter.Id;
-                else commitT.Writer = commiter;
+                else commitT.Creator = commiter;
                 commitT.Pos = sentimentCal.PositoiveSentiScore;
                 commitT.Neg = sentimentCal.NegativeSentiScore;
                 commitT.RepositoryId = repositoryId;

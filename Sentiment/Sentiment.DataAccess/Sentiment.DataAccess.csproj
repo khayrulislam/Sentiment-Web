@@ -65,6 +65,7 @@
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryPattern\Implement\AllRepository.cs" />
     <Compile Include="RepositoryPattern\Implement\BranchCommit.cs" />
