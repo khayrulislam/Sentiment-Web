@@ -139,11 +139,20 @@ namespace Sentiment.Services.Service
 
         public string RemoveGitHubTag(string text)
         {
-
+            // using loop remove all the stemmig string
             text = Regex.Replace(text, @"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})","");
-            text = Regex.Replace(text, @"#+\s|==+|--+|\*+|_+|~+|·+|`.*`|```.*```|<.*>|!\s*\[.*\]+", "");
+            text = Regex.Replace(text, @"\t|\n|\r", "");
+            text = Regex.Replace(text, @"//+", "");
+            text = Regex.Replace(text, @"\.\.+", ".");
+            text = Regex.Replace(text, @"\^+", "");
+            
+            text = Regex.Replace(text, @"#+\s|==+|--+|\*+|_+|~+|·+|`.*`|``+.*``+|<.*>|!\s*\[.*\]+", "");
             text = Regex.Replace(text, @"</.*>", " .");
-            text = Regex.Replace(text, @"<|>", "");
+            text = Regex.Replace(text, @"[>]", "");
+            text = Regex.Replace(text, @"[->]", "");
+            text = Regex.Replace(text, @"[<]", "");
+            text = Regex.Replace(text, @"[<-]", "");
+            text = new string(text.Where(c => !char.IsControl(c)).ToArray());
 
 
             /*

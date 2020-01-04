@@ -283,7 +283,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<IssueT> list = new List<IssueT>();
             try
             {
-                list = _dbContext.Issues.AsNoTracking().Where(iss=>iss.RepositoryId == repoId && iss.IssueType==IssueType.Issue).ToList();
+                list = _dbContext.Issues.Include("Comments").Include("Creator").AsNoTracking().Where(iss=>iss.RepositoryId == repoId && iss.IssueType==IssueType.Issue && iss.State == "closed").ToList(); // colsed issue
             }
             catch (Exception e)
             {

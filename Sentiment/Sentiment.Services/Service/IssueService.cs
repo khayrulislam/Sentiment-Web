@@ -89,6 +89,7 @@ namespace Sentiment.Services.Service
         {
             int titlePos = 0; int titleNeg = 0;int bodyPos = 0;int bodyNeg = 0;
             var body = commonService.RemoveGitHubTag(issue.Body);
+            
             var title = commonService.RemoveGitHubTag(issue.Title);
             sentimentCal.CalculateSentiment(title);  titlePos = sentimentCal.PositoiveSentiScore;  titleNeg = sentimentCal.NegativeSentiScore;
             if(body != null) sentimentCal.CalculateSentiment(body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;

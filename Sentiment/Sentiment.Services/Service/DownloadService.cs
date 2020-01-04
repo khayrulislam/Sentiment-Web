@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Sentiment.DataAccess.Shared;
+using Sentiment.DataAccess.DataClass;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,7 @@ namespace Sentiment.Services.Service
         CommitService commitService;
         IssueService issueService;
         CommentService commentService;
+        CommonService commonService;
 
         public DownloadService()
         {
@@ -33,6 +35,7 @@ namespace Sentiment.Services.Service
             commitService = new CommitService();
             issueService = new IssueService();
             commentService = new CommentService();
+            commonService = new CommonService();
         }
 
         private string GetFilePath()
@@ -130,10 +133,10 @@ namespace Sentiment.Services.Service
             if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Branch)) { WriteBranchSheet(writer, repoId); }
             //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit)) { WriteCommitSheet(writer, repoId); }
             else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue)) { WriteIssueSheet(writer, repoId); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request)) { WritePullRequestSheet(writer, repoId); }
+            //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request)) { WritePullRequestSheet(writer, repoId); }
             //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Commit_Comment)) { WriteCommitCommentSheet(writer, repoId); }
             else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Issue_Comment)) { WriteIssueCommentSheet(writer); }
-            else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request_Comment)) { /*WritePullRequestCommentSheet(writer);*/ }
+            //else if (sheetName == Enum.GetName(typeof(RepositorySheets), RepositorySheets.Pull_Request_Comment)) { /*WritePullRequestCommentSheet(writer);*/ }
 
         }
 
@@ -214,7 +217,7 @@ namespace Sentiment.Services.Service
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Date.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Pos.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Neg.ToString() } });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = Regex.Replace(comment.Message, @"[\u0000-\u0008,\u000B,\u000C,\u000E-\u001F]", "") } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = commonService.RemoveGitHubTag(comment.Message) } });
 
                 writer.WriteEndElement();
             } );
@@ -254,26 +257,44 @@ namespace Sentiment.Services.Service
             WriteSheetHeader(writer, issueHeaderList);
             WriteIssueData(writer, repoId);
         }
-
+     
         private void WriteIssueData(OpenXmlWriter writer, int repoId)
         {
             var issueList = issueService.GetIssueList(repoId);
             issueList.ForEach((issue)=> {
                 writer.WriteStartElement(new Row());
 
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Id.ToString() } });
+                //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Id.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.IssueNumber.ToString()} });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.State } });
+                //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.State } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.PosTitle.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.NegTitle.ToString() } });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Title} });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = commonService.RemoveGitHubTag(issue.Title) } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Pos.ToString()} });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Neg.ToString()} });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = RemoveInvalidXmlChars(issue.Body) } });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.UpdateDate.ToString()} });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = commonService.RemoveGitHubTag(issue.Body) } });
+                //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.UpdateDate.ToString()} });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.CreateDate.ToString() } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.CloseDate.ToString() } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Lables } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Assignees } });
+
+                if(issue.Creator != null) writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Creator.Name } });
+                else writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = "" } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = GetCommentsId(issue.Comments) } });
 
                 writer.WriteEndElement();
             });
+        }
+
+        private string GetCommentsId(ICollection<IssueCommentT> comments)
+        {
+            string commentIds = "";
+            comments.ToList().ForEach((comment)=> {
+                commentIds += comment.CommentNumber + ",";
+            });
+            if (commentIds.Length > 0) commentIds = commentIds.TrimEnd(',');
+            return commentIds;
         }
 
         private void WriteCommitSheet(OpenXmlWriter writer, int repoId)
