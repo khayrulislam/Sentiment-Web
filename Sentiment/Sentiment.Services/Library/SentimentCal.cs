@@ -47,6 +47,8 @@ namespace Sentiment.Services.Library
 
         public void CalculateSentiment(string sentence)
         {
+            this.PositoiveSentiScore = 1;
+            this.NegativeSentiScore = -1;
             string[] values = senti.computeSentimentScores(sentence).Split(' ');
             this.PositoiveSentiScore = Convert.ToInt32(values[0]);
             this.NegativeSentiScore = Convert.ToInt32(values[1]);

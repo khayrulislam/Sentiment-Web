@@ -53,7 +53,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> commits = new List<SentimentData>();
             try
             {
-                commits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.WriterId == contributorId)
+                commits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.CreatorId == contributorId)
                     .OrderBy(com => new { com.DateTime, com.Id })
                     .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos })
                     .ToList();
@@ -84,7 +84,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> commits = new List<SentimentData>();
             try
             {
-                commits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.WriterId == contributorId)
+                commits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.CreatorId == contributorId)
                     .OrderBy(com => new { com.DateTime, com.Id })
                     .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos })
                     .ToList();
@@ -130,7 +130,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> sentimentCommits = new List<SentimentData>();
             try
             {
-                sentimentCommits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.WriterId==contributorId && (com.Pos != 1 || com.Neg != -1))
+                sentimentCommits = _dbContext.Commits.Where(com => com.RepositoryId == repoId && com.CreatorId==contributorId && (com.Pos != 1 || com.Neg != -1))
                     .OrderBy(com => new { com.DateTime, com.Id })
                     .Select(com => new SentimentData() { Datetime = com.DateTime, Neg = com.Neg, Pos = com.Pos }).ToList();
             }

@@ -18,7 +18,7 @@ namespace Sentiment.DataAccess.DataClass
     { 
         public int Pos { get; set; }
         public int Neg { get; set; }
-        public int? WriterId { get; set; }
+        public int? CreatorId { get; set; }
         public ContributorT Creator { get; set; }
     }
 

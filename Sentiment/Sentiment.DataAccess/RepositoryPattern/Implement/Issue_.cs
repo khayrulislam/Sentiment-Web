@@ -74,7 +74,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> list = new List<SentimentData>();
             try
             {
-                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.Issue && iss.WriterId == contributorId )
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.Issue && iss.CreatorId == contributorId )
                     .OrderBy(iss => new { iss.UpdateDate, iss.Id })
                     .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
             }
@@ -90,7 +90,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> list = new List<SentimentData>();
             try
             {
-                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType==IssueType.Issue && iss.WriterId == contributorId && (iss.Pos != 1 || iss.Neg != -1))
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType==IssueType.Issue && iss.CreatorId == contributorId && (iss.Pos != 1 || iss.Neg != -1))
                     .OrderBy(iss => new { iss.UpdateDate, iss.Id })
                     .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value , Neg = iss.Neg, Pos = iss.Pos }).ToList();
             }
@@ -143,7 +143,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> list = new List<SentimentData>();
             try
             {
-                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.WriterId == contributorId)
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.CreatorId == contributorId)
                     .OrderBy(iss => new { iss.UpdateDate, iss.Id })
                     .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
             }
@@ -159,7 +159,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<SentimentData> list = new List<SentimentData>();
             try
             {
-                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.WriterId == contributorId && (iss.Pos != 1 || iss.Neg != -1))
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.CreatorId == contributorId && (iss.Pos != 1 || iss.Neg != -1))
                     .OrderBy(iss => new { iss.UpdateDate, iss.Id })
                     .Select(iss => new SentimentData() { Datetime = iss.UpdateDate.Value, Neg = iss.Neg, Pos = iss.Pos }).ToList();
             }
@@ -297,7 +297,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             List<IssueT> list = new List<IssueT>();
             try
             {
-                list = _dbContext.Issues.AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest).ToList();
+                list = _dbContext.Issues.Include("Comments").Include("Creator").AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest && iss.State == "closed").ToList();
             }
             catch (Exception e)
             {

@@ -14,7 +14,8 @@ namespace Sentiment.DataAccess.Shared
         Commit = 0,
         Issue,
         PullRequest,
-        Review
+        Review,
+        
     }
 
     public enum AnalysisState
@@ -45,13 +46,14 @@ namespace Sentiment.DataAccess.Shared
 
     public enum RepositorySheets
     {
-        Branch,
+        //Branch,
         //Commit,
         Issue,
+        Issue_Comment,
         Pull_Request,
         //Commit_Comment,
-        Issue_Comment,
-        Pull_Request_Comment
+        Pull_Request_Comment,
+        Review_Comment
     }
 
     public enum BranchHeader
@@ -90,6 +92,28 @@ namespace Sentiment.DataAccess.Shared
         Comments
     }
 
+    public enum PullHeader
+    {
+        //Id,
+        PullRequestNumber,
+        //Status,
+        Title_Pos_Sentiment,
+        Title_Neg_Sentiment,
+        Title,
+        Body_Pos_Sentiment,
+        Body_Neg_Sentiment,
+        Body,
+        Create_Date,
+        Close_Date,
+        Merge_date,
+        Labels,
+        Participants, // assignees
+        Creator,
+        Comments,
+        Merged,
+        Reviews
+    }
+
     public enum CommitCommentHeader
     {
         Id,
@@ -103,13 +127,26 @@ namespace Sentiment.DataAccess.Shared
 
     public enum IssueCommentHeader
     {
-        Id,
+        //Id,
         IssueId,
         CommentNumber,
         Date,
         Pos_Sentiment,
         Neg_Sentiment,
-        Message
+        Message,
+        Creator
+    }
+
+    public enum PullCommentHeader
+    {
+        //Id,
+        PullRequestId,
+        CommentNumber,
+        Date,
+        Pos_Sentiment,
+        Neg_Sentiment,
+        Message,
+        Creator
     }
 
 }

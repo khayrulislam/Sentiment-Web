@@ -140,42 +140,26 @@ namespace Sentiment.Services.Service
         public string RemoveGitHubTag(string text)
         {
             // using loop remove all the stemmig string
+            text = new string(text.Where(c => !char.IsControl(c)).ToArray());
             text = Regex.Replace(text, @"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})","");
-            text = Regex.Replace(text, @"\t|\n|\r", "");
+            text = Regex.Replace(text, @"\t|\n|\r", ". ");
             text = Regex.Replace(text, @"//+", "");
-            text = Regex.Replace(text, @"\.\.+", ".");
             text = Regex.Replace(text, @"\^+", "");
             
-            text = Regex.Replace(text, @"#+\s|==+|--+|\*+|_+|~+|·+|`.*`|``+.*``+|<.*>|!\s*\[.*\]+", "");
-            text = Regex.Replace(text, @"</.*>", " .");
-            text = Regex.Replace(text, @"[>]", "");
-            text = Regex.Replace(text, @"[->]", "");
-            text = Regex.Replace(text, @"[<]", "");
-            text = Regex.Replace(text, @"[<-]", "");
-            text = new string(text.Where(c => !char.IsControl(c)).ToArray());
+            text = Regex.Replace(text, @"#+\s|==+|--+|\*+|_+|~+|·+|<.*>|!\s*\[.*\]+", "");
+            text = Regex.Replace(text, @"</.*>", " . ");
+            text = Regex.Replace(text, @"<.*>", " ");
+            text = Regex.Replace(text, @">", "");
+            text = Regex.Replace(text, @"->", "");
+            text = Regex.Replace(text, @"<", "");
+            text = Regex.Replace(text, @"<-", "");
+            text = Regex.Replace(text, @"`+", "`");
+            text = Regex.Replace(text, @"`(.*?)`", "");
+            text = Regex.Replace(text, @"\.\.+", ".");
+            text = Regex.Replace(text, @"\s+", " ");
 
 
-            /*
-                        string header = Regex.Replace(str, @"#+\s|==+|--+", "");
-
-                        string bold = Regex.Replace(str, @"\*+|_+|~+", "");
-
-                        string list = Regex.Replace(str, @"·+", "");
-
-
-                        string inlinecode = Regex.Replace(str, @"`.*`", "");
-
-                        string code = Regex.Replace(str, @"```.*```", "");
-
-                        string starttag = Regex.Replace(str, @"<.*>", "");
-
-                        string endtag = Regex.Replace(str, @"</.*>", " .");
-
-                        @"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
-
-
-
-                        string image = Regex.Replace(str, @"!\s*\[.*\]+", "");*/
+            // replace code segment
 
             return text;
         }

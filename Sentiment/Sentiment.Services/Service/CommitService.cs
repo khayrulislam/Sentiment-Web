@@ -105,7 +105,7 @@ namespace Sentiment.Services.Service
                 sentimentCal.CalculateSentiment(commit.Commit.Message);
 
                 commitT.Sha = commit.Sha;
-                if (commiter != null) commitT.WriterId = commiter.Id;
+                if (commiter != null) commitT.CreatorId = commiter.Id;
                 else commitT.Creator = commiter;
                 commitT.Pos = sentimentCal.PositoiveSentiScore;
                 commitT.Neg = sentimentCal.NegativeSentiScore;

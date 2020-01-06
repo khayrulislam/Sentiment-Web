@@ -31,6 +31,7 @@ namespace Sentiment.Services.Service
 
         private void Initialize()
         {
+            
             this.gitHubClient = GitHubConnection.Instance;
             this.issueClient = gitHubClient.Issue;
             this.pullRequestsClient = gitHubClient.PullRequest;
@@ -64,12 +65,21 @@ namespace Sentiment.Services.Service
                     var issueList = new List<IssueT>();
                     var taskList = new List<Task>();
                     var list = new List<Task>();
-                    issueBlock.ToList().ForEach( (issue) => {
+                    issueBlock.ToList().ForEach(  (issue) => {
+                        
                         var issueStore = unitOfWork.Issue.GetByNumber(repositoryId, issue.Number);
+                        int issueId;
+                        IssueType issueType;
                         if (issueStore != null)
                         {
                             var bodyPos = 0; var bodyNeg = 0;
-                            if(issue.Body!=null)sentimentCal.CalculateSentiment(issue.Body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;
+                            issueId = issueStore.Id;
+                            issueType = issueStore.IssueType;
+                            if (issue.Body != null) { 
+                                sentimentCal.CalculateSentiment(commonService.RemoveGitHubTag(issue.Body));
+                                bodyPos = sentimentCal.PositoiveSentiScore;
+                                bodyNeg = sentimentCal.NegativeSentiScore;
+                            }
                             issueStore.IssueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
                             issueStore.Pos = bodyPos;
                             issueStore.Neg = bodyNeg;
@@ -77,47 +87,94 @@ namespace Sentiment.Services.Service
                         }
                         else
                         {
-                            unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
+                            var issueStore2 = GetAIssue(issue, repositoryId);
+                            unitOfWork.Issue.Add(issueStore2);
                             unitOfWork.Complete();
-                        }
-                    });
+                            //issueId = issueStore2.Id;
+                            //issueType = issueStore2.IssueType;
 
-                    //await StorePullRequestReviewAsync(repoId,repositoryId);
+                        }
+
+                        /*if(issueType == IssueType.PullRequest)
+                        {
+                            var pullReviews = await pullRequestsClient.Review.GetAll(repoId,issueId);
+                            pullReviews.ToList().ForEach( (review) => {
+                                var reviewStore = unitOfWork.IssueComment.GetByNumber(issue.Id, review.Id);
+                                if (reviewStore !=null)
+                                {
+                                    var bodyPos = 0; var bodyNeg = 0;
+                                    if (reviewStore.Message != null) { 
+                                        sentimentCal.CalculateSentiment(commonService.RemoveGitHubTag(reviewStore.Message));
+                                        bodyPos = sentimentCal.PositoiveSentiScore;
+                                        bodyNeg = sentimentCal.NegativeSentiScore;
+                                    }
+                                    reviewStore.Type = CommentType.Review;
+                                    reviewStore.Pos = bodyPos;
+                                    reviewStore.Neg = bodyNeg;
+                                    unitOfWork.Complete();
+                                }
+                                else
+                                {
+                                    reviewStore = GetAReview(review, repositoryId,issue.Id);
+                                    unitOfWork.IssueComment.Add(reviewStore);
+                                    unitOfWork.Complete();
+                                }
+                            });
+                        }*/
+                    });
                     await commentService.StoreIssueCommentAsync(repoId, repositoryId);
                 }
             }
         }
-
-/*        private async Task StorePullRequestReviewAsync(long repoId, int repositoryId)
+        
+      /*  private IssueCommentT GetAReview(PullRequestReview comment, int repositoryId, int issueId)
         {
-
-            using (var unitOfWork = new UnitOfWork())
+            string body = "";
+            var issuer = contributorService.GetContributor(comment.User.Id, comment.User.Login);
+            if(comment.Body!=null) body = commonService.RemoveGitHubTag(comment.Body);
+            var commentType = CommentType.Review;
+            sentimentCal.CalculateSentiment(body);
+            return new IssueCommentT()
             {
-                var repository = unitOfWork.Repository.Get(repositoryId);
-                request.Since = repository.AnalysisDate;
-                var pullBlock = await pullRequestsClient.Review.GetAll(repoId,);
-            }
-
-                throw new NotImplementedException();
+                IssueId = issueId,
+                CommentNumber = comment.Id,
+                Pos = sentimentCal.PositoiveSentiScore,
+                Neg = sentimentCal.NegativeSentiScore,
+                CreatorId = issuer.Id,
+                Date = comment.SubmittedAt,
+                RepositoryId = repositoryId,
+                Message = body,
+                Type = commentType
+            };
         }*/
 
         private IssueT GetAIssue(Issue issue, int repositoryId)
         {
             int titlePos = 0; int titleNeg = 0;int bodyPos = 0;int bodyNeg = 0;
-            var body = commonService.RemoveGitHubTag(issue.Body);
-            
+            //var body = commonService.RemoveGitHubTag(issue.Body);
+            string body = "";
+            bool merge = false;
+            DateTimeOffset? mergedate = new DateTimeOffset();
+            if(issue.Body!=null) body = commonService.RemoveGitHubTag(issue.Body);
             var title = commonService.RemoveGitHubTag(issue.Title);
             sentimentCal.CalculateSentiment(title);  titlePos = sentimentCal.PositoiveSentiScore;  titleNeg = sentimentCal.NegativeSentiScore;
             if(body != null) sentimentCal.CalculateSentiment(body);  bodyPos = sentimentCal.PositoiveSentiScore;  bodyNeg = sentimentCal.NegativeSentiScore;
             var issuer = contributorService.GetContributor(issue.User.Id, issue.User.Login);
             var issueType = issue.PullRequest == null ? IssueType.Issue : IssueType.PullRequest;
+
+            if(issueType == IssueType.PullRequest)
+            {
+                merge = issue.PullRequest.Merged;
+                mergedate = issue.PullRequest.MergedAt;
+            }
+            
             return new IssueT()
             {
                 RepositoryId = repositoryId,
                 IssueNumber = issue.Number,
                 Pos = bodyPos,
                 Neg = bodyNeg,
-                WriterId = issuer.Id,
+                CreatorId = issuer.Id,
                 State = issue.State.StringValue,
                 IssueType = issueType,
                 NegTitle = titleNeg,
@@ -128,7 +185,9 @@ namespace Sentiment.Services.Service
                 CreateDate = issue.CreatedAt,
                 CloseDate = issue.ClosedAt,
                 Lables = GetLables(issue.Labels),
-                Assignees = GetAssignees(issue.Assignees)
+                Assignees = GetAssignees(issue.Assignees),
+                Merged = merge,
+                MergeDate = mergedate
             };
         }
 

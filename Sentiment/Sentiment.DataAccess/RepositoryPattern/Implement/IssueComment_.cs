@@ -34,13 +34,13 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
 
         public List<IssueCommentT> GetIssueCommentList(int repoId)
         {
-            return _dbContext.IssueComments.AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.Issue.IssueType == IssueType.Issue).ToList();
+            return _dbContext.IssueComments.Include("Issue").Include("Creator").AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.Issue.IssueType == IssueType.Issue && iss.Issue.State == "closed").ToList(); // close issue commment
 
         }
 
         public List<IssueCommentT> GetPullRequestCommentList(int repoId)
         {
-            return _dbContext.IssueComments.AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.Issue.IssueType == IssueType.PullRequest).ToList();
+            return _dbContext.IssueComments.Include("Issue").Include("Creator").AsNoTracking().Where(iss => iss.RepositoryId == repoId && iss.Issue.IssueType == IssueType.PullRequest && iss.Issue.State == "closed").ToList(); // close pull request commment
         }
 
         public int GetPullRequestCount(int repoId)
