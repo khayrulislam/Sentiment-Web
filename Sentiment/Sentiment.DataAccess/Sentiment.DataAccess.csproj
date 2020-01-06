@@ -61,13 +61,14 @@
     <Compile Include="DataClass\CommitT.cs" />
     <Compile Include="DataClass\ContributorT.cs" />
     <Compile Include="DataClass\IssueT.cs" />
+    <Compile Include="DataClass\PullCommitT.cs" />
     <Compile Include="DataClass\RepositoryContributorT.cs" />
     <Compile Include="DataClass\RepositoryT.cs" />
     <Compile Include="DataClass\Sentiment.cs" />
     <Compile Include="DbContext\SentiDbContext.cs" />
-    <Compile Include="Migrations\202001051450411_create.cs" />
-    <Compile Include="Migrations\202001051450411_create.Designer.cs">
-      <DependentUpon>202001051450411_create.cs</DependentUpon>
+    <Compile Include="Migrations\202001061022012_create.cs" />
+    <Compile Include="Migrations\202001061022012_create.Designer.cs">
+      <DependentUpon>202001061022012_create.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="RepositoryPattern\Implement\Commit_.cs" />
     <Compile Include="RepositoryPattern\Implement\Contributor_.cs" />
     <Compile Include="RepositoryPattern\Implement\Issue_.cs" />
+    <Compile Include="RepositoryPattern\Implement\PullCommit_.cs" />
     <Compile Include="RepositoryPattern\Implement\RepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\Implement\Repository_.cs" />
     <Compile Include="RepositoryPattern\Implement\UnitOfWork.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="RepositoryPattern\IRepository\I_CommitComment.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Contributor.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_Issue.cs" />
+    <Compile Include="RepositoryPattern\IRepository\I_PullCommit.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_RepositoryContributor.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_UnitOfWork.cs" />
     <Compile Include="RepositoryPattern\IRepository\I_AllRepository.cs" />
@@ -102,8 +105,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202001051450411_create.resx">
-      <DependentUpon>202001051450411_create.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202001061022012_create.resx">
+      <DependentUpon>202001061022012_create.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

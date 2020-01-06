@@ -29,6 +29,8 @@ namespace Sentiment.DataAccess.DataClass
         public string Assignees { get; set; } // comma seperated assignees login
         public bool Merged { get; set; }
         public DateTimeOffset? MergeDate { get; set; }
+        public ICollection<PullCommitT> Commits { get; set; }
+
     }
 
     public class IssueView

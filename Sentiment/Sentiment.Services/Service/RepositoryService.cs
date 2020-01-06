@@ -40,6 +40,18 @@ namespace Sentiment.Services.Service
             this.issueService = new IssueService();
         }
 
+
+
+        public async Task ExecuteMultipleProjectAsync(List<project> list)
+        {
+            foreach (var project in list)
+            {
+                string []arr = project.Name.Split('/');
+                await ExecuteAnalysisAsync(arr[1], arr[0]);
+            }
+        }
+
+
         public async Task ExecuteAnalysisAsync(string repoName, string repoOwnerName)
         {
             DateTime start = DateTime.Now;

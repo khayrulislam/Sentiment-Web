@@ -31,7 +31,15 @@ namespace Sentiment.WebAPI.Controllers
         }
 
 
-
+        [HttpPost]
+        public HttpResponseMessage ExecuteMultipleProject(List<project> list)
+        {
+            Task.Run(() =>
+            {
+                repositoryService.ExecuteMultipleProjectAsync(list);
+            });
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
 
 
 

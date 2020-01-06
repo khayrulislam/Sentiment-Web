@@ -173,9 +173,20 @@ namespace Sentiment.Services.Service
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = GetCommentsId(issue.Comments, CommentType.PullRequest) } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Merged.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = GetCommentsId(issue.Comments, CommentType.Review) } });
+                //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = GetCommitsSha(issue.Commits) } });
 
                 writer.WriteEndElement();
             });
+        }
+
+        private string GetCommitsSha(ICollection<PullCommitT> commits)
+        {
+            string commitSha = "";
+            commits.ToList().ForEach( (commit) => {
+                commitSha += commit.CommitSha + ",";
+            });
+            if (commitSha.Length > 0) commitSha = commitSha.TrimEnd(',');
+            return commitSha;
         }
 
         private string GetCommentsId(ICollection<IssueCommentT> comments, CommentType type)
@@ -204,7 +215,7 @@ namespace Sentiment.Services.Service
                 writer.WriteStartElement(new Row());
 
                 //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Id.ToString() } });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.IssueId.ToString() } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Issue.IssueNumber.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.CommentNumber.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Date.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Pos.ToString() } });
@@ -233,7 +244,7 @@ namespace Sentiment.Services.Service
                     writer.WriteStartElement(new Row());
 
                     //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Id.ToString() } });
-                    writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.IssueId.ToString() } });
+                    writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Issue.IssueNumber.ToString() } });
                     writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.CommentNumber.ToString() } });
                     writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Date.ToString() } });
                     writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Pos.ToString() } });
@@ -263,7 +274,7 @@ namespace Sentiment.Services.Service
                 writer.WriteStartElement(new Row());
 
                 //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Id.ToString() } });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.IssueId.ToString() } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Issue.IssueNumber.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.CommentNumber.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Date.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = comment.Pos.ToString() } });

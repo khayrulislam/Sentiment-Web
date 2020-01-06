@@ -24,6 +24,7 @@ namespace Sentiment.DataAccess
         public DbSet<IssueCommentT> IssueComments{ get; set; }
         public DbSet<CommitCommentT> CommitComments{ get; set; }
         public DbSet<IssueT> Issues{ get; set; }
+        public DbSet<PullCommitT> PullCommits{ get; set; }
 
 
 

@@ -36,6 +36,7 @@ namespace Sentiment.Services.Service
             this.gitHubClient = GitHubConnection.Instance;
             this.issueClient = gitHubClient.Issue;
             this.pullRequestsClient = gitHubClient.PullRequest;
+            //var repoPull = gitHubClient.Repository.PullRequest;
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
             this.commentService = new CommentService();
@@ -93,7 +94,7 @@ namespace Sentiment.Services.Service
                         }
                     });
                     await StoreAllPullRequestsAsync(repoId,repositoryId);
-                    await commentService.StoreIssueCommentAsync(repoId, repositoryId);
+                    
                 }
             }
         }
@@ -110,6 +111,7 @@ namespace Sentiment.Services.Service
                 {
                     pullBlock.ToList().ForEach((pull) => {
                         var pullStore = unitOfWork.Issue.GetByNumber(repositoryId, pull.Number);
+                        int pId;
                         if (pullStore != null)
                         {
                             if (pull.Body != null)
@@ -122,13 +124,29 @@ namespace Sentiment.Services.Service
                             }
                             if(pullStore.IssueType != IssueType.Issue) pullStore.IssueType = IssueType.PullRequest;
                             unitOfWork.Complete();
+                            pId = pullStore.Id;
                         }
                         else
                         {
-                            unitOfWork.Issue.Add(GetAPull(pull, repositoryId));
+                            var pp = GetAPull(pull, repositoryId);
+                            unitOfWork.Issue.Add(pp);
                             unitOfWork.Complete();
+                            pId = pp.Id;
                         }
+
+                        /*if(pull.Commits > 0)
+                        {
+                            var commits = await pullRequestsClient.Commits(repoId,pull.Number);
+                            commits.ToList().ForEach((comm)=> {
+                                unitOfWork.PullCommit.Add(new PullCommitT() {
+                                    CommitSha = comm.Sha,
+                                    PullRequestId = pId
+                                });
+                                unitOfWork.Complete();
+                            });
+                        }*/
                     });
+                    await commentService.StoreIssueCommentAsync(repoId, repositoryId);
                 }
             }
         }

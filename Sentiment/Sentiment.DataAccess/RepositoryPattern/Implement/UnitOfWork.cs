@@ -18,6 +18,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
         public I_IssueComment IssueComment { get; private set; }
         public I_CommitComment CommitComment { get; private set; }
         public I_Issue Issue{ get; private set; }
+        public I_PullCommit PullCommit{ get; private set; }
 
         private SentiDbContext _dbContext;
 
@@ -33,6 +34,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             IssueComment = new IssueComment_(_dbContext);
             CommitComment = new CommitComment_(_dbContext);
             Issue = new Issue_(_dbContext);
+            PullCommit = new PullCommit_(_dbContext);
         }
 
         public int Complete()

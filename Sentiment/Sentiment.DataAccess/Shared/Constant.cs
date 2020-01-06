@@ -44,6 +44,12 @@ namespace Sentiment.DataAccess.Shared
     }
 
 
+    public class project
+    {
+        public string Name { get; set; }
+
+    }
+
     public enum RepositorySheets
     {
         //Branch,
@@ -111,7 +117,8 @@ namespace Sentiment.DataAccess.Shared
         Creator,
         Comments,
         Merged,
-        Reviews
+        Reviews,
+        //Commits
     }
 
     public enum CommitCommentHeader

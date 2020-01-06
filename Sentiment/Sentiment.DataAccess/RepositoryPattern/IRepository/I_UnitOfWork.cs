@@ -17,6 +17,7 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         I_IssueComment IssueComment { get; }
         I_CommitComment CommitComment { get; }
         I_Issue Issue { get; }
+        I_PullCommit PullCommit{ get; }
 
         int Complete();
     }
