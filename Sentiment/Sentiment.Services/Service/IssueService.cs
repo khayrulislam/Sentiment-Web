@@ -16,6 +16,7 @@ namespace Sentiment.Services.Service
     {
         GitHubClient gitHubClient;
         IIssuesClient issueClient;
+        IPullRequestsClient pullRequestsClient;
         SentimentCal sentimentCal;
         RepositoryIssueRequest request;
         ApiOptions option;
@@ -32,6 +33,7 @@ namespace Sentiment.Services.Service
         {
             this.gitHubClient = GitHubConnection.Instance;
             this.issueClient = gitHubClient.Issue;
+            this.pullRequestsClient = gitHubClient.PullRequest;
             this.sentimentCal = SentimentCal.Instance;
             this.contributorService = new ContributorService();
             this.commentService = new CommentService();
@@ -80,10 +82,24 @@ namespace Sentiment.Services.Service
                         }
                     });
 
+                    //await StorePullRequestReviewAsync(repoId,repositoryId);
                     await commentService.StoreIssueCommentAsync(repoId, repositoryId);
                 }
             }
         }
+
+/*        private async Task StorePullRequestReviewAsync(long repoId, int repositoryId)
+        {
+
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var repository = unitOfWork.Repository.Get(repositoryId);
+                request.Since = repository.AnalysisDate;
+                var pullBlock = await pullRequestsClient.Review.GetAll(repoId,);
+            }
+
+                throw new NotImplementedException();
+        }*/
 
         private IssueT GetAIssue(Issue issue, int repositoryId)
         {

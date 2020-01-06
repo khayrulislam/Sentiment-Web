@@ -27,7 +27,8 @@ namespace Sentiment.DataAccess.DataClass
         public ICollection<IssueCommentT> Comments { get; set; }
         public string Lables { get; set; } // comma seperated lable name
         public string Assignees { get; set; } // comma seperated assignees login
-
+        public bool Merged { get; set; }
+        public DateTimeOffset? MergeDate { get; set; }
     }
 
     public class IssueView
