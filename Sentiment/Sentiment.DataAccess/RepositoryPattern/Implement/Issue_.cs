@@ -305,5 +305,33 @@ namespace Sentiment.DataAccess.RepositoryPattern.Implement
             }
             return list;
         }
+
+        public List<int> GetIssueNumberList(int repoId)
+        {
+            List<int> list = new List<int>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId).Select(iss => iss.IssueNumber).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
+
+        public List<int> GetPullRequestNumberList(int repoId)
+        {
+            List<int> list = new List<int>();
+            try
+            {
+                list = _dbContext.Issues.Where(iss => iss.RepositoryId == repoId && iss.IssueType == IssueType.PullRequest).Select(iss => iss.IssueNumber).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return list;
+        }
     }
 }

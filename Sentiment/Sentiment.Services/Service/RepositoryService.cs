@@ -24,6 +24,7 @@ namespace Sentiment.Services.Service
         ContributorService contributorService;
         CommitService commitService;
         IssueService issueService;
+        CommentService commentService;
 
         public RepositoryService()
         {
@@ -38,6 +39,7 @@ namespace Sentiment.Services.Service
             this.contributorService = new ContributorService();
             this.commitService = new CommitService();
             this.issueService = new IssueService();
+            this.commentService = new CommentService();
         }
 
 
@@ -67,7 +69,12 @@ namespace Sentiment.Services.Service
             await contributorService.StoreAllContributorsAsync(repoId, repositoryId);
             var list = new List<Task>();
 
-            list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
+
+            //await issueService.StoreAllIssuesAsync(repoId, repositoryId);
+            await commentService.StoreIssueCommentOnebyOneAsync(repoId, repositoryId);
+            //await commentService.StoreReviewCommentAsync(repoId, repositoryId);
+
+            //list.Add(Task.Run(async () => { await issueService.StoreAllIssuesAsync(repoId, repositoryId); return 1; }));
             //list.Add(Task.Run(async () => { await commitService.StoreAllCommitsAsync(repoId, repositoryId); return 1; }));
 
             await Task.WhenAll(list.ToArray());

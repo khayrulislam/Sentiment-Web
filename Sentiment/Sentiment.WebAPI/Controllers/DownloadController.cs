@@ -12,12 +12,14 @@ namespace Sentiment.WebAPI.Controllers
     public class DownloadController : ApiController
     {
         private DownloadService downloadService = new DownloadService();
+        private RepositoryService repositoryService = new RepositoryService();
 
         [HttpGet]
         public HttpResponseMessage DownloadRepository(int repoId)
         {
             var data = downloadService.GetRepositoryContent(repoId);
 
+            var repository = repositoryService.Get(repoId);
 
             var response = new HttpResponseMessage();
 
@@ -26,7 +28,7 @@ namespace Sentiment.WebAPI.Controllers
             response.Content.Headers.ContentLength = data.Length;
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-            response.Content.Headers.ContentDisposition.FileName = "download" + ".xlsx";
+            response.Content.Headers.ContentDisposition.FileName = repository.Name + ".xlsx";
 
             return response;
         }

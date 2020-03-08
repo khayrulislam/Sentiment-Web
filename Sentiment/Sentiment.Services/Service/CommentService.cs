@@ -109,15 +109,17 @@ namespace Sentiment.Services.Service
             };
         }
 
-        public async Task StoreIssueCommentAsync(long repoId,int repositoryId)
+
+        public async Task StoreIssueCommentOnebyOneAsync(long repoId, int repositoryId)
         {
-            try
+            using (var unitOfWork = new UnitOfWork())
             {
-                using (var unitOfWork = new UnitOfWork())
+                var repository = unitOfWork.Repository.Get(repositoryId);
+                var issueNumber = unitOfWork.Issue.GetIssueNumberList(repositoryId);
+
+                foreach(var inum in issueNumber)
                 {
-                    var repository = unitOfWork.Repository.Get(repositoryId);
-                    request.Since = repository.AnalysisDate;
-                    var comments = await issueCommentClient.GetAllForRepository(repoId, request);
+                    var comments = await issueCommentClient.GetAllForIssue(repoId,inum);
                     comments.ToList().ForEach((comment) =>
                     {
                         var issueId = GetIssueId(comment.HtmlUrl);
@@ -128,51 +130,6 @@ namespace Sentiment.Services.Service
                             if (commentStore == null)
                             {
                                 unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue));
-                                unitOfWork.Complete();
-                            }
-                            else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
-                            {
-                                var body = commonService.RemoveGitHubTag(comment.Body); 
-                                sentimentCal.CalculateSentiment(body);
-                                commentStore.Message = body;
-                                commentStore.Pos = sentimentCal.PositoiveSentiScore;
-                                commentStore.Neg = sentimentCal.NegativeSentiScore;
-                                commentStore.Date = comment.UpdatedAt;
-                                unitOfWork.Complete();
-                            }
-
-                        }
-                    });
-                }
-                await StoreReviewCommentAsync(repoId, repositoryId);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        // review comment
-        public async Task StoreReviewCommentAsync(long repoId, int repositoryId)
-        {
-            try
-            {
-                using (var unitOfWork = new UnitOfWork())
-                {
-                    var repository = unitOfWork.Repository.Get(repositoryId);
-                    pRequest.Since = repository.AnalysisDate;
-                    var comments = await reviewComment.GetAllForRepository(repoId,pRequest);
-
-                    comments.ToList().ForEach((comment) =>
-                    {
-                        var issueId = GetIssueId(comment.HtmlUrl);
-                        var issue = unitOfWork.Issue.GetByNumber(repositoryId, issueId);
-                        if (issue != null)
-                        {
-                            var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
-                            if (commentStore == null)
-                            {
-                                unitOfWork.IssueComment.Add(GetAReviewComment(comment, repositoryId, issue));
                                 unitOfWork.Complete();
                             }
                             else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
@@ -188,6 +145,144 @@ namespace Sentiment.Services.Service
 
                         }
                     });
+                }
+
+
+                await StoreReviewCommentAsync(repoId, repositoryId);
+            }
+        }
+
+
+
+
+
+        public async Task StoreIssueCommentAsync(long repoId,int repositoryId)
+        {
+            try
+            {
+                using (var unitOfWork = new UnitOfWork())
+                {
+                    var repository = unitOfWork.Repository.Get(repositoryId);
+                    request.Since = repository.AnalysisDate;
+                    int i = 0;
+
+                    while (true)
+                    {
+                        option.StartPage = ++i;
+                        var comments = await issueCommentClient.GetAllForRepository(repoId, request,option);
+                        if (comments.Count <= 0) break;
+                        comments.ToList().ForEach((comment) =>
+                        {
+                            var issueId = GetIssueId(comment.HtmlUrl);
+                            var issue = unitOfWork.Issue.GetByNumber(repositoryId, issueId);
+                            if (issue != null)
+                            {
+                                var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
+                                if (commentStore == null)
+                                {
+                                    unitOfWork.IssueComment.Add(GetAIssueComment(comment, repositoryId, issue));
+                                    unitOfWork.Complete();
+                                }
+                                else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                                {
+                                    var body = commonService.RemoveGitHubTag(comment.Body);
+                                    sentimentCal.CalculateSentiment(body);
+                                    commentStore.Message = body;
+                                    commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                                    commentStore.Neg = sentimentCal.NegativeSentiScore;
+                                    commentStore.Date = comment.UpdatedAt;
+                                    unitOfWork.Complete();
+                                }
+
+                            }
+                        });
+                    }
+                    await StoreReviewCommentAsync(repoId, repositoryId);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        // review comment
+        public async Task StoreReviewCommentAsync(long repoId, int repositoryId)
+        {
+            try
+            {
+                using (var unitOfWork = new UnitOfWork())
+                {
+
+
+                    var repository = unitOfWork.Repository.Get(repositoryId);
+                    var issueNumber = unitOfWork.Issue.GetPullRequestNumberList(repositoryId);
+
+                    foreach (var inum in issueNumber)
+                    {
+                        var comments = await reviewComment.GetAll(repoId, inum);
+                        comments.ToList().ForEach((comment) =>
+                        {
+                            var issueId = GetIssueId(comment.HtmlUrl);
+                            var issue = unitOfWork.Issue.GetByNumber(repositoryId, issueId);
+                            if (issue != null)
+                            {
+                                var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
+                                if (commentStore == null)
+                                {
+                                    unitOfWork.IssueComment.Add(GetAReviewComment(comment, repositoryId, issue));
+                                    unitOfWork.Complete();
+                                }
+                                else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                                {
+                                    var body = commonService.RemoveGitHubTag(comment.Body);
+                                    sentimentCal.CalculateSentiment(body);
+                                    commentStore.Message = body;
+                                    commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                                    commentStore.Neg = sentimentCal.NegativeSentiScore;
+                                    commentStore.Date = comment.UpdatedAt;
+                                    unitOfWork.Complete();
+                                }
+                            }
+                        });
+                    }
+
+
+                    /*var repository = unitOfWork.Repository.Get(repositoryId);
+                    pRequest.Since = repository.AnalysisDate;
+                    int i = 0;
+
+                    while (true)
+                    {
+                        option.StartPage = ++i;
+                        var comments = await reviewComment.GetAllForRepository(repoId, pRequest,option);
+                        if (comments.Count <= 0) break;
+                        comments.ToList().ForEach((comment) =>
+                        {
+                            var issueId = GetIssueId(comment.HtmlUrl);
+                            var issue = unitOfWork.Issue.GetByNumber(repositoryId, issueId);
+                            if (issue != null)
+                            {
+                                var commentStore = unitOfWork.IssueComment.GetByNumber(issue.Id, comment.Id);
+                                if (commentStore == null)
+                                {
+                                    unitOfWork.IssueComment.Add(GetAReviewComment(comment, repositoryId, issue));
+                                    unitOfWork.Complete();
+                                }
+                                else if (commentStore != null && commentStore.Date != comment.UpdatedAt)
+                                {
+                                    var body = commonService.RemoveGitHubTag(comment.Body);
+                                    sentimentCal.CalculateSentiment(body);
+                                    commentStore.Message = body;
+                                    commentStore.Pos = sentimentCal.PositoiveSentiScore;
+                                    commentStore.Neg = sentimentCal.NegativeSentiScore;
+                                    commentStore.Date = comment.UpdatedAt;
+                                    unitOfWork.Complete();
+                                }
+                            }
+                        });
+                    }*/
+
 
                 }
             }
@@ -221,7 +316,7 @@ namespace Sentiment.Services.Service
 
         private int GetIssueId(string url)
         {
-            return int.Parse(Regex.Match(url, @"\d+").Value);
+            return int.Parse(Regex.Match(url, @"\d+#").Value.TrimEnd('#'));
         }
 
         private IssueCommentT GetAIssueComment(IssueComment comment,int repositoryId, IssueT issue)

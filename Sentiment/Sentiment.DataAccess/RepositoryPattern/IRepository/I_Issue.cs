@@ -37,6 +37,10 @@ namespace Sentiment.DataAccess.RepositoryPattern.IRepository
         List<IssueT> GetRepositoryIssueList(int repoId);
         List<IssueT> GetRepositoryPullRequestList(int repoId);
 
+        List<int> GetIssueNumberList(int repoId);
+        List<int> GetPullRequestNumberList(int repoId);
+
+
 
     }
 }

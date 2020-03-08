@@ -56,7 +56,7 @@ namespace Sentiment.Services.Service
             this.option = new ApiOptions()
             {
                 PageCount = 1,
-                PageSize = 100
+                PageSize = 100,
             };
         }
 
@@ -66,33 +66,43 @@ namespace Sentiment.Services.Service
             {
                 var repository = unitOfWork.Repository.Get(repositoryId);
                 request.Since = repository.AnalysisDate;
-                var issueBlock = await issueClient.GetAllForRepository(repoId,request);
+                int i = 0;
 
                 if (repositoryId != 0)
                 {
-                    issueBlock.ToList().ForEach(  (issue) => {
-                        var issueStore = unitOfWork.Issue.GetByNumber(repositoryId, issue.Number);
-                        if (issueStore != null)
-                        {
-                            if ( issue.PullRequest == null && issue.Body != null) {
-                                var body = commonService.RemoveGitHubTag(issue.Body); 
-                                sentimentCal.CalculateSentiment(body);
-                                issueStore.Body = body;
-                                issueStore.Pos = sentimentCal.PositoiveSentiScore;
-                                issueStore.Neg = sentimentCal.NegativeSentiScore;
-                                issueStore.IssueType = IssueType.Issue;
-                            }
-                            unitOfWork.Complete();
-                        }
-                        else
-                        {
-                            if(issue.PullRequest == null)
+                    while (true) 
+                    {
+                        option.StartPage = ++i;
+                        var issueBlock = await issueClient.GetAllForRepository(repoId, request, option);
+
+                        if (issueBlock.Count <= 0) break;
+
+                        issueBlock.ToList().ForEach((issue) => {
+                            var issueStore = unitOfWork.Issue.GetByNumber(repositoryId, issue.Number);
+                            if (issueStore != null)
                             {
-                                unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
+                                if (issue.PullRequest == null && issue.Body != null)
+                                {
+                                    var body = commonService.RemoveGitHubTag(issue.Body);
+                                    sentimentCal.CalculateSentiment(body);
+                                    issueStore.Body = body;
+                                    issueStore.Pos = sentimentCal.PositoiveSentiScore;
+                                    issueStore.Neg = sentimentCal.NegativeSentiScore;
+                                    issueStore.IssueType = IssueType.Issue;
+                                }
                                 unitOfWork.Complete();
                             }
-                        }
-                    });
+                            else
+                            {
+                                if (issue.PullRequest == null)
+                                {
+                                    unitOfWork.Issue.Add(GetAIssue(issue, repositoryId));
+                                    unitOfWork.Complete();
+                                }
+                            }
+                        });
+                    }
+                    
                     await StoreAllPullRequestsAsync(repoId,repositoryId);
                     
                 }
@@ -105,48 +115,42 @@ namespace Sentiment.Services.Service
             using (var unitOfWork = new UnitOfWork())
             {
                 var repository = unitOfWork.Repository.Get(repositoryId);
-                var pullBlock = await pullRequestsClient.GetAllForRepository(repoId,pullRequest);
-
+                int i = 0;
                 if (repositoryId != 0)
                 {
-                    pullBlock.ToList().ForEach((pull) => {
-                        var pullStore = unitOfWork.Issue.GetByNumber(repositoryId, pull.Number);
-                        int pId;
-                        if (pullStore != null)
-                        {
-                            if (pull.Body != null)
-                            {
-                                var body = commonService.RemoveGitHubTag(pull.Body);
-                                sentimentCal.CalculateSentiment(body);
-                                pullStore.Body = body;
-                                pullStore.Pos = sentimentCal.PositoiveSentiScore;
-                                pullStore.Neg = sentimentCal.NegativeSentiScore;
-                            }
-                            if(pullStore.IssueType != IssueType.Issue) pullStore.IssueType = IssueType.PullRequest;
-                            unitOfWork.Complete();
-                            pId = pullStore.Id;
-                        }
-                        else
-                        {
-                            var pp = GetAPull(pull, repositoryId);
-                            unitOfWork.Issue.Add(pp);
-                            unitOfWork.Complete();
-                            pId = pp.Id;
-                        }
+                    while (true)
+                    {
+                        option.StartPage = ++i;
+                        var pullBlock = await pullRequestsClient.GetAllForRepository(repoId, pullRequest,option);
+                        if (pullBlock.Count <= 0) break;
 
-                        /*if(pull.Commits > 0)
-                        {
-                            var commits = await pullRequestsClient.Commits(repoId,pull.Number);
-                            commits.ToList().ForEach((comm)=> {
-                                unitOfWork.PullCommit.Add(new PullCommitT() {
-                                    CommitSha = comm.Sha,
-                                    PullRequestId = pId
-                                });
+                        pullBlock.ToList().ForEach((pull) => {
+                            var pullStore = unitOfWork.Issue.GetByNumber(repositoryId, pull.Number);
+                            int pId;
+                            if (pullStore != null)
+                            {
+                                if (pull.Body != null)
+                                {
+                                    var body = commonService.RemoveGitHubTag(pull.Body);
+                                    sentimentCal.CalculateSentiment(body);
+                                    pullStore.Body = body;
+                                    pullStore.Pos = sentimentCal.PositoiveSentiScore;
+                                    pullStore.Neg = sentimentCal.NegativeSentiScore;
+                                }
+                                if (pullStore.IssueType != IssueType.Issue) pullStore.IssueType = IssueType.PullRequest;
                                 unitOfWork.Complete();
-                            });
-                        }*/
-                    });
-                    await commentService.StoreIssueCommentAsync(repoId, repositoryId);
+                                pId = pullStore.Id;
+                            }
+                            else
+                            {
+                                var pp = GetAPull(pull, repositoryId);
+                                unitOfWork.Issue.Add(pp);
+                                unitOfWork.Complete();
+                                pId = pp.Id;
+                            }
+                        });
+                    }
+                    //await commentService.StoreIssueCommentAsync(repoId, repositoryId);
                 }
             }
         }

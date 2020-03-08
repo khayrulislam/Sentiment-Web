@@ -333,7 +333,7 @@ namespace Sentiment.Services.Service
                 //writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.State } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.PosTitle.ToString() } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.NegTitle.ToString() } });
-                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Title } });
+                writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = new string(issue.Title.Where(c => !char.IsControl(c)).ToArray()) } });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Pos.ToString()} });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Neg.ToString()} });
                 writer.WriteElement(new Cell() { DataType = CellValues.String, CellValue = new CellValue() { Text = issue.Body } });
